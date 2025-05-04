@@ -52,7 +52,9 @@ class DetailPageView extends GetView<DetailPageController> {
                       Text(
                         'Rp 1.000.000 /Perbulan',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.blue),
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
                       ),
                     ],
                   ),
@@ -72,8 +74,10 @@ class DetailPageView extends GetView<DetailPageController> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Fasilitas',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        'Fasilitas',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 8),
@@ -109,24 +113,29 @@ class DetailPageView extends GetView<DetailPageController> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Kebijakan Properti',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        'Kebijakan Properti',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       Text('Lihat semua', style: TextStyle(color: Colors.blue)),
                     ],
                   ),
                   const SizedBox(height: 8),
                   Text(
-                      '1. Seluruh fasilitas kost hanya diperuntukkan bagi penyewa kamar.\n'
-                      '2. Tidak menerima tamu di kamar kost.\n'
-                      '3. Tidak diperkenankan merokok di dalam kamar.'),
+                    '1. Seluruh fasilitas kost hanya diperuntukkan bagi penyewa kamar.\n'
+                    '2. Tidak menerima tamu di kamar kost.\n'
+                    '3. Tidak diperkenankan merokok di dalam kamar.',
+                  ),
                   const SizedBox(height: 16),
 
                   // Deskripsi Properti
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Deskripsi Properti',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        'Deskripsi Properti',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       Text('Lihat semua', style: TextStyle(color: Colors.blue)),
                     ],
                   ),

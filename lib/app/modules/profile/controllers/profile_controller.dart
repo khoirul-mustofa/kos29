@@ -34,7 +34,6 @@ class ProfileController extends GetxController {
         if (userDoc.exists) {
           userData = userDoc.data() as Map<String, dynamic>;
           update();
-          logger.i(userData.toString());
         }
         update();
       }

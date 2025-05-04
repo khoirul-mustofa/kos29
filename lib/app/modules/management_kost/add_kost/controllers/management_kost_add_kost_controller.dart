@@ -1,10 +1,19 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:kos29/app/helper/logger_app.dart';
+import 'package:kos29/app/modules/kost_page/controllers/kost_page_controller.dart';
+import 'package:kos29/app/routes/app_pages.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:mime/mime.dart';
+import 'package:path/path.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ManagementKostAddKostController extends GetxController {
   final formKey = GlobalKey<FormState>();
@@ -16,9 +25,11 @@ class ManagementKostAddKostController extends GetxController {
   final fasilitasController = TextEditingController();
 
   final kosTersedia = true.obs;
-
   final jenis = 'Putra'.obs;
   final currentPosition = Rxn<LatLng>();
+
+  String? imageUrl;
+  String? localImagePath;
 
   @override
   void onInit() {
@@ -81,7 +92,44 @@ class ManagementKostAddKostController extends GetxController {
     }
   }
 
-  final uid = FirebaseAuth.instance.currentUser?.uid;
+  Future<void> pickAndUploadImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile == null) {
+      // Get.snackbar("Info", "Tidak ada gambar dipilih");
+      return;
+    }
+
+    localImagePath = pickedFile.path;
+    update(); // untuk update preview image
+
+    final file = File(pickedFile.path);
+    final fileName = basename(file.path);
+    final fileBytes = await file.readAsBytes();
+    final contentType = lookupMimeType(file.path);
+
+    final bucket = Supabase.instance.client.storage.from('media');
+
+    try {
+      await bucket.remove([fileName]); // opsional
+      final result = await bucket.uploadBinary(
+        fileName,
+        fileBytes,
+        fileOptions: FileOptions(contentType: contentType),
+      );
+
+      if (result.isEmpty) throw Exception("Upload gagal");
+
+      imageUrl = bucket.getPublicUrl(fileName);
+      update();
+
+      Get.snackbar("Sukses", "Gambar berhasil diupload");
+    } catch (e) {
+      Get.snackbar("Error", e.toString());
+      logger.e(e);
+    }
+  }
 
   void saveKost() async {
     if (formKey.currentState!.validate()) {
@@ -93,6 +141,7 @@ class ManagementKostAddKostController extends GetxController {
 
       final data = {
         'nama': namaController.text,
+        'gambar': imageUrl,
         'alamat': alamatController.text,
         'harga': int.tryParse(hargaController.text) ?? 0,
         'jenis': jenis.value,
@@ -111,8 +160,9 @@ class ManagementKostAddKostController extends GetxController {
             .doc(uid)
             .collection('kost')
             .add({'informasi_kost': data});
-
-        Get.back();
+        final listController = Get.find<KostPageController>();
+        listController.loadKos();
+        Get.offNamed(Routes.KOST_PAGE);
         Get.snackbar('Berhasil', 'Kosan berhasil disimpan');
       } catch (e) {
         Get.snackbar('Error', 'Gagal menyimpan data: $e');

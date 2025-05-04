@@ -15,10 +15,6 @@ class ProfileView extends GetView<ProfileController> {
       builder: (controller) {
         return Scaffold(
           appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {},
-            ),
             actions: [
               IconButton(icon: const Icon(Icons.settings), onPressed: () {}),
             ],
@@ -36,22 +32,6 @@ class ProfileView extends GetView<ProfileController> {
                           '${controller.currentUser?.photoURL}',
                         ),
                       ),
-                      // Positioned(
-                      //   bottom: 0,
-                      //   right: 0,
-                      //   child: Container(
-                      //     padding: const EdgeInsets.all(4),
-                      //     decoration: BoxDecoration(
-                      //       shape: BoxShape.circle,
-                      //       color: Colors.white,
-                      //     ),
-                      //     child: const Icon(
-                      //       Icons.camera_alt,
-                      //       size: 20,
-                      //       color: Colors.black,
-                      //     ),
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),

@@ -5,6 +5,7 @@ import 'package:kos29/app/routes/app_pages.dart';
 
 class KostPageController extends GetxController {
   final kosanList = <Map<String, dynamic>>[].obs;
+  final isLoading = true.obs;
 
   @override
   void onInit() {
@@ -13,10 +14,12 @@ class KostPageController extends GetxController {
   }
 
   Future<void> loadKos() async {
+    isLoading.value = true;
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
         Get.snackbar('Error', 'Pengguna belum login');
+        isLoading.value = false;
         return;
       }
 
@@ -43,7 +46,9 @@ class KostPageController extends GetxController {
 
       kosanList.assignAll(loadedKost);
     } catch (e) {
-      Get.snackbar('Error loading kos', e.toString());
+      Get.snackbar('Error', 'Gagal memuat kosan: $e');
+    } finally {
+      isLoading.value = false;
     }
   }
 

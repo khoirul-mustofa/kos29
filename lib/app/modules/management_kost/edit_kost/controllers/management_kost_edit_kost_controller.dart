@@ -8,6 +8,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kos29/app/helper/logger_app.dart';
+import 'package:kos29/app/modules/kost_page/controllers/kost_page_controller.dart';
+import 'package:kos29/app/routes/app_pages.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart';
@@ -27,13 +29,13 @@ class ManagementKostEditKostController extends GetxController {
   final jenis = 'Putra'.obs;
   final currentPosition = Rxn<LatLng>();
 
-  final idKost = Get.arguments['id'] as String;
+  final idKost = Get.arguments['id'];
   String? imageUrl;
 
   @override
   void onInit() {
     super.onInit();
-    logger.i('id kost: $idKost');
+    logger.i(idKost);
     loadKost();
   }
 
@@ -49,7 +51,6 @@ class ManagementKostEditKostController extends GetxController {
 
   void loadKost() async {
     final user = FirebaseAuth.instance.currentUser;
-    logger.i('user: ${user?.uid}');
     if (user == null) {
       Get.snackbar('Error', 'Pengguna belum login');
       return;
@@ -64,8 +65,6 @@ class ManagementKostEditKostController extends GetxController {
             .get();
 
     final data = snapshot.data();
-    logger.i('data: $data');
-    logger.i(snapshot.data());
     if (data == null) {
       Get.snackbar('Error', 'Data kosan tidak ditemukan');
       return;
@@ -77,10 +76,12 @@ class ManagementKostEditKostController extends GetxController {
     fasilitasController.text = data['informasi_kost']['fasilitas'].join(', ');
     kosTersedia.value = data['informasi_kost']['tersedia'];
     jenis.value = data['informasi_kost']['jenis'];
+    imageUrl = data['informasi_kost']['gambar'];
     currentPosition.value = LatLng(
       data['informasi_kost']['latitude'],
       data['informasi_kost']['longitude'],
     );
+    update();
     await _updateAlamatFromLatLng(currentPosition.value!);
   }
 
@@ -151,20 +152,23 @@ class ManagementKostEditKostController extends GetxController {
         'tersedia': kosTersedia.value,
         'latitude': currentPosition.value?.latitude,
         'longitude': currentPosition.value?.longitude,
-        'updated_at':
-            FieldValue.serverTimestamp(), // Gunakan field updated_at untuk menandakan waktu pembaruan
+
+        'updated_at': FieldValue.serverTimestamp(),
       };
 
       try {
-        // Menggunakan update untuk memperbarui data yang sudah ada
         await FirebaseFirestore.instance
             .collection('kostan')
             .doc(uid)
             .collection('kost')
-            .doc(idKost) // Menentukan dokumen berdasarkan idKost
+            .doc(idKost)
             .update({'informasi_kost': data});
 
-        Get.back();
+        final pageKostController = Get.find<KostPageController>();
+        pageKostController.loadKos();
+
+        Get.offNamed(Routes.KOST_PAGE);
+
         Get.snackbar('Berhasil', 'Kosan berhasil diperbarui');
       } catch (e) {
         Get.snackbar('Error', 'Gagal memperbarui data: $e');
@@ -172,41 +176,8 @@ class ManagementKostEditKostController extends GetxController {
     }
   }
 
-  Future<void> uploadImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile == null) {
-      Get.snackbar("Info", "Tidak ada gambar dipilih");
-      return;
-    }
-
-    final file = File(pickedFile.path);
-    final fileName = basename(file.path);
-    final fileBytes = await file.readAsBytes();
-    final contentType = lookupMimeType(file.path);
-
-    final bucket = Supabase.instance.client.storage.from('media');
-
-    try {
-      await bucket.remove(['uploads/$fileName']); // Optional: hapus duplikat
-      final result = await bucket.uploadBinary(
-        'uploads/$fileName',
-        fileBytes,
-        fileOptions: FileOptions(contentType: contentType),
-      );
-
-      if (result.isEmpty) throw Exception("Upload gagal");
-
-      final url = bucket.getPublicUrl('uploads/$fileName');
-      imageUrl = url;
-      update(); // penting untuk GetBuilder
-
-      Get.snackbar("Sukses", "Gambar berhasil diupload");
-    } catch (e) {
-      Get.snackbar("Error", e.toString());
-      logger.e(e);
-    }
+  String generateUniqueFileName(String fileName) {
+    return 'uploads/$fileName';
   }
 
   String? localImagePath;
@@ -230,17 +201,17 @@ class ManagementKostEditKostController extends GetxController {
     final bucket = Supabase.instance.client.storage.from('media');
 
     try {
-      await bucket.remove(['uploads/$fileName']); // opsional
+      await bucket.remove([fileName]);
       final result = await bucket.uploadBinary(
-        'uploads/$fileName',
+        fileName,
         fileBytes,
         fileOptions: FileOptions(contentType: contentType),
       );
 
       if (result.isEmpty) throw Exception("Upload gagal");
 
-      imageUrl = bucket.getPublicUrl('uploads/$fileName');
-      update(); // update UI
+      imageUrl = bucket.getPublicUrl(fileName);
+      update();
 
       Get.snackbar("Sukses", "Gambar berhasil diupload");
     } catch (e) {
