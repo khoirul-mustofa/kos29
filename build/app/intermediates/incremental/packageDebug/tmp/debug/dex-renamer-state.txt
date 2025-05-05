@@ -1,0 +1,22 @@
+#Mon May 05 20:42:00 WIB 2025
+base.0=I\:\\Development\\flutter\\skripsi_unhasy_2025\\kos29\\build\\app\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
+base.1=I\:\\Development\\flutter\\skripsi_unhasy_2025\\kos29\\build\\app\\intermediates\\dex\\debug\\mergeLibDexDebug\\0\\classes.dex
+base.2=I\:\\Development\\flutter\\skripsi_unhasy_2025\\kos29\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
+base.3=I\:\\Development\\flutter\\skripsi_unhasy_2025\\kos29\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\1\\classes.dex
+base.4=I\:\\Development\\flutter\\skripsi_unhasy_2025\\kos29\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\7\\classes.dex
+base.5=I\:\\Development\\flutter\\skripsi_unhasy_2025\\kos29\\build\\app\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes2.dex
+base.6=I\:\\Development\\flutter\\skripsi_unhasy_2025\\kos29\\build\\app\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes3.dex
+path.0=classes.dex
+path.1=0/classes.dex
+path.2=0/classes.dex
+path.3=1/classes.dex
+path.4=7/classes.dex
+path.5=classes2.dex
+path.6=classes3.dex
+renamed.0=classes.dex
+renamed.1=classes2.dex
+renamed.2=classes3.dex
+renamed.3=classes4.dex
+renamed.4=classes5.dex
+renamed.5=classes6.dex
+renamed.6=classes7.dex
