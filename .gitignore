@@ -6,4 +6,4 @@
 build/
 
 # Flutter
-.dart_tool/
+.dart_tool
