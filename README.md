@@ -1,16 +1,11 @@
-# kos29
+# Kos29 - Aplikasi Pencarian Kost
 
-A new Flutter project.
+**Kos29** adalah aplikasi mobile yang memudahkan pengguna dalam mencari dan memesan kost sesuai dengan lokasi, harga, fasilitas, dan ulasan. Aplikasi ini dibangun menggunakan Flutter dengan pendekatan Clean Architecture dan state management GetX.
 
-## Getting Started
+## 👨‍💻 Kontributor
 
-This project is a starting point for a Flutter application.
+- [Khoirul Mustofa](mailto:khoirul@gmail.com)
 
-A few resources to get you started if this is your first Flutter project:
+---
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Terima kasih telah menggunakan Kos29! Silakan beri bintang ⭐ jika proyek ini bermanfaat.
