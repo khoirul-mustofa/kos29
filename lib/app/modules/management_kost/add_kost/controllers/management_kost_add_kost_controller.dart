@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -9,11 +10,11 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kos29/app/helper/logger_app.dart';
 import 'package:kos29/app/modules/kost_page/controllers/kost_page_controller.dart';
-import 'package:kos29/app/routes/app_pages.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 class ManagementKostAddKostController extends GetxController {
   final formKey = GlobalKey<FormState>();
@@ -138,7 +139,7 @@ class ManagementKostAddKostController extends GetxController {
         Get.snackbar('Error', 'User belum login');
         return;
       }
-
+      final idKos = Uuid().v1();
       final data = {
         'nama': namaController.text,
         'gambar': imageUrl,
@@ -151,21 +152,28 @@ class ManagementKostAddKostController extends GetxController {
         'tersedia': kosTersedia.value,
         'latitude': currentPosition.value?.latitude,
         'longitude': currentPosition.value?.longitude,
+        'uid': uid,
+        'id_kos': idKos,
         'created_at': FieldValue.serverTimestamp(),
       };
 
       try {
         await FirebaseFirestore.instance
-            .collection('kostan')
-            .doc(uid)
-            .collection('kost')
-            .add({'informasi_kost': data});
+            .collection('kosts')
+            .doc(idKos)
+            .set(data);
         final listController = Get.find<KostPageController>();
-        listController.loadKos();
-        Get.offNamed(Routes.KOST_PAGE);
+        listController.loadKos(firstLoad: true);
+        Get.back();
         Get.snackbar('Berhasil', 'Kosan berhasil disimpan');
+        if (kDebugMode) {
+          logger.d('Kosan berhasil disimpan');
+        }
       } catch (e) {
         Get.snackbar('Error', 'Gagal menyimpan data: $e');
+        if (kDebugMode) {
+          logger.e('Gagal menyimpan data: $e');
+        }
       }
     }
   }

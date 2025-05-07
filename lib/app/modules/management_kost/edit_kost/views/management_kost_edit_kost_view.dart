@@ -8,7 +8,9 @@ import '../controllers/management_kost_edit_kost_controller.dart';
 
 class ManagementKostEditKostView
     extends GetView<ManagementKostEditKostController> {
-  const ManagementKostEditKostView({super.key});
+  ManagementKostEditKostView({super.key});
+  @override
+  final controller = Get.put(ManagementKostEditKostController());
 
   @override
   Widget build(BuildContext context) {

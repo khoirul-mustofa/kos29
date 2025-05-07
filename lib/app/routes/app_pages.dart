@@ -41,11 +41,7 @@ class AppPages {
   static const INITIAL = Routes.SPLASH_SCREEN;
 
   static final routes = [
-    GetPage(
-      name: _Paths.HOME,
-      page: () => HomeView(),
-      binding: HomeBinding(),
-    ),
+    GetPage(name: _Paths.HOME, page: () => HomeView(), binding: HomeBinding()),
     GetPage(
       name: _Paths.SPLASH_SCREEN,
       page: () => SplashScreenView(),
@@ -68,7 +64,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.SEARCH_PAGE,
-      page: () => const SearchPageView(),
+      page: () => SearchPageView(),
       binding: SearchPageBinding(),
     ),
     GetPage(
@@ -108,17 +104,17 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.MANAGEMENT_KOST_DETAIL_KOST,
-      page: () => const ManagementKostDetailKostView(),
+      page: () => ManagementKostDetailKostView(),
       binding: ManagementKostDetailKostBinding(),
     ),
     GetPage(
       name: _Paths.MANAGEMENT_KOST_ADD_KOST,
-      page: () => const ManagementKostAddKostView(),
+      page: () => ManagementKostAddKostView(),
       binding: ManagementKostAddKostBinding(),
     ),
     GetPage(
       name: _Paths.MANAGEMENT_KOST_EDIT_KOST,
-      page: () => const ManagementKostEditKostView(),
+      page: () => ManagementKostEditKostView(),
       binding: ManagementKostEditKostBinding(),
     ),
   ];

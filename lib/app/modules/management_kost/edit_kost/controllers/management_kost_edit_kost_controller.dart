@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -35,7 +34,6 @@ class ManagementKostEditKostController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    logger.i(idKost);
     loadKost();
   }
 
@@ -50,37 +48,23 @@ class ManagementKostEditKostController extends GetxController {
   }
 
   void loadKost() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      Get.snackbar('Error', 'Pengguna belum login');
-      return;
-    }
-
     final snapshot =
-        await FirebaseFirestore.instance
-            .collection('kostan')
-            .doc(user.uid)
-            .collection('kost')
-            .doc(idKost)
-            .get();
+        await FirebaseFirestore.instance.collection('kosts').doc(idKost).get();
 
     final data = snapshot.data();
     if (data == null) {
       Get.snackbar('Error', 'Data kosan tidak ditemukan');
       return;
     }
-    namaController.text = data['informasi_kost']['nama'];
-    alamatController.text = data['informasi_kost']['alamat'];
-    hargaController.text = data['informasi_kost']['harga'].toString();
-    deskripsiController.text = data['informasi_kost']['deskripsi'];
-    fasilitasController.text = data['informasi_kost']['fasilitas'].join(', ');
-    kosTersedia.value = data['informasi_kost']['tersedia'];
-    jenis.value = data['informasi_kost']['jenis'];
-    imageUrl = data['informasi_kost']['gambar'];
-    currentPosition.value = LatLng(
-      data['informasi_kost']['latitude'],
-      data['informasi_kost']['longitude'],
-    );
+    namaController.text = data['nama'];
+    alamatController.text = data['alamat'];
+    hargaController.text = data['harga'].toString();
+    deskripsiController.text = data['deskripsi'];
+    fasilitasController.text = data['fasilitas'].join(', ');
+    kosTersedia.value = data['tersedia'];
+    jenis.value = data['jenis'];
+    imageUrl = data['gambar'];
+    currentPosition.value = LatLng(data['latitude'], data['longitude']);
     update();
     await _updateAlamatFromLatLng(currentPosition.value!);
   }
@@ -130,16 +114,8 @@ class ManagementKostEditKostController extends GetxController {
     }
   }
 
-  final uid = FirebaseAuth.instance.currentUser?.uid;
-
   void saveKost() async {
     if (formKey.currentState!.validate()) {
-      final uid = FirebaseAuth.instance.currentUser?.uid;
-      if (uid == null) {
-        Get.snackbar('Error', 'User belum login');
-        return;
-      }
-
       final data = {
         'nama': namaController.text,
         'gambar': imageUrl,
@@ -152,21 +128,17 @@ class ManagementKostEditKostController extends GetxController {
         'tersedia': kosTersedia.value,
         'latitude': currentPosition.value?.latitude,
         'longitude': currentPosition.value?.longitude,
-
         'updated_at': FieldValue.serverTimestamp(),
       };
 
       try {
         await FirebaseFirestore.instance
-            .collection('kostan')
-            .doc(uid)
-            .collection('kost')
+            .collection('kosts')
             .doc(idKost)
-            .update({'informasi_kost': data});
+            .update(data);
 
-        final pageKostController = Get.find<KostPageController>();
-        pageKostController.loadKos();
-
+        final kostPageController = Get.find<KostPageController>();
+        kostPageController.loadKos(firstLoad: true);
         Get.offNamed(Routes.KOST_PAGE);
 
         Get.snackbar('Berhasil', 'Kosan berhasil diperbarui');

@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kos29/app/helper/logger_app.dart';
@@ -9,7 +9,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ManagementKostDetailKostController extends GetxController {
   final kostData = <String, dynamic>{}.obs;
-  final id = Get.arguments;
+  final id = Get.arguments['id'] as String;
+
   String? imageUrl;
 
   @override
@@ -19,27 +20,18 @@ class ManagementKostDetailKostController extends GetxController {
   }
 
   void loadKost(String id) async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      Get.snackbar('Error', 'Pengguna belum login');
-      return;
-    }
-
     final snapshot =
-        await FirebaseFirestore.instance
-            .collection('kostan')
-            .doc(user.uid)
-            .collection('kost')
-            .doc(id)
-            .get();
+        await FirebaseFirestore.instance.collection('kosts').doc(id).get();
 
     final data = snapshot.data();
     if (data == null) {
       Get.snackbar('Error', 'Data kosan tidak ditemukan');
       return;
     }
+
     kostData.value = data;
-    imageUrl = data['gambar'];
+    imageUrl = data['gambar'] ?? '';
+    update();
   }
 
   void goToEdit() {
@@ -47,24 +39,18 @@ class ManagementKostDetailKostController extends GetxController {
   }
 
   Future<void> deleteImage() async {
-    if (imageUrl == null) {
+    if (imageUrl == null || imageUrl!.isEmpty) {
       logger.i("Tidak ada gambar untuk dihapus");
       return;
     }
 
     try {
       final bucket = Supabase.instance.client.storage.from('media');
-
-      // Ekstrak nama file dari URL
       final fileName = Uri.parse(imageUrl!).pathSegments.last;
-
-      // Hapus file dari bucket Supabase
       await bucket.remove(['uploads/$fileName']);
-
-      imageUrl = null; // Kosongkan URL
-      update(); // Update UI jika pakai GetBuilder
+      imageUrl = null;
     } catch (e) {
-      logger.e(e);
+      logger.e("Gagal menghapus gambar: $e");
     }
   }
 
@@ -76,31 +62,19 @@ class ManagementKostDetailKostController extends GetxController {
       textCancel: 'Batal',
       confirmTextColor: Colors.white,
       onConfirm: () async {
-        Get.back(); // Tutup dialog konfirmasi
-        try {
-          final user = FirebaseAuth.instance.currentUser;
-          if (user == null) {
-            Get.snackbar('Error', 'Pengguna belum login');
-            return;
-          }
+        Get.back();
 
-          // Panggil dulu delete gambar
+        try {
           await deleteImage();
 
-          // Lanjutkan dengan menghapus data kosan
-          await FirebaseFirestore.instance
-              .collection('kostan')
-              .doc(user.uid)
-              .collection('kost')
-              .doc(id)
-              .delete();
+          await FirebaseFirestore.instance.collection('kosts').doc(id).delete();
 
-          Get.back(); // Kembali ke halaman sebelumnya (daftar kos)
+          Get.back(); // Kembali ke list
           Get.snackbar('Berhasil', 'Kosan telah dihapus');
 
-          // Refresh daftar kosan
-          final listController = Get.find<KostPageController>();
-          listController.loadKos();
+          final kostPageController = Get.find<KostPageController>();
+          kostPageController.loadKos(firstLoad: true);
+          Get.offNamed(Routes.KOST_PAGE);
         } catch (e) {
           Get.snackbar('Gagal', 'Terjadi kesalahan: $e');
         }

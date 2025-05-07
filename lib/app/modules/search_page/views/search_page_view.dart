@@ -1,101 +1,117 @@
+// search_page_view.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:kos29/app/routes/app_pages.dart';
+import 'package:kos29/app/modules/search_page/controllers/search_page_controller.dart';
 import 'package:kos29/app/widgets/card_kost.dart';
 
-import '../controllers/search_page_controller.dart';
-
-class SearchPageView extends GetView<SearchPageController> {
+class SearchPageView extends StatefulWidget {
   const SearchPageView({super.key});
+
+  @override
+  State<SearchPageView> createState() => _SearchPageViewState();
+}
+
+class _SearchPageViewState extends State<SearchPageView> {
+  final ScrollController _scrollController = ScrollController();
+  final SearchPageController controller = Get.put(SearchPageController());
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent - 200 &&
+        !controller.isLoading &&
+        controller.hasMore) {
+      controller.fetchKostData(loadMore: true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: const Text('Cari Kos'),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: GetBuilder<SearchPageController>(
-          builder: (controller) {
-            return Column(
+      appBar: AppBar(title: const Text('Cari Kos'), centerTitle: true),
+      body: GetBuilder<SearchPageController>(
+        builder: (controller) {
+          return RefreshIndicator(
+            onRefresh: controller.refreshKost,
+            child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16),
                   child: TextFormField(
-                    textInputAction: TextInputAction.search,
-                    keyboardType: TextInputType.text,
-                    onFieldSubmitted: (value) {},
                     decoration: InputDecoration(
                       labelText: 'Cari Kost',
-                      suffixIcon: IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.search),
-                      ),
+                      suffixIcon: const Icon(Icons.search),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.grey),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.teal),
-                      ),
                     ),
+                    onChanged: controller.search,
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 8),
+                SizedBox(
                   height: 50,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: controller.category.length,
                     itemBuilder: (context, index) {
                       return Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.only(left: 16, right: 5),
                         child: ChoiceChip(
-                          selectedColor: Colors.teal.withValues(alpha: 0.3),
-                          backgroundColor: Colors.white,
-                          labelStyle: const TextStyle(color: Colors.black),
+                          selectedColor: Colors.teal.shade100,
                           label: Text(controller.category[index]),
                           selected: controller.selectedCategory == index,
                           onSelected: (value) {
-                            if (value) {
-                              controller.selectedCategory = index;
-                              controller.update();
-                            }
+                            if (value) controller.changeCategory(index);
                           },
                         ),
                       );
                     },
                   ),
                 ),
-                const SizedBox(height: 16),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                  child: SizedBox(
-                    height: Get.height / 1.4,
-                    child: ListView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: 10,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () => Get.toNamed(Routes.DETAIL_PAGE),
-                          child: CardKost(),
-                        );
-                      },
-                    ),
-                  ),
+                const SizedBox(height: 10),
+                Expanded(
+                  child:
+                      controller.kostList.isEmpty && !controller.isLoading
+                          ? const Center(child: Text('Tidak ada data kos'))
+                          : ListView.builder(
+                            controller: _scrollController,
+                            itemCount: controller.filteredKost.length + 1,
+                            itemBuilder: (context, index) {
+                              if (index < controller.filteredKost.length) {
+                                final kost = controller.filteredKost[index];
+                                return GestureDetector(
+                                  onTap: () => controller.gotoDetailPage(kost),
+                                  child: CardKost(kost: kost),
+                                );
+                              } else {
+                                return controller.hasMore
+                                    ? const Padding(
+                                      padding: EdgeInsets.all(16),
+                                      child: Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    )
+                                    : const SizedBox();
+                              }
+                            },
+                          ),
                 ),
               ],
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

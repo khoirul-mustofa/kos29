@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
@@ -14,12 +13,12 @@ class ManagementKostAddKostView
     return Scaffold(
       appBar: AppBar(title: const Text("Tambah Kosan")),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Form(
           key: controller.formKey,
           child: ListView(
             children: [
-              // Gambar
+              const SizedBox(height: 20),
               GetBuilder<ManagementKostAddKostController>(
                 builder: (controller) {
                   return ClipRRect(
@@ -168,7 +167,7 @@ class ManagementKostAddKostView
                 );
               }),
 
-              const SizedBox(height: 24),
+              SizedBox(height: Get.height * 0.2),
             ],
           ),
         ),

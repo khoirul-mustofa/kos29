@@ -1,63 +1,178 @@
-import 'package:get/get.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
+import 'package:kos29/app/data/models/kost_model.dart';
 import 'package:kos29/app/helper/logger_app.dart';
-import 'package:kos29/app/services/haversine.dart';
+import 'package:kos29/app/routes/app_pages.dart';
+import 'package:kos29/app/services/haversine_service.dart';
+import 'package:kos29/app/services/visit_history_service.dart';
 
 class SearchPageController extends GetxController {
-  String location = "";
-
-  double distance = 0.0;
-
-  double lat1 = -6.2088; // Latitude untuk titik A (misalnya Jakarta)
-  double lon1 = 106.8456; // Longitude untuk titik A
-  double lat2 = -7.7956; // Latitude untuk titik B (misalnya Yogyakarta)
-  double lon2 = 110.3695; // Longitude untuk titik B
-
-  List<String> category = ['Terdekat', 'Termurah', 'Termahal', 'Terbaik'];
+  List<KostModel> kostList = [];
+  List<String> category = ["Semua", "Putra", "Putri", "Campur"];
   int selectedCategory = 0;
+  bool isLoading = false;
+  bool hasMore = true;
+  int limit = 10;
+  DocumentSnapshot? lastDoc;
+  String _searchText = '';
+  Position? currentPosition;
+  List<KostModel> get filteredKost {
+    List<KostModel> list = kostList;
+
+    if (selectedCategory > 0) {
+      list =
+          list
+              .where(
+                (k) =>
+                    k.jenis.toLowerCase() ==
+                    category[selectedCategory].toLowerCase(),
+              )
+              .toList();
+    }
+
+    if (currentPosition != null) {
+      final currentLat = currentPosition!.latitude;
+      final currentLon = currentPosition!.longitude;
+
+      list =
+          list.map((k) {
+            k.distance = calculateDistance(
+              currentLat,
+              currentLon,
+              k.latitude,
+              k.longitude,
+            );
+            return k;
+          }).toList();
+
+      list.sort((a, b) => a.distance.compareTo(b.distance));
+    }
+
+    if (_searchText.isNotEmpty) {
+      list =
+          list
+              .where(
+                (k) => k.nama.toLowerCase().contains(_searchText.toLowerCase()),
+              )
+              .toList();
+    }
+
+    return list;
+  }
+
+  void changeCategory(int index) {
+    selectedCategory = index;
+    update();
+  }
+
+  void search(String text) {
+    _searchText = text;
+    update();
+  }
+
+  Future<void> getCurrentLocation() async {
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        logger.e('❌ Location permission denied forever');
+        return;
+      }
+
+      currentPosition = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      );
+      update();
+    } catch (e) {
+      logger.e('❌ Error getting location: $e');
+    }
+  }
+
+  Future<void> fetchKostData({bool loadMore = false}) async {
+    if (isLoading || (!hasMore && loadMore)) return;
+
+    try {
+      isLoading = true;
+      update();
+
+      Query query = FirebaseFirestore.instance
+          .collection('kosts')
+          .orderBy('nama')
+          .limit(limit);
+
+      if (loadMore && lastDoc != null) {
+        query = query.startAfterDocument(lastDoc!);
+      }
+
+      final snapshot = await query.get();
+
+      if (snapshot.docs.isNotEmpty) {
+        lastDoc = snapshot.docs.last;
+
+        final newKost =
+            snapshot.docs.map((doc) {
+              final data = doc.data() as Map<String, dynamic>;
+              final kost = KostModel.fromMap(data);
+              kost.idKos = doc.id; // Assign document ID ke model
+
+              if (currentPosition != null) {
+                final distance = Geolocator.distanceBetween(
+                  currentPosition!.latitude,
+                  currentPosition!.longitude,
+                  kost.latitude,
+                  kost.longitude,
+                );
+                kost.distance = distance / 1000;
+              }
+
+              return kost;
+            }).toList();
+
+        if (loadMore) {
+          kostList.addAll(newKost);
+        } else {
+          kostList = newKost;
+        }
+      } else {
+        hasMore = false;
+      }
+    } catch (e) {
+      logger.e('⛔ fetchKostData error: $e');
+    } finally {
+      isLoading = false;
+      update();
+    }
+  }
+
+  Future<void> gotoDetailPage(KostModel kost) async {
+    if (kost.idKos.isEmpty) return;
+
+    await saveVisit(kost.idKos, kost.uid);
+    Get.toNamed(Routes.DETAIL_PAGE, arguments: kost);
+  }
+
+  Future<void> saveVisit(String kostId, String uid) async {
+    final visitHistoryService = VisitHistoryService();
+    await visitHistoryService.saveVisit(kostId);
+  }
+
+  Future<void> refreshKost() async {
+    kostList.clear();
+    lastDoc = null;
+    hasMore = true;
+    await getCurrentLocation();
+    await fetchKostData();
+  }
 
   @override
   void onInit() {
     super.onInit();
-    getCurrentPosition();
-    distance = calculateDistance(lat1, lon1, lat2, lon2);
-  }
-
-  Future<void> getCurrentPosition() async {
-    try {
-      // meminta izin lokasi
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        // jika service tidak diaktifkan
-        return Future.error('Location services are disabled.');
-      }
-
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          // jika permission denied, mengembalikan error
-          return Future.error('Location permissions are denied');
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        // jika izin lokasi ditolak secara permanen
-        return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.',
-        );
-      }
-
-      // mendapatkan lokasi saat ini
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-      location = "${position.latitude}, ${position.longitude}";
-      logger.i('location : $position.latitude, $position.longitude');
-      update();
-    } catch (e) {
-      location = "error : $e";
-      update();
-    }
+    refreshKost();
   }
 }
