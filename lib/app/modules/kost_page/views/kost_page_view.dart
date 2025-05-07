@@ -16,7 +16,6 @@ class _KostPageViewState extends State<KostPageView> {
   @override
   void initState() {
     super.initState();
-
     scrollController.addListener(() {
       if (scrollController.position.pixels >=
               scrollController.position.maxScrollExtent - 300 &&

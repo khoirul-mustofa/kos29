@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:kos29/app/modules/home/controllers/home_controller.dart';
 
 import 'package:kos29/app/routes/app_pages.dart';
 
@@ -15,6 +16,10 @@ class KostPageController extends GetxController {
   void onInit() {
     super.onInit();
     loadKos(firstLoad: true);
+  }
+
+  void refreshHomePage() {
+    Get.find<HomeController>().refreshHomePage();
   }
 
   Future<void> loadKos({bool firstLoad = false}) async {
@@ -72,4 +77,10 @@ class KostPageController extends GetxController {
 
   void goToDetail(String id) =>
       Get.toNamed(Routes.MANAGEMENT_KOST_DETAIL_KOST, arguments: {'id': id});
+
+  @override
+  void onClose() {
+    super.onClose();
+    refreshHomePage();
+  }
 }

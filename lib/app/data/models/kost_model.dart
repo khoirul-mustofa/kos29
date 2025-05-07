@@ -9,7 +9,8 @@ class KostModel {
   double distance;
   String uid;
   String idKos;
-  double? jarak;
+  double jarak;
+  String deskripsi;
 
   KostModel({
     required this.nama,
@@ -22,7 +23,8 @@ class KostModel {
     this.distance = 0,
     required this.uid,
     required this.idKos,
-    this.jarak,
+    required this.jarak,
+    required this.deskripsi,
   });
 
   factory KostModel.fromMap(Map<String, dynamic> map) {
@@ -36,7 +38,8 @@ class KostModel {
       jenis: map['jenis'] ?? '',
       uid: map['uid'] ?? '',
       idKos: map['id_kos'] ?? '',
-      jarak: map['jarak']?.toDouble() ?? 0.0,
+      jarak: map['jarak'] ?? 0.0,
+      deskripsi: map['deskripsi'] ?? '',
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:kos29/app/modules/home/controllers/home_controller.dart';
+import 'package:kos29/app/helper/formater_helper.dart';
 
 import '../controllers/detail_page_controller.dart';
 
@@ -9,194 +9,287 @@ class DetailPageView extends GetView<DetailPageController> {
   const DetailPageView({super.key});
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      onPopInvokedWithResult: (didPop, result) {
-        if (didPop) {
-          Get.find<HomeController>().ambilKunjunganTerakhir();
-        }
-      },
-      child: Scaffold(
-        body: SafeArea(
-          child: ListView(
-            children: [
-              // Gambar Kost
-              Stack(
-                children: [
-                  Image.network(
-                    'https://images.unsplash.com/photo-1726066012645-959fc63f61b4?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxfHx8ZW58MHx8fHx8',
-                    width: double.infinity,
-                    height: 250,
-                    fit: BoxFit.cover,
-                  ),
-                  Positioned(
-                    top: 16,
-                    left: 16,
-                    child: IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () => Get.back(),
-                    ),
-                  ),
-                ],
-              ),
-
-              // Informasi Kost
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold(
+      body: GetBuilder<DetailPageController>(
+        builder: (controller) {
+          return SafeArea(
+            child: ListView(
+              children: [
+                // Gambar Kost dengan radius
+                Stack(
                   children: [
-                    Text(
-                      'Kost Aisyah Plaju, Palembang',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                    ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(24),
+                        bottomRight: Radius.circular(24),
+                      ),
+                      child: Image.network(
+                        'https://images.unsplash.com/photo-1726066012645-959fc63f61b4?w=500&auto=format&fit=crop&q=60',
+                        width: double.infinity,
+                        height: 250,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(Icons.location_on, size: 18),
-                        const SizedBox(width: 4),
-                        Text('Plaju, Palembang'),
-                        Spacer(),
-                        Text(
-                          'Rp 1.000.000 /Perbulan',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(Icons.star, color: Colors.orange, size: 18),
-                        const SizedBox(width: 4),
-                        Text('4.5/5 (100 reviewers)'),
-                        const SizedBox(width: 8),
-                        Icon(Icons.check_circle, color: Colors.green, size: 18),
-                        const SizedBox(width: 4),
-                        Text('3 Tersedia'),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Fasilitas',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-
-                    SizedBox(
-                      width: Get.width,
-                      height: 100,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        physics: BouncingScrollPhysics(),
-                        children: List.generate(
-                          4,
-                          (index) => _facilityIcon(Icons.tv, 'TV'),
+                    Positioned(
+                      top: 16,
+                      left: 16,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.black45,
+                        child: IconButton(
+                          icon: Icon(Icons.arrow_back, color: Colors.white),
+                          onPressed: () => Get.back(),
                         ),
                       ),
                     ),
-                    // Fasilitas
-
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    //   children: [
-                    //     _facilityIcon(Icons.tv, 'TV'),
-                    //     _facilityIcon(Icons.wifi, 'WiFi'),
-                    //     _facilityIcon(Icons.bed, 'Tempat Tidur'),
-                    //     _facilityIcon(Icons.ac_unit, 'AC'),
-                    //     _facilityIcon(Icons.ac_unit, 'AC'),
-                    //     _facilityIcon(Icons.bed, 'Tempat Tidur'),
-                    //   ],
-                    // ),
-                    const SizedBox(height: 16),
-
-                    // Kebijakan Properti
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Kebijakan Properti',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'Lihat semua',
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '1. Seluruh fasilitas kost hanya diperuntukkan bagi penyewa kamar.\n'
-                      '2. Tidak menerima tamu di kamar kost.\n'
-                      '3. Tidak diperkenankan merokok di dalam kamar.',
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Deskripsi Properti
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Deskripsi Properti',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'Lihat semua',
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text('Kost nyaman dan aman dengan CCTV 24 jam.'),
-                    const SizedBox(height: 24),
                   ],
                 ),
-              ),
-            ],
-          ),
-        ),
-        // bottomNavigationBar: Padding(
-        //   padding: const EdgeInsets.all(16.0),
-        //   child: ElevatedButton(
-        //     onPressed: () {},
-        //     style: ElevatedButton.styleFrom(
-        //       padding: const EdgeInsets.symmetric(vertical: 16),
-        //       // backgroundColor: Colors.blueAccent,
-        //       shape: RoundedRectangleBorder(
-        //         borderRadius: BorderRadius.circular(12),
-        //       ),
-        //     ),
-        //     child: Text('Pesan Kost'),
-        //   ),
-        // ),
+
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              controller.dataKost.nama,
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 12),
+                      Material(
+                        color: Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(12),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(12),
+                          onTap: () {
+                            controller.launchMapOnAndroid(
+                              context,
+                              controller.dataKost.latitude,
+                              controller.dataKost.longitude,
+                            );
+                          },
+                          child: Container(
+                            width: Get.width,
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.location_on,
+                                  size: 18,
+                                  color: Colors.red,
+                                ),
+                                SizedBox(width: 4),
+                                Expanded(
+                                  child: Text(
+                                    controller.dataKost.alamat,
+                                    style: TextStyle(color: Colors.grey),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: '  ',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text:
+                                            '${controller.dataKost.jarak.round()} km',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.orange.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.star,
+                                  size: 16,
+                                  color: Colors.orange,
+                                ),
+                                const SizedBox(width: 4),
+                                Text('4.5 | 100 ulasan'),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 4),
+                          Text('3 Kamar Tersedia'),
+                          const SizedBox(width: 4),
+                        ],
+                      ),
+                      SizedBox(height: 12),
+                      RichText(
+                        text: TextSpan(
+                          text: FormatterHelper.formatHarga(
+                            controller.dataKost.harga,
+                          ),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.green,
+                            fontFamily:
+                                'NotoSans', // pastikan font ini sudah di-setup
+                          ),
+                          children: [
+                            TextSpan(
+                              text: ' /bulan',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+                      // Fasilitas
+                      _sectionTitle('Fasilitas'),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        height: 100,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          physics: BouncingScrollPhysics(),
+                          children: [
+                            _facilityIcon(Icons.tv, 'TV'),
+                            _facilityIcon(Icons.wifi, 'WiFi'),
+                            _facilityIcon(Icons.bed, 'Tempat Tidur'),
+                            _facilityIcon(Icons.ac_unit, 'AC'),
+                            _facilityIcon(Icons.kitchen, 'Dapur'),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+                      // Kebijakan Properti
+                      _sectionTitleWithLink('Kebijakan Properti'),
+                      const SizedBox(height: 8),
+                      _bulletText(
+                        'Seluruh fasilitas kost hanya diperuntukkan bagi penyewa kamar.',
+                      ),
+                      _bulletText('Tidak menerima tamu di kamar kost.'),
+                      _bulletText(
+                        'Tidak diperkenankan merokok di dalam kamar.',
+                      ),
+
+                      const SizedBox(height: 24),
+                      // Deskripsi Properti
+                      _sectionTitleWithLink('Deskripsi Properti'),
+                      const SizedBox(height: 8),
+                      Text(
+                        controller.dataKost.deskripsi,
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
 
   Widget _facilityIcon(IconData icon, String label) {
-    return Column(
-      children: [
-        Container(
-          margin: const EdgeInsets.only(right: 10),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.blue.shade50,
-            borderRadius: BorderRadius.circular(12),
+    return Container(
+      margin: const EdgeInsets.only(right: 12),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.teal.shade50,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(icon, size: 28),
           ),
-          child: Icon(icon, size: 28),
-        ),
-        const SizedBox(height: 4),
-        Text(label),
+          const SizedBox(height: 6),
+          Text(label, style: TextStyle(fontSize: 13)),
+        ],
+      ),
+    );
+  }
+
+  Widget _sectionTitle(String title) {
+    return Text(
+      title,
+      style: TextStyle(
+        color: Colors.black,
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+      ),
+    );
+  }
+
+  Widget _sectionTitleWithLink(String title) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _sectionTitle(title),
+        Text('Lihat semua', style: TextStyle(color: Colors.blue, fontSize: 13)),
       ],
+    );
+  }
+
+  Widget _bulletText(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('• ', style: TextStyle(fontSize: 14)),
+          Expanded(child: Text(text, style: TextStyle(fontSize: 14))),
+        ],
+      ),
     );
   }
 }

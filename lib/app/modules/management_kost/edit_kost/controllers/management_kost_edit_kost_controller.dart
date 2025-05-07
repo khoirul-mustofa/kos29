@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kos29/app/helper/logger_app.dart';
 import 'package:kos29/app/modules/kost_page/controllers/kost_page_controller.dart';
+import 'package:kos29/app/modules/management_kost/detail_kost/controllers/management_kost_detail_kost_controller.dart';
 import 'package:kos29/app/routes/app_pages.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mime/mime.dart';
@@ -139,9 +140,9 @@ class ManagementKostEditKostController extends GetxController {
 
         final kostPageController = Get.find<KostPageController>();
         kostPageController.loadKos(firstLoad: true);
-        Get.offNamed(Routes.KOST_PAGE);
-
         Get.snackbar('Berhasil', 'Kosan berhasil diperbarui');
+
+        Get.offNamed(Routes.KOST_PAGE);
       } catch (e) {
         Get.snackbar('Error', 'Gagal memperbarui data: $e');
       }

@@ -85,13 +85,19 @@ class ManagementKostAddKostView
                 onChanged: (val) => controller.jenis.value = val!,
               ),
               const SizedBox(height: 12),
-              buildTextInput(
+              TextFormField(
                 controller: controller.deskripsiController,
-                label: "Deskripsi Kosan",
-                icon: Icons.description,
+                decoration: InputDecoration(
+                  labelText: "Deskripsi Kosan",
+                  prefixIcon: const Icon(Icons.description),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
                 maxLines: 3,
               ),
               const SizedBox(height: 12),
+
               buildTextInput(
                 controller: controller.fasilitasController,
                 label: "Fasilitas (pisahkan dengan koma)",

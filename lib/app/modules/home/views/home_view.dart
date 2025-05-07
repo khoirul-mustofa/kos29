@@ -4,9 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kos29/app/helper/formater_helper.dart';
 import 'package:kos29/app/routes/app_pages.dart';
-import 'package:kos29/app/services/haversine_service.dart';
 import 'package:kos29/app/style/app_colors.dart';
-import 'package:kos29/app/widgets/card_kost.dart';
 
 import '../controllers/home_controller.dart';
 

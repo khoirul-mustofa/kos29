@@ -21,6 +21,10 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    refreshHomePage();
+  }
+
+  void refreshHomePage() {
     ambilKunjunganTerakhir();
     ambilRekomendasiTerdekat();
   }
@@ -88,22 +92,21 @@ class HomeController extends GetxController {
       final snapshot = await _firestore.collection('kosts').get();
       final allKosts =
           snapshot.docs.map((doc) {
-            final data = {'idKos': doc.id, ...doc.data()};
-            final kost = KostModel.fromMap(data);
-
             // Hitung dan set jarak
-            kost.jarak = calculateDistance(
+            final jarak = calculateDistance(
               posisi.latitude,
               posisi.longitude,
-              kost.latitude,
-              kost.longitude,
+              doc.data()['latitude']?.toDouble() ?? 0.0,
+              doc.data()['longitude']?.toDouble() ?? 0.0,
             );
+            final data = {'idKos': doc.id, 'jarak': jarak, ...doc.data()};
+            final kost = KostModel.fromMap(data);
 
             return kost;
           }).toList();
 
       // Urutkan berdasarkan jarak terdekat
-      allKosts.sort((a, b) => (a.jarak ?? 0).compareTo(b.jarak ?? 0));
+      allKosts.sort((a, b) => a.jarak.compareTo(b.jarak));
 
       // Ambil 5 terdekat
       rekomendasiKosts = allKosts.take(5).toList();

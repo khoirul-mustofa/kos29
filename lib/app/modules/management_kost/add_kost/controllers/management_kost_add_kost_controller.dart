@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kos29/app/helper/logger_app.dart';
 import 'package:kos29/app/modules/kost_page/controllers/kost_page_controller.dart';
+import 'package:kos29/app/routes/app_pages.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart';
@@ -164,8 +165,9 @@ class ManagementKostAddKostController extends GetxController {
             .set(data);
         final listController = Get.find<KostPageController>();
         listController.loadKos(firstLoad: true);
-        Get.back();
         Get.snackbar('Berhasil', 'Kosan berhasil disimpan');
+        Get.offAllNamed(Routes.KOST_PAGE);
+
         if (kDebugMode) {
           logger.d('Kosan berhasil disimpan');
         }
