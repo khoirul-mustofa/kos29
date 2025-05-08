@@ -90,29 +90,43 @@ class HomeController extends GetxController {
       );
 
       final snapshot = await _firestore.collection('kosts').get();
-      final allKosts =
-          snapshot.docs.map((doc) {
-            // Hitung dan set jarak
-            final jarak = calculateDistance(
-              posisi.latitude,
-              posisi.longitude,
-              doc.data()['latitude']?.toDouble() ?? 0.0,
-              doc.data()['longitude']?.toDouble() ?? 0.0,
-            );
-            final data = {'idKos': doc.id, 'jarak': jarak, ...doc.data()};
-            final kost = KostModel.fromMap(data);
 
-            return kost;
-          }).toList();
+      final List<MapEntry<KostModel, dynamic>> kostWithDistance =
+          snapshot.docs
+              .map((doc) {
+                final data = doc.data();
 
-      // Urutkan berdasarkan jarak terdekat
-      allKosts.sort((a, b) => a.jarak.compareTo(b.jarak));
+                final lat = data['latitude'];
+                final lon = data['longitude'];
 
-      // Ambil 5 terdekat
-      rekomendasiKosts = allKosts.take(5).toList();
+                if (lat == null || lon == null) {
+                  logger.w(
+                    'Data kost ${doc.id} tidak memiliki koordinat lengkap.',
+                  );
+                  return null;
+                }
+
+                final distance = calculateDistanceService(
+                  posisi.latitude,
+                  posisi.longitude,
+                  (lat as num).toDouble(),
+                  (lon as num).toDouble(),
+                );
+
+                final kost = KostModel.fromMap({'idKos': doc.id, ...data});
+                kost.distance = distance;
+                return MapEntry(kost, distance);
+              })
+              .whereType<MapEntry<KostModel, dynamic>>()
+              .toList();
+
+      kostWithDistance.sort((a, b) => a.value.compareTo(b.value));
+      rekomendasiKosts = kostWithDistance.take(5).map((e) => e.key).toList();
       update();
 
-      logger.i("Berhasil ambil rekomendasi kost terdekat");
+      if (kDebugMode) {
+        logger.i("Berhasil ambil rekomendasi kost terdekat");
+      }
     } catch (e) {
       logger.e("Gagal ambil rekomendasi kost terdekat: $e");
       rekomendasiKosts = [];

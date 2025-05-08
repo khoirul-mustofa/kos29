@@ -281,29 +281,40 @@ class HomeView extends GetView<HomeController> {
                                             const SizedBox(height: 8),
 
                                             // Jarak (opsional)
-                                            if (controller
-                                                    .rekomendasiKosts[index]
-                                                    .jarak !=
-                                                null)
-                                              Row(
-                                                children: [
-                                                  const Icon(
-                                                    Icons.location_on,
-                                                    size: 16,
-                                                    color: Colors.red,
+                                            Row(
+                                              children: [
+                                                const Icon(
+                                                  Icons.location_on,
+                                                  size: 16,
+                                                  color: Colors.red,
+                                                ),
+                                                const SizedBox(width: 4),
+                                                RichText(
+                                                  text: TextSpan(
+                                                    children: [
+                                                      TextSpan(
+                                                        text:
+                                                            '${controller.rekomendasiKosts[index].distance.toStringAsFixed(2)} km',
+                                                        style: const TextStyle(
+                                                          fontSize: 12,
+                                                          color: Colors.black54,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      TextSpan(
+                                                        text:
+                                                            ' dari lokasi Anda',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          color: Colors.grey,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
-                                                  const SizedBox(width: 4),
-                                                  Text(
-                                                    "${controller.rekomendasiKosts[index].jarak!.toStringAsFixed(2)} km dari kamu",
-                                                    style: const TextStyle(
-                                                      fontSize: 12,
-                                                      color: Colors.black54,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
+                                                ),
+                                              ],
+                                            ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(

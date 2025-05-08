@@ -25,6 +25,8 @@ class ManagementKostAddKostController extends GetxController {
   final hargaController = TextEditingController();
   final deskripsiController = TextEditingController();
   final fasilitasController = TextEditingController();
+  final kebijakanController = TextEditingController();
+  final kamarTersediaController = TextEditingController();
 
   final kosTersedia = true.obs;
   final jenis = 'Putra'.obs;
@@ -104,7 +106,7 @@ class ManagementKostAddKostController extends GetxController {
     }
 
     localImagePath = pickedFile.path;
-    update(); // untuk update preview image
+    update();
 
     final file = File(pickedFile.path);
     final fileName = basename(file.path);
@@ -155,7 +157,10 @@ class ManagementKostAddKostController extends GetxController {
         'longitude': currentPosition.value?.longitude,
         'uid': uid,
         'id_kos': idKos,
-        'created_at': FieldValue.serverTimestamp(),
+        'kebijakan':
+            kebijakanController.text.split(',').map((e) => e.trim()).toList(),
+        'kamar_tersedia': int.tryParse(kamarTersediaController.text) ?? 0,
+        'created_at': DateTime.now().toIso8601String(),
       };
 
       try {
@@ -166,7 +171,7 @@ class ManagementKostAddKostController extends GetxController {
         final listController = Get.find<KostPageController>();
         listController.loadKos(firstLoad: true);
         Get.snackbar('Berhasil', 'Kosan berhasil disimpan');
-        Get.offAllNamed(Routes.KOST_PAGE);
+        Get.offNamed(Routes.KOST_PAGE);
 
         if (kDebugMode) {
           logger.d('Kosan berhasil disimpan');

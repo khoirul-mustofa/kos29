@@ -110,14 +110,6 @@ class DetailPageView extends GetView<DetailPageController> {
                                           color: Colors.grey,
                                         ),
                                       ),
-                                      TextSpan(
-                                        text:
-                                            '${controller.dataKost.jarak.round()} km',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
                                     ],
                                   ),
                                 ),
@@ -126,7 +118,29 @@ class DetailPageView extends GetView<DetailPageController> {
                           ),
                         ),
                       ),
-
+                      const SizedBox(height: 12),
+                      RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text:
+                                  '${controller.dataKost.distance.toStringAsFixed(2)} km',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.teal,
+                              ),
+                            ),
+                            TextSpan(
+                              text: ' dari lokasi Anda',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                       const SizedBox(height: 12),
                       Row(
                         children: [
@@ -172,8 +186,7 @@ class DetailPageView extends GetView<DetailPageController> {
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: Colors.green,
-                            fontFamily:
-                                'NotoSans', // pastikan font ini sudah di-setup
+                            fontFamily: 'NotoSans',
                           ),
                           children: [
                             TextSpan(
@@ -188,45 +201,58 @@ class DetailPageView extends GetView<DetailPageController> {
                         ),
                       ),
 
-                      const SizedBox(height: 24),
                       // Fasilitas
-                      _sectionTitle('Fasilitas'),
-                      const SizedBox(height: 8),
+                      _sectionTitleWithLink('Fasilitas', 'fasilitas'),
                       SizedBox(
-                        height: 100,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          physics: BouncingScrollPhysics(),
-                          children: [
-                            _facilityIcon(Icons.tv, 'TV'),
-                            _facilityIcon(Icons.wifi, 'WiFi'),
-                            _facilityIcon(Icons.bed, 'Tempat Tidur'),
-                            _facilityIcon(Icons.ac_unit, 'AC'),
-                            _facilityIcon(Icons.kitchen, 'Dapur'),
-                          ],
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: List.generate(
+                            controller.isFasilitasExpanded
+                                ? controller.dataKost.fasilitas.length
+                                : controller.dataKost.fasilitas.length.clamp(
+                                  0,
+                                  3,
+                                ),
+                            (index) {
+                              return SizedBox(
+                                width: Get.width,
+                                child: Text(
+                                  '${index + 1}. ${controller.dataKost.fasilitas[index]}',
+                                  style: TextStyle(fontSize: 13),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines:
+                                      controller.isFasilitasExpanded ? null : 1,
+                                  textAlign: TextAlign.left,
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
 
-                      const SizedBox(height: 24),
                       // Kebijakan Properti
-                      _sectionTitleWithLink('Kebijakan Properti'),
-                      const SizedBox(height: 8),
-                      _bulletText(
-                        'Seluruh fasilitas kost hanya diperuntukkan bagi penyewa kamar.',
-                      ),
-                      _bulletText('Tidak menerima tamu di kamar kost.'),
-                      _bulletText(
-                        'Tidak diperkenankan merokok di dalam kamar.',
-                      ),
+                      _sectionTitleWithLink('Kebijakan Properti', 'kebijakan'),
+                      if (controller.isKebijakanExpanded)
+                        ...List.generate(10, (index) {
+                          return _bulletText(
+                            'Seluruh fasilitas kost hanya diperuntukkan bagi penyewa kamar.',
+                          );
+                        })
+                      else
+                        _bulletText(
+                          'Seluruh fasilitas kost hanya diperuntukkan bagi penyewa kamar.',
+                        ),
 
-                      const SizedBox(height: 24),
                       // Deskripsi Properti
-                      _sectionTitleWithLink('Deskripsi Properti'),
-                      const SizedBox(height: 8),
+                      _sectionTitleWithLink('Deskripsi Properti', 'deskripsi'),
                       Text(
                         controller.dataKost.deskripsi,
                         style: TextStyle(fontSize: 14),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: controller.isDeskripsiExpanded ? null : 3,
                       ),
+
                       const SizedBox(height: 24),
                     ],
                   ),
@@ -239,43 +265,35 @@ class DetailPageView extends GetView<DetailPageController> {
     );
   }
 
-  Widget _facilityIcon(IconData icon, String label) {
-    return Container(
-      margin: const EdgeInsets.only(right: 12),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: Colors.teal.shade50,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Icon(icon, size: 28),
-          ),
-          const SizedBox(height: 6),
-          Text(label, style: TextStyle(fontSize: 13)),
-        ],
-      ),
-    );
-  }
+  Widget _sectionTitleWithLink(String title, String key) {
+    bool isExpanded = false;
 
-  Widget _sectionTitle(String title) {
-    return Text(
-      title,
-      style: TextStyle(
-        color: Colors.black,
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-      ),
-    );
-  }
+    if (key == 'fasilitas') {
+      isExpanded = controller.isFasilitasExpanded;
+    } else if (key == 'deskripsi') {
+      isExpanded = controller.isDeskripsiExpanded;
+    }
 
-  Widget _sectionTitleWithLink(String title) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _sectionTitle(title),
-        Text('Lihat semua', style: TextStyle(color: Colors.blue, fontSize: 13)),
+        Text(
+          title,
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+            controller.toggleiExpanded(key);
+          },
+          child: Text(
+            isExpanded ? 'Sembunyikan' : 'Lihat semua',
+            style: TextStyle(color: Colors.blue, fontSize: 13),
+          ),
+        ),
       ],
     );
   }

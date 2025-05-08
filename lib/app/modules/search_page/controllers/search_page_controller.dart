@@ -37,7 +37,7 @@ class SearchPageController extends GetxController {
 
       list =
           list.map((k) {
-            k.distance = calculateDistance(
+            k.distance = calculateDistanceService(
               currentLat,
               currentLon,
               k.latitude,

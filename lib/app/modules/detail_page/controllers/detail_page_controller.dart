@@ -7,12 +7,30 @@ import 'package:url_launcher/url_launcher.dart';
 
 class DetailPageController extends GetxController {
   final dataKost = Get.arguments as KostModel;
-
+  bool isDeskripsiExpanded = false;
+  bool isFasilitasExpanded = false;
+  bool isKebijakanExpanded = false;
   @override
   void onInit() {
     super.onInit();
-    logger.i('latitud: ${dataKost.latitude}');
     refreshHomePage();
+
+    logger.i('data kost: ${dataKost.fasilitas.join(', ')}');
+  }
+
+  void toggleiExpanded(String key) {
+    switch (key) {
+      case 'fasilitas':
+        isFasilitasExpanded = !isFasilitasExpanded;
+        break;
+      case 'deskripsi':
+        isDeskripsiExpanded = !isDeskripsiExpanded;
+        break;
+      case 'kebijakan':
+        isKebijakanExpanded = !isKebijakanExpanded;
+        break;
+    }
+    update();
   }
 
   refreshHomePage() {

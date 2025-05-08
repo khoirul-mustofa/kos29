@@ -1,12 +1,18 @@
 import 'dart:math';
 
-double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+double calculateDistanceService(
+  double lat1,
+  double lon1,
+  double lat2,
+  double lon2,
+) {
   const double R = 6371; // Radius bumi dalam kilometer
 
   double latDistance = _degToRad(lat2 - lat1);
   double lonDistance = _degToRad(lon2 - lon1);
 
-  double a = sin(latDistance / 2) * sin(latDistance / 2) +
+  double a =
+      sin(latDistance / 2) * sin(latDistance / 2) +
       cos(_degToRad(lat1)) *
           cos(_degToRad(lat2)) *
           sin(lonDistance / 2) *

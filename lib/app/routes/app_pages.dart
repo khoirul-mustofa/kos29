@@ -89,7 +89,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.HISTORY_SEARCH,
-      page: () => const HistorySearchView(),
+      page: () => HistorySearchView(),
       binding: HistorySearchBinding(),
     ),
     GetPage(

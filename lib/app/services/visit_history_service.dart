@@ -29,7 +29,10 @@ class VisitHistoryService {
 
       // Hindari duplikat
       if (!jsonList.contains(kostId)) {
-        jsonList.add({'kostId': kostId});
+        jsonList.add({
+          'kostId': kostId,
+          'visitedAt': DateTime.now().toIso8601String(),
+        });
         await file.writeAsString(jsonEncode(jsonList));
       }
       if (kDebugMode) {
@@ -52,7 +55,14 @@ class VisitHistoryService {
       logger.d('✅ Visited IDs: ${jsonList.length}');
       logger.i('data jsonList: $jsonList');
     }
-    return jsonList.map((e) => {"kostId": e['kostId'] as String}).toList();
+    return jsonList
+        .map(
+          (e) => {
+            "kostId": e['kostId'] as String,
+            "visitedAt": e['visitedAt'] as String,
+          },
+        )
+        .toList();
   }
 
   // (Opsional) Hapus riwayat

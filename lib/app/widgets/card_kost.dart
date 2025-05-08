@@ -103,7 +103,7 @@ class CardKost extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          "${kost.distance.toStringAsFixed(2)} km dari kamu",
+                          "${kost.distance.toStringAsFixed(2)} km dari lokasi Anda",
                           style: const TextStyle(
                             fontSize: 12,
                             color: Colors.black54,

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kos29/app/modules/history_search/controllers/history_search_controller.dart';
 
 class BottomNavController extends GetxController {
   RxInt selectedIndex = 0.obs;
@@ -19,5 +20,8 @@ class BottomNavController extends GetxController {
 
   void onPageChanged(int index) {
     selectedIndex.value = index;
+    if (index == 1) {
+      Get.find<HistorySearchController>().getHistorySearch();
+    }
   }
 }
