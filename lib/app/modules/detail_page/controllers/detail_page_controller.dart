@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kos29/app/data/models/kost_model.dart';
@@ -15,11 +17,13 @@ class DetailPageController extends GetxController {
     super.onInit();
     saveVisit(dataKost.idKos);
     refreshHomePage();
+    log('onInit Detail Page');
   }
 
   Future<void> saveVisit(String kostId) async {
     final visitHistoryService = VisitHistoryService();
     await visitHistoryService.saveVisit(kostId);
+    log('saveVisit Detail Page');
   }
 
   void toggleiExpanded(String key) {

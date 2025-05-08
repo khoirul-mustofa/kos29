@@ -53,48 +53,50 @@ class BottomNavView extends GetView<BottomNavController> {
           ],
         ),
 
-        bottomNavigationBar: Obx(() {
-          return Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(25),
-              child: BottomNavigationBar(
-                currentIndex: controller.selectedIndex.value,
-                onTap: controller.changeTabIndexWithAnimation,
-                selectedItemColor: Colors.teal,
-                unselectedItemColor: Colors.black,
-                backgroundColor: Colors.teal.shade100,
-                selectedIconTheme: const IconThemeData(size: 30),
-                elevation: 10,
-                selectedLabelStyle: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                unselectedLabelStyle: const TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 12,
-                ),
-                type: BottomNavigationBarType.fixed,
-                items: [
-                  const BottomNavigationBarItem(
-                    icon: Icon(Icons.home_rounded),
-                    label: 'Beranda',
+        bottomNavigationBar: Material(
+          elevation: 10,
+          child: Obx(() {
+            return Padding(
+              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(25),
+                child: BottomNavigationBar(
+                  currentIndex: controller.selectedIndex.value,
+                  onTap: controller.changeTabIndexWithAnimation,
+                  selectedItemColor: Colors.teal,
+                  unselectedItemColor: Colors.black,
+                  backgroundColor: Colors.teal.shade100,
+                  selectedIconTheme: const IconThemeData(size: 30),
+                  selectedLabelStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
-                  const BottomNavigationBarItem(
-                    icon: Icon(Icons.history),
-                    label: 'Riwayat',
+                  unselectedLabelStyle: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
                   ),
-                  BottomNavigationBarItem(
-                    icon: Icon(
-                      controller.isAuth ? Icons.person : Icons.login_rounded,
+                  type: BottomNavigationBarType.fixed,
+                  items: [
+                    const BottomNavigationBarItem(
+                      icon: Icon(Icons.home_rounded),
+                      label: 'Beranda',
                     ),
-                    label: controller.isAuth ? 'Profil' : 'Masuk',
-                  ),
-                ],
+                    const BottomNavigationBarItem(
+                      icon: Icon(Icons.history),
+                      label: 'Riwayat',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(
+                        controller.isAuth ? Icons.person : Icons.login_rounded,
+                      ),
+                      label: controller.isAuth ? 'Profil' : 'Masuk',
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        }),
+            );
+          }),
+        ),
       ),
     );
   }

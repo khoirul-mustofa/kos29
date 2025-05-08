@@ -24,7 +24,7 @@ class DetailPageView extends GetView<DetailPageController> {
                         bottomRight: Radius.circular(24),
                       ),
                       child: Image.network(
-                        'https://images.unsplash.com/photo-1726066012645-959fc63f61b4?w=500&auto=format&fit=crop&q=60',
+                        controller.dataKost.gambar,
                         width: double.infinity,
                         height: 250,
                         fit: BoxFit.cover,
