@@ -39,11 +39,21 @@ class HistorySearchView extends GetView<HistorySearchController> {
         return ListView.separated(
           padding: const EdgeInsets.all(16),
           physics: const BouncingScrollPhysics(),
-          itemCount: controller.kostData.length,
+          controller: controller.scrollController,
+          itemCount:
+              controller.kostData.length + (controller.hasMore.value ? 1 : 0),
           separatorBuilder: (_, __) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
-            final kost = controller.kostData[index];
+            if (index >= controller.kostData.length) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(8),
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
 
+            final kost = controller.kostData[index];
             return InkWell(
               onTap: () {
                 Get.toNamed(Routes.DETAIL_PAGE, arguments: kost);

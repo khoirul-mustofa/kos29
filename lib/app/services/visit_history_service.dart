@@ -20,21 +20,25 @@ class VisitHistoryService {
     return file;
   }
 
-  // Simpan kunjungan baru
   Future<void> saveVisit(String kostId) async {
     try {
       final file = await _getFile();
       final content = await file.readAsString();
-      final List<dynamic> jsonList = jsonDecode(content);
 
-      // Hindari duplikat
-      if (!jsonList.contains(kostId)) {
-        jsonList.add({
-          'kostId': kostId,
-          'visitedAt': DateTime.now().toIso8601String(),
-        });
-        await file.writeAsString(jsonEncode(jsonList));
-      }
+      final List<dynamic> jsonList =
+          content.isNotEmpty ? jsonDecode(content) : [];
+
+      // Hapus jika ada data lama dengan kostId yang sama
+      jsonList.removeWhere((item) => item['kostId'] == kostId);
+
+      // Tambahkan data baru
+      jsonList.add({
+        'kostId': kostId,
+        'visitedAt': DateTime.now().toIso8601String(),
+      });
+
+      await file.writeAsString(jsonEncode(jsonList));
+
       if (kDebugMode) {
         logger.d('✅ Visit saved: $kostId');
       }

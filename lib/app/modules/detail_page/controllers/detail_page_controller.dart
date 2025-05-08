@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kos29/app/data/models/kost_model.dart';
-import 'package:kos29/app/helper/logger_app.dart';
 import 'package:kos29/app/modules/home/controllers/home_controller.dart';
+import 'package:kos29/app/services/visit_history_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DetailPageController extends GetxController {
@@ -13,9 +13,13 @@ class DetailPageController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    saveVisit(dataKost.idKos);
     refreshHomePage();
+  }
 
-    logger.i('data kost: ${dataKost.fasilitas.join(', ')}');
+  Future<void> saveVisit(String kostId) async {
+    final visitHistoryService = VisitHistoryService();
+    await visitHistoryService.saveVisit(kostId);
   }
 
   void toggleiExpanded(String key) {

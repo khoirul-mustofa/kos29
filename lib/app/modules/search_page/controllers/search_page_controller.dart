@@ -152,13 +152,7 @@ class SearchPageController extends GetxController {
 
   Future<void> gotoDetailPage(KostModel kost) async {
     if (kost.idKos.isEmpty) return;
-    await saveVisit(kost.idKos, kost.uid);
     Get.toNamed(Routes.DETAIL_PAGE, arguments: kost);
-  }
-
-  Future<void> saveVisit(String kostId, String uid) async {
-    final visitHistoryService = VisitHistoryService();
-    await visitHistoryService.saveVisit(kostId);
   }
 
   Future<void> refreshKost() async {
