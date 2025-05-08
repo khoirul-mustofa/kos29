@@ -63,7 +63,6 @@ class VisitHistoryService {
         .toList();
   }
 
-  // (Opsional) Hapus riwayat
   Future<void> clearHistory() async {
     final file = await _getFile();
     await file.writeAsString(jsonEncode([]));

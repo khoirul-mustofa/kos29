@@ -24,9 +24,9 @@ class HomeController extends GetxController {
     refreshHomePage();
   }
 
-  void refreshHomePage() {
-    ambilKunjunganTerakhir();
-    ambilRekomendasiTerdekat();
+  Future<void> refreshHomePage() async {
+    await ambilKunjunganTerakhir();
+    await ambilRekomendasiTerdekat();
   }
 
   Future<void> ambilKunjunganTerakhir() async {

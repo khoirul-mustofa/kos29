@@ -7,5 +7,6 @@ String timeAgoHelper(String dateStr) {
   if (diff.inDays >= 1) return '${diff.inDays} hari yang lalu';
   if (diff.inHours >= 1) return '${diff.inHours} jam yang lalu';
   if (diff.inMinutes >= 1) return '${diff.inMinutes} menit yang lalu';
+  if (diff.inSeconds >= 1) return '${diff.inSeconds} detik yang lalu';
   return 'Baru saja';
 }

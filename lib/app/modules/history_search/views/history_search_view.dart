@@ -93,7 +93,6 @@ class HistorySearchView extends GetView<HistorySearchController> {
                     ),
                     const SizedBox(width: 12),
 
-                    // Detail informasi
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

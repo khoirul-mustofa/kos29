@@ -37,7 +37,14 @@ class HistorySearchController extends GetxController {
   Future<void> getHistorySearch() async {
     isLoading.value = true;
     kostData.clear();
+
     historyVisit = await visitHistoryService.getVisitedKosts();
+
+    historyVisit.sort(
+      (a, b) => DateTime.parse(
+        b['visitedAt']!,
+      ).compareTo(DateTime.parse(a['visitedAt']!)),
+    );
 
     currentPage = 0;
     hasMore.value = true;
@@ -53,7 +60,7 @@ class HistorySearchController extends GetxController {
 
     final start = currentPage * pageSize;
     final end = (currentPage + 1) * pageSize;
-    final itemsToLoad = historyVisit.reversed.toList().sublist(
+    final itemsToLoad = historyVisit.toList().sublist(
       start,
       end > historyVisit.length ? historyVisit.length : end,
     );

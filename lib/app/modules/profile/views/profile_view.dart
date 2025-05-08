@@ -75,7 +75,9 @@ class ProfileView extends GetView<ProfileController> {
                 }),
                 const Divider(),
                 _buildMenuItem(Icons.delete_outline, 'Clear Cache', () {}),
-                _buildMenuItem(Icons.history, 'Clear History', () {}),
+                _buildMenuItem(Icons.history, 'Clear History', () {
+                  controller.clearHistory();
+                }),
                 _buildMenuItem(Icons.logout, 'Log Out', () {
                   controller.signOut();
                 }),

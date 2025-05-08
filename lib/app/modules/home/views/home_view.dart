@@ -56,316 +56,333 @@ class HomeView extends GetView<HomeController> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: GetBuilder<HomeController>(
-            builder: (controller) {
-              return Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Hey ${controller.prfController.currentUser?.displayName ?? 'kamu'} 😎',
-                      style: TextStyle(
-                        fontSize: 22,
-                        color: const Color.fromARGB(255, 65, 77, 72),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      '#Dapatkan Kemudahan',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'Cari dan Temukan Kos Terdekat!',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    GestureDetector(
-                      onTap: () => Get.toNamed(Routes.SEARCH_PAGE),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 10,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.search),
-                            Text('Cari kos dimana?'),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      physics: BouncingScrollPhysics(),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        spacing: 8,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: List.generate(4, (index) {
-                          final List category = [
-                            'Terdekat',
-                            'Termurah',
-                            'Termahal',
-                            'Terbaik',
-                          ];
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await controller.refreshHomePage();
+        },
+        child: SingleChildScrollView(
+          controller: ScrollController(),
+          scrollDirection: Axis.vertical,
 
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  height: 64,
-                                  width: 74,
-                                  decoration: BoxDecoration(
-                                    color:
-                                        index == 0
-                                            ? Colors.blue.shade50
-                                            : index == 1
-                                            ? Colors.green.shade50
-                                            : index == 2
-                                            ? Colors.red.shade50
-                                            : Colors.yellow.shade50,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Center(child: Icon(Icons.home)),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black87,
-                                  ),
-                                  category[index],
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          );
-                        }),
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: GetBuilder<HomeController>(
+              builder: (controller) {
+                return Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Hey ${controller.prfController.currentUser?.displayName ?? 'kamu'} 😎',
+                        style: TextStyle(
+                          fontSize: 22,
+                          color: const Color.fromARGB(255, 65, 77, 72),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    _buildKunjunganTerakhir(controller),
-                    SizedBox(height: 10),
-                    Text(
-                      'Rekomendasi Terdekat',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                      SizedBox(height: 5),
+                      Text(
+                        '#Dapatkan Kemudahan',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      physics: BouncingScrollPhysics(),
-                      child: Row(
-                        children: List.generate(controller.rekomendasiKosts.length, (
-                          index,
-                        ) {
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Material(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: InkWell(
+                      Text(
+                        'Cari dan Temukan Kos Terdekat!',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      GestureDetector(
+                        onTap: () => Get.toNamed(Routes.SEARCH_PAGE),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.search),
+                              Text('Cari kos dimana?'),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        physics: BouncingScrollPhysics(),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          spacing: 8,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: List.generate(4, (index) {
+                            final List category = [
+                              'Terdekat',
+                              'Termurah',
+                              'Termahal',
+                              'Terbaik',
+                            ];
+
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    height: 64,
+                                    width: 74,
+                                    decoration: BoxDecoration(
+                                      color:
+                                          index == 0
+                                              ? Colors.blue.shade50
+                                              : index == 1
+                                              ? Colors.green.shade50
+                                              : index == 2
+                                              ? Colors.red.shade50
+                                              : Colors.yellow.shade50,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Center(child: Icon(Icons.home)),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
+                                    category[index],
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            );
+                          }),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      _buildKunjunganTerakhir(controller),
+                      SizedBox(height: 10),
+                      Text(
+                        'Rekomendasi Terdekat',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        physics: BouncingScrollPhysics(),
+                        child: Row(
+                          children: List.generate(controller.rekomendasiKosts.length, (
+                            index,
+                          ) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Material(
                                     borderRadius: BorderRadius.circular(8),
-                                    onTap: () {
-                                      Get.toNamed(
-                                        Routes.DETAIL_PAGE,
-                                        arguments:
-                                            controller.rekomendasiKosts[index],
-                                      );
-                                    },
-                                    child: Container(
-                                      width: Get.width * 0.5,
-                                      padding: const EdgeInsets.all(8.0),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                          color: AppColors.appGreyAlpa50,
+                                    child: InkWell(
+                                      borderRadius: BorderRadius.circular(8),
+                                      onTap: () {
+                                        Get.toNamed(
+                                          Routes.DETAIL_PAGE,
+                                          arguments:
+                                              controller
+                                                  .rekomendasiKosts[index],
+                                        );
+                                      },
+                                      child: Container(
+                                        width: Get.width * 0.5,
+                                        padding: const EdgeInsets.all(8.0),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          border: Border.all(
+                                            color: AppColors.appGreyAlpa50,
+                                          ),
                                         ),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            height: 120,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              image: DecorationImage(
-                                                image: CachedNetworkImageProvider(
-                                                  controller
-                                                      .rekomendasiKosts[index]
-                                                      .gambar,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              height: 120,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                image: DecorationImage(
+                                                  image: CachedNetworkImageProvider(
+                                                    controller
+                                                        .rekomendasiKosts[index]
+                                                        .gambar,
+                                                  ),
+                                                  fit: BoxFit.cover,
                                                 ),
-                                                fit: BoxFit.cover,
                                               ),
                                             ),
-                                          ),
-                                          SizedBox(height: 10),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              // Nama kost
-                                              Text(
-                                                controller
-                                                    .rekomendasiKosts[index]
-                                                    .nama,
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-
-                                              const SizedBox(height: 6),
-
-                                              // Harga dan jenis kos
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    FormatterHelper.formatHarga(
-                                                      controller
-                                                          .rekomendasiKosts[index]
-                                                          .harga,
-                                                    ),
-                                                    style: const TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.green,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 12),
-                                                  Container(
-                                                    padding:
-                                                        const EdgeInsets.symmetric(
-                                                          horizontal: 8,
-                                                          vertical: 4,
-                                                        ),
-                                                    decoration: BoxDecoration(
-                                                      color:
-                                                          Colors.blue.shade100,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            6,
-                                                          ),
-                                                    ),
-                                                    child: Text(
-                                                      controller
-                                                          .rekomendasiKosts[index]
-                                                          .jenis,
-                                                      style: const TextStyle(
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-
-                                              const SizedBox(height: 8),
-
-                                              Row(
-                                                children: [
-                                                  const Icon(
-                                                    Icons.location_on,
-                                                    size: 16,
-                                                    color: Colors.red,
-                                                  ),
-                                                  const SizedBox(width: 4),
-                                                  RichText(
-                                                    text: TextSpan(
-                                                      children: [
-                                                        TextSpan(
-                                                          text:
-                                                              '${controller.rekomendasiKosts[index].distance.toStringAsFixed(2)} km',
-                                                          style: const TextStyle(
-                                                            fontSize: 12,
-                                                            color:
-                                                                Colors.black54,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                        TextSpan(
-                                                          text:
-                                                              ' dari lokasi Anda',
-                                                          style: TextStyle(
-                                                            fontSize: 12,
-                                                            color: Colors.grey,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                  left: 8.0,
-                                                  top: 10,
-                                                ),
-                                                child: Text(
+                                            SizedBox(height: 10),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                // Nama kost
+                                                Text(
                                                   controller
                                                       .rekomendasiKosts[index]
-                                                      .alamat,
+                                                      .nama,
                                                   style: const TextStyle(
                                                     fontSize: 12,
-                                                    color: Colors.black54,
+                                                    fontWeight: FontWeight.w600,
                                                   ),
-                                                  maxLines: 3,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
+
+                                                const SizedBox(height: 6),
+
+                                                // Harga dan jenis kos
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      FormatterHelper.formatHarga(
+                                                        controller
+                                                            .rekomendasiKosts[index]
+                                                            .harga,
+                                                      ),
+                                                      style: const TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.green,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 12),
+                                                    Container(
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                            horizontal: 8,
+                                                            vertical: 4,
+                                                          ),
+                                                      decoration: BoxDecoration(
+                                                        color:
+                                                            Colors
+                                                                .blue
+                                                                .shade100,
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              6,
+                                                            ),
+                                                      ),
+                                                      child: Text(
+                                                        controller
+                                                            .rekomendasiKosts[index]
+                                                            .jenis,
+                                                        style: const TextStyle(
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+
+                                                const SizedBox(height: 8),
+
+                                                Row(
+                                                  children: [
+                                                    const Icon(
+                                                      Icons.location_on,
+                                                      size: 16,
+                                                      color: Colors.red,
+                                                    ),
+                                                    const SizedBox(width: 4),
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text:
+                                                                '${controller.rekomendasiKosts[index].distance.toStringAsFixed(2)} km',
+                                                            style: const TextStyle(
+                                                              fontSize: 12,
+                                                              color:
+                                                                  Colors
+                                                                      .black54,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                          TextSpan(
+                                                            text:
+                                                                ' dari lokasi Anda',
+                                                            style: TextStyle(
+                                                              fontSize: 12,
+                                                              color:
+                                                                  Colors.grey,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                        left: 8.0,
+                                                        top: 10,
+                                                      ),
+                                                  child: Text(
+                                                    controller
+                                                        .rekomendasiKosts[index]
+                                                        .alamat,
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                      color: Colors.black54,
+                                                    ),
+                                                    maxLines: 3,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(height: 10),
-                              ],
-                            ),
-                          );
-                        }),
+                                  SizedBox(height: 10),
+                                ],
+                              ),
+                            );
+                          }),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            },
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),
