@@ -1,9 +1,6 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:kos29/app/helper/formater_helper.dart';
 import 'package:kos29/app/routes/app_pages.dart';
 import 'package:kos29/app/style/app_colors.dart';
@@ -44,7 +41,6 @@ class HomeView extends GetView<HomeController> {
             fontSize: 24,
             fontWeight: FontWeight.bold,
             color: Colors.teal,
-            fontFamily: 'Varela',
           ),
         ),
         actions: [
@@ -67,6 +63,10 @@ class HomeView extends GetView<HomeController> {
               builder:
                   (themeController) => IconButton(
                     onPressed: themeController.toggleTheme,
+                    tooltip:
+                        themeController.theme == ThemeMode.dark
+                            ? 'Dark theme'
+                            : 'Light theme',
                     icon: Icon(
                       themeController.theme == ThemeMode.dark
                           ? Icons.dark_mode

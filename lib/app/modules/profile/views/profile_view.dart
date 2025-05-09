@@ -25,7 +25,7 @@ class ProfileView extends GetView<ProfileController> {
                         CircleAvatar(
                           radius: 45,
                           backgroundImage: NetworkImage(
-                            '${controller.currentUser?.photoURL}',
+                            '${controller.userData!['photo_url']}',
                           ),
                         ),
                       ],
@@ -33,21 +33,21 @@ class ProfileView extends GetView<ProfileController> {
                   ),
                   const SizedBox(height: 12),
 
-                  // Name and Email
                   Text(
-                    controller.currentUser?.displayName ?? '---',
+                    controller.userData!['displayName'] ?? '---',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    controller.currentUser?.email ?? '---',
+                    controller.userData!['email'] ?? '---',
                     style: TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                   const SizedBox(height: 8),
 
-                  // Edit Profile Button
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Get.toNamed(Routes.EDIT_PROFILE);
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.teal.shade50,
                       minimumSize: const Size(100, 36),

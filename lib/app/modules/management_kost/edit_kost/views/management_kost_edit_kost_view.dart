@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
+import 'package:kos29/app/modules/management_kost/add_kost/views/management_kost_add_kost_view.dart';
 import '../controllers/management_kost_edit_kost_controller.dart';
 
 class ManagementKostEditKostView
@@ -80,7 +81,6 @@ class ManagementKostEditKostView
               ),
               const SizedBox(height: 20),
 
-              // Input fields
               buildTextInput(
                 controller: controller.namaController,
                 label: "Nama Kosan",
@@ -238,30 +238,4 @@ class ManagementKostEditKostView
       ),
     );
   }
-}
-
-Widget buildTextInput({
-  required TextEditingController controller,
-  required String label,
-  IconData? icon,
-  TextInputType keyboardType = TextInputType.text,
-  String? Function(String?)? validator,
-  int maxLines = 1,
-  bool readOnly = false,
-  VoidCallback? onTap,
-}) {
-  return TextFormField(
-    controller: controller,
-    validator: validator,
-    keyboardType: keyboardType,
-    readOnly: readOnly,
-    onTap: onTap,
-    maxLines: maxLines,
-    decoration: InputDecoration(
-      prefixIcon: icon != null ? Icon(icon) : null,
-      labelText: label,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-      contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-    ),
-  );
 }

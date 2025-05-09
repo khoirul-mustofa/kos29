@@ -30,11 +30,7 @@ class OnboardingView extends GetView<OnboardingController> {
                       const SizedBox(height: 20),
                       Text(
                         controller.titles[index],
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
+                        style: Get.theme.textTheme.titleMedium,
                       ),
                       const SizedBox(height: 12),
                       Padding(
@@ -42,10 +38,7 @@ class OnboardingView extends GetView<OnboardingController> {
                         child: Text(
                           controller.descriptions[index],
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.black54,
-                          ),
+                          style: Get.theme.textTheme.bodyMedium,
                         ),
                       ),
                     ],

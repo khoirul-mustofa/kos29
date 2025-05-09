@@ -9,8 +9,11 @@ class OnboardingController extends GetxController {
   final images = [
     'assets/lottie/Animation-onboarding-3.json',
     'assets/lottie/Animation-onboarding-2.json',
-    'assets/lottie/Animation-onboarding-1.json',
+    Theme.of(Get.context!).brightness == Brightness.dark
+        ? 'assets/lottie/Animation-onboarding-1-dark.json'
+        : 'assets/lottie/Animation-onboarding-1.json',
   ];
+
   final List<String> titles = [
     'Temukan Kost Terdekat Secara Akurat',
     'Rekomendasi Cerdas Sesuai Kebutuhanmu',
