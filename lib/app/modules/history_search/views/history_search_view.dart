@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:kos29/app/helper/formater_helper.dart';
 import 'package:kos29/app/helper/timeago_helper.dart';
 import 'package:kos29/app/routes/app_pages.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../controllers/history_search_controller.dart';
 
 class HistorySearchView extends GetView<HistorySearchController> {
@@ -23,7 +25,7 @@ class HistorySearchView extends GetView<HistorySearchController> {
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return _buildShimmerLoading();
         }
 
         if (controller.kostData.isEmpty) {
@@ -71,16 +73,26 @@ class HistorySearchView extends GetView<HistorySearchController> {
                 padding: const EdgeInsets.all(12),
                 child: Row(
                   children: [
-                    // Gambar thumbnail
+                    // Gambar thumbnail with shimmer loading
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: Image.network(
-                        kost.gambar,
+                      child: CachedNetworkImage(
+                        imageUrl: kost.gambar,
                         width: 100,
                         height: 80,
                         fit: BoxFit.cover,
-                        errorBuilder:
-                            (_, __, ___) => Container(
+                        placeholder:
+                            (context, url) => Shimmer.fromColors(
+                              baseColor: Colors.grey[300]!,
+                              highlightColor: Colors.grey[100]!,
+                              child: Container(
+                                width: 100,
+                                height: 80,
+                                color: Colors.white,
+                              ),
+                            ),
+                        errorWidget:
+                            (context, url, error) => Container(
                               width: 100,
                               height: 80,
                               color: Colors.grey[300],
@@ -156,6 +168,97 @@ class HistorySearchView extends GetView<HistorySearchController> {
           },
         );
       }),
+    );
+  }
+
+  Widget _buildShimmerLoading() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: ListView.separated(
+        padding: const EdgeInsets.all(16),
+        itemCount: 5,
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        itemBuilder: (context, index) {
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                // Thumbnail shimmer
+                Container(
+                  width: 100,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Title shimmer
+                      Container(
+                        width: double.infinity,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      // Address shimmer
+                      Container(
+                        width: double.infinity,
+                        height: 16,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      // Type shimmer
+                      Container(
+                        width: 80,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      // Price shimmer
+                      Container(
+                        width: 120,
+                        height: 16,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      // Time shimmer
+                      Container(
+                        width: 100,
+                        height: 14,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

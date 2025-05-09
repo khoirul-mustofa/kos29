@@ -1,21 +1,40 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kos29/app/helper/logger_app.dart';
 import 'package:kos29/app/modules/profile/controllers/profile_controller.dart';
+import 'package:path/path.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 class EditProfileController extends GetxController {
   final nameController = TextEditingController();
   final phoneController = TextEditingController();
+  final emailController = TextEditingController();
+  final bioController = TextEditingController();
+  final addressController = TextEditingController();
+  final usernameController = TextEditingController();
+  final genderController = TextEditingController();
+  final birthDateController = TextEditingController();
+  final occupationController = TextEditingController();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   RxBool isLoading = false.obs;
+  RxBool isUploadingImage = false.obs;
+  RxString profileImageUrl = ''.obs;
+  RxString gender = 'Laki-laki'.obs;
+  String? localImagePath;
+
+  final List<String> genderOptions = ['Laki-laki', 'Perempuan'];
 
   @override
   void onInit() {
@@ -24,46 +43,202 @@ class EditProfileController extends GetxController {
   }
 
   void fetchUserData() async {
-    final uid = _auth.currentUser!.uid;
-    final doc = await _firestore.collection('users').doc(uid).get();
-    final data = doc.data();
-    if (data != null) {
-      nameController.text = data['displayName'] ?? '';
-      phoneController.text = data['phone'] ?? '';
+    try {
+      isLoading.value = true;
+      final user = _auth.currentUser;
+      if (user == null) {
+        Get.snackbar(
+          'Error',
+          'User tidak ditemukan',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return;
+      }
+
+      // Get data from Firestore
+      final doc = await _firestore.collection('users').doc(user.uid).get();
+      final data = doc.data();
+
+      // Get data from Firebase Auth
+      final authData = {
+        'email': user.email,
+        'displayName': user.displayName,
+        'phoneNumber': user.phoneNumber,
+        'photoURL': user.photoURL,
+      };
+
+      // Update controllers with data
+      nameController.text =
+          data?['displayName'] ?? authData['displayName'] ?? '';
+      phoneController.text = data?['phone'] ?? authData['phoneNumber'] ?? '';
+      emailController.text = authData['email'] ?? '';
+      bioController.text = data?['bio'] ?? '';
+      addressController.text = data?['address'] ?? '';
+      usernameController.text = data?['username'] ?? '';
+      genderController.text = data?['gender'] ?? 'Laki-laki';
+      birthDateController.text = data?['birthDate'] ?? '';
+      occupationController.text = data?['occupation'] ?? '';
+      profileImageUrl.value = data?['photoURL'] ?? authData['photoURL'] ?? '';
+      gender.value = data?['gender'] ?? 'Laki-laki';
+
+      if (kDebugMode) {
+        print('User Data from Auth: $authData');
+        print('User Data from Firestore: $data');
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Gagal mengambil data profil: ${e.toString()}',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      logger.e('Error fetching user data: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> pickAndUploadImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 800,
+      maxHeight: 800,
+      imageQuality: 85,
+    );
+
+    if (pickedFile == null) return;
+
+    isUploadingImage.value = true;
+    localImagePath = pickedFile.path;
+    update();
+
+    try {
+      final file = File(pickedFile.path);
+      final fileName = '${Uuid().v1()}${extension(file.path)}';
+      final fileBytes = await file.readAsBytes();
+
+      final bucket = Supabase.instance.client.storage.from('profile_images');
+
+      // Delete old image if exists
+      if (profileImageUrl.value.isNotEmpty) {
+        final oldFileName = basename(profileImageUrl.value);
+        await bucket.remove([oldFileName]);
+      }
+
+      final result = await bucket.uploadBinary(
+        fileName,
+        fileBytes,
+        fileOptions: FileOptions(
+          contentType: 'image/${extension(file.path).replaceAll('.', '')}',
+        ),
+      );
+
+      if (result.isEmpty) throw Exception("Upload gagal");
+
+      profileImageUrl.value = bucket.getPublicUrl(fileName);
+      update();
+
+      Get.snackbar(
+        "Sukses",
+        "Foto profil berhasil diperbarui",
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        "Gagal mengupload foto: ${e.toString()}",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      logger.e('Error uploading image: $e');
+    } finally {
+      isUploadingImage.value = false;
     }
   }
 
   void updateProfile() async {
     try {
-      isLoading.value = true;
-      final uid = _auth.currentUser!.uid;
+      if (nameController.text.trim().isEmpty) {
+        Get.snackbar(
+          'Error',
+          'Nama tidak boleh kosong',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return;
+      }
 
-      await _firestore.collection('users').doc(uid).update({
+      isLoading.value = true;
+      final user = _auth.currentUser;
+      if (user == null) {
+        Get.snackbar(
+          'Error',
+          'User tidak ditemukan',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return;
+      }
+
+      // Update Firebase Auth profile
+      await user.updateDisplayName(nameController.text.trim());
+      if (profileImageUrl.value.isNotEmpty) {
+        await user.updatePhotoURL(profileImageUrl.value);
+      }
+
+      // Update Firestore data
+      final data = {
         'displayName': nameController.text.trim(),
         'phone': phoneController.text.trim(),
-      });
+        'email': emailController.text.trim(),
+        'bio': bioController.text.trim(),
+        'address': addressController.text.trim(),
+        'photoURL': profileImageUrl.value,
+        'username': usernameController.text.trim(),
+        'gender': gender.value,
+        'birthDate': birthDateController.text.trim(),
+        'occupation': occupationController.text.trim(),
+        'updated_at': DateTime.now().toIso8601String(),
+      };
 
-      isLoading.value = false;
+      await _firestore.collection('users').doc(user.uid).update(data);
 
       Get.back();
-      Get.snackbar('Berhasil', 'Profil berhasil diperbarui');
+      Get.snackbar(
+        'Berhasil',
+        'Profil berhasil diperbarui',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
     } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Gagal memperbarui profil: ${e.toString()}',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      logger.e('Error updating profile: $e');
+    } finally {
       isLoading.value = false;
-      Get.snackbar('Gagal', 'Gagal memperbarui profil');
-      if (kDebugMode) {
-        logger.e('error $e');
-      }
     }
   }
 
   @override
   void onClose() {
-    super.onClose();
-    nameController.clear();
-    phoneController.clear();
     nameController.dispose();
     phoneController.dispose();
+    emailController.dispose();
+    bioController.dispose();
+    addressController.dispose();
+    usernameController.dispose();
+    genderController.dispose();
+    birthDateController.dispose();
+    occupationController.dispose();
     final controllerProfile = Get.find<ProfileController>();
     controllerProfile.getCurrentUser();
+    super.onClose();
   }
 }

@@ -16,8 +16,9 @@ class HomeController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final VisitHistoryService _visitHistoryService = VisitHistoryService();
 
-  KostModel? kunjunganTerakhir;
-  List<KostModel> rekomendasiKosts = [];
+  final kunjunganTerakhir = Rxn<KostModel>();
+  final rekomendasiKosts = <KostModel>[].obs;
+  final isLoading = false.obs;
 
   @override
   void onInit() {
@@ -26,8 +27,16 @@ class HomeController extends GetxController {
   }
 
   Future<void> refreshHomePage() async {
+    Future.microtask(() {
+      isLoading.value = true;
+    });
+
     await ambilKunjunganTerakhir();
     await ambilRekomendasiTerdekat();
+
+    Future.microtask(() {
+      isLoading.value = false;
+    });
   }
 
   Future<void> ambilKunjunganTerakhir() async {
@@ -36,8 +45,7 @@ class HomeController extends GetxController {
       final visitedIds = await _visitHistoryService.getVisitedKosts();
 
       if (visitedIds.isEmpty) {
-        kunjunganTerakhir = null;
-        update();
+        kunjunganTerakhir.value = null;
         if (kDebugMode) {
           logger.i('Tidak ada kunjungan terakhir');
         }
@@ -53,8 +61,7 @@ class HomeController extends GetxController {
               .get();
 
       if (!kostDoc.exists) {
-        kunjunganTerakhir = null;
-        update();
+        kunjunganTerakhir.value = null;
         if (kDebugMode) {
           logger.w(
             'Dokumen tidak ditemukan di path: '
@@ -64,11 +71,10 @@ class HomeController extends GetxController {
         return;
       }
 
-      kunjunganTerakhir = KostModel.fromMap({
+      kunjunganTerakhir.value = KostModel.fromMap({
         'idKos': kostDoc.id,
         ...kostDoc.data()!,
       });
-      update();
       if (kDebugMode) {
         logger.i('Kunjungan terakhir berhasil diambil');
       }
@@ -76,8 +82,7 @@ class HomeController extends GetxController {
       if (kDebugMode) {
         logger.e('Gagal ambil kunjungan terakhir: $e');
       }
-      kunjunganTerakhir = null;
-      update();
+      kunjunganTerakhir.value = null;
     }
   }
 
@@ -122,16 +127,15 @@ class HomeController extends GetxController {
               .toList();
 
       kostWithDistance.sort((a, b) => a.value.compareTo(b.value));
-      rekomendasiKosts = kostWithDistance.take(5).map((e) => e.key).toList();
-      update();
+      rekomendasiKosts.value =
+          kostWithDistance.take(5).map((e) => e.key).toList();
 
       if (kDebugMode) {
         logger.i("Berhasil ambil rekomendasi kost terdekat");
       }
     } catch (e) {
       logger.e("Gagal ambil rekomendasi kost terdekat: $e");
-      rekomendasiKosts = [];
-      update();
+      rekomendasiKosts.clear();
     }
   }
 

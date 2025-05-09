@@ -17,6 +17,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ManagementKostEditKostController extends GetxController {
   final formKey = GlobalKey<FormState>();
+  final isLoading = false.obs;
 
   final namaController = TextEditingController();
   final alamatController = TextEditingController();
@@ -50,26 +51,34 @@ class ManagementKostEditKostController extends GetxController {
   }
 
   void loadKost() async {
-    final snapshot =
-        await FirebaseFirestore.instance.collection('kosts').doc(idKost).get();
+    isLoading.value = true;
+    try {
+      final snapshot =
+          await FirebaseFirestore.instance
+              .collection('kosts')
+              .doc(idKost)
+              .get();
 
-    final data = snapshot.data();
-    if (data == null) {
-      logger.e('Data kosan tidak ditemukan');
-      return;
+      final data = snapshot.data();
+      if (data == null) {
+        logger.e('Data kosan tidak ditemukan');
+        return;
+      }
+      namaController.text = data['nama'];
+      alamatController.text = data['alamat'];
+      hargaController.text = data['harga'].toString();
+      deskripsiController.text = data['deskripsi'];
+      fasilitasController.text = data['fasilitas'].join(', ');
+      kosTersedia.value = data['tersedia'];
+      jenis.value = data['jenis'];
+      imageUrl = data['gambar'];
+      kamarTersediaController.text = data['kamar_tersedia'].toString();
+      currentPosition.value = LatLng(data['latitude'], data['longitude']);
+      update();
+      await _updateAlamatFromLatLng(currentPosition.value!);
+    } finally {
+      isLoading.value = false;
     }
-    namaController.text = data['nama'];
-    alamatController.text = data['alamat'];
-    hargaController.text = data['harga'].toString();
-    deskripsiController.text = data['deskripsi'];
-    fasilitasController.text = data['fasilitas'].join(', ');
-    kosTersedia.value = data['tersedia'];
-    jenis.value = data['jenis'];
-    imageUrl = data['gambar'];
-    kamarTersediaController.text = data['kamar_tersedia'].toString();
-    currentPosition.value = LatLng(data['latitude'], data['longitude']);
-    update();
-    await _updateAlamatFromLatLng(currentPosition.value!);
   }
 
   Future<void> getCurrentLocation() async {

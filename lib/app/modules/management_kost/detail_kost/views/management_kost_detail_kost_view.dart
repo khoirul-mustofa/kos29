@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 import '../controllers/management_kost_detail_kost_controller.dart';
 
 class ManagementKostDetailKostView
@@ -23,7 +24,7 @@ class ManagementKostDetailKostView
       body: Obx(() {
         final kost = controller.kostData;
         if (kost.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return _buildShimmerLoading();
         }
 
         final fasilitas = (kost['fasilitas'] as List?)?.join(', ') ?? '-';
@@ -41,15 +42,10 @@ class ManagementKostDetailKostView
                     width: double.infinity,
                     fit: BoxFit.cover,
                     placeholder:
-                        (context, url) => Container(
-                          height: 200,
-                          color:
-                              Get.isDarkMode
-                                  ? Colors.grey[800]
-                                  : Colors.grey[200],
-                          child: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
+                        (context, url) => Shimmer.fromColors(
+                          baseColor: Colors.grey[300]!,
+                          highlightColor: Colors.grey[100]!,
+                          child: Container(height: 200, color: Colors.white),
                         ),
                     errorWidget:
                         (context, url, error) => Container(
@@ -131,6 +127,91 @@ class ManagementKostDetailKostView
           ],
         );
       }),
+    );
+  }
+
+  Widget _buildShimmerLoading() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          // Image shimmer
+          Container(
+            height: 200,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          const SizedBox(height: 20),
+          // Card shimmer
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              children: List.generate(
+                5,
+                (index) => Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      // Icon shimmer
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Title shimmer
+                            Container(
+                              width: 100,
+                              height: 16,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            // Subtitle shimmer
+                            Container(
+                              width: double.infinity,
+                              height: 14,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          // Button shimmer
+          Container(
+            height: 48,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

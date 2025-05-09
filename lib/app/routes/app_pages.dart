@@ -6,6 +6,8 @@ import '../modules/auth/sign_in/bindings/sign_in_binding.dart';
 import '../modules/auth/sign_in/views/sign_in_view.dart';
 import '../modules/bottom_nav/bindings/bottom_nav_binding.dart';
 import '../modules/bottom_nav/views/bottom_nav_view.dart';
+import '../modules/change_location/bindings/change_location_binding.dart';
+import '../modules/change_location/views/change_location_view.dart';
 import '../modules/detail_page/bindings/detail_page_binding.dart';
 import '../modules/detail_page/views/detail_page_view.dart';
 import '../modules/form_profile/bindings/form_profile_binding.dart';
@@ -130,6 +132,11 @@ class AppPages {
       name: _Paths.REVIEW_MANAGEMENT,
       page: () => const ReviewManagementView(),
       binding: ReviewManagementBinding(),
+    ),
+    GetPage(
+      name: _Paths.CHANGE_LOCATION,
+      page: () => const ChangeLocationView(),
+      binding: ChangeLocationBinding(),
     ),
   ];
 }
