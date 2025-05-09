@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:kos29/app/data/models/kost_model.dart';
@@ -132,5 +133,41 @@ class HomeController extends GetxController {
       rekomendasiKosts = [];
       update();
     }
+  }
+
+  void showLanguageDialog(BuildContext context) {
+    final currentLang = Get.locale?.languageCode ?? 'id';
+
+    Get.defaultDialog(
+      title: 'Pilih Bahasa',
+      content: Column(
+        children: [
+          ListTile(
+            leading: const Text('🇮🇩', style: TextStyle(fontSize: 24)),
+            title: const Text('Indonesia'),
+            trailing:
+                currentLang == 'id'
+                    ? const Icon(Icons.check, color: Colors.teal)
+                    : null,
+            onTap: () {
+              Get.updateLocale(const Locale('id', 'ID'));
+              Get.back();
+            },
+          ),
+          ListTile(
+            leading: const Text('🇺🇸', style: TextStyle(fontSize: 24)),
+            title: const Text('English'),
+            trailing:
+                currentLang == 'en'
+                    ? const Icon(Icons.check, color: Colors.teal)
+                    : null,
+            onTap: () {
+              Get.updateLocale(const Locale('en', 'US'));
+              Get.back();
+            },
+          ),
+        ],
+      ),
+    );
   }
 }

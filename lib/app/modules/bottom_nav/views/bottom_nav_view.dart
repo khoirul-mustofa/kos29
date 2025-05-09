@@ -41,7 +41,8 @@ class BottomNavView extends GetView<BottomNavController> {
         }
       },
       child: Scaffold(
-        backgroundColor: Colors.grey[100],
+        backgroundColor:
+            Get.isDarkMode ? Colors.grey[800] : Colors.teal.shade100,
         body: PageView(
           controller: controller.pageController,
           onPageChanged: controller.onPageChanged,
@@ -54,7 +55,6 @@ class BottomNavView extends GetView<BottomNavController> {
         ),
 
         bottomNavigationBar: Material(
-          elevation: 10,
           child: Obx(() {
             return Padding(
               padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
@@ -64,8 +64,10 @@ class BottomNavView extends GetView<BottomNavController> {
                   currentIndex: controller.selectedIndex.value,
                   onTap: controller.changeTabIndexWithAnimation,
                   selectedItemColor: Colors.teal,
-                  unselectedItemColor: Colors.black,
-                  backgroundColor: Colors.teal.shade100,
+                  unselectedItemColor:
+                      Get.isDarkMode ? Colors.grey : Colors.black,
+                  backgroundColor:
+                      Get.isDarkMode ? Colors.grey[800] : Colors.teal.shade100,
                   selectedIconTheme: const IconThemeData(size: 30),
                   selectedLabelStyle: const TextStyle(
                     fontSize: 16,

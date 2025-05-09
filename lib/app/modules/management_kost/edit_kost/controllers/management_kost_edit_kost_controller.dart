@@ -23,6 +23,7 @@ class ManagementKostEditKostController extends GetxController {
   final hargaController = TextEditingController();
   final deskripsiController = TextEditingController();
   final fasilitasController = TextEditingController();
+  final kamarTersediaController = TextEditingController();
 
   final kosTersedia = true.obs;
 
@@ -65,6 +66,7 @@ class ManagementKostEditKostController extends GetxController {
     kosTersedia.value = data['tersedia'];
     jenis.value = data['jenis'];
     imageUrl = data['gambar'];
+    kamarTersediaController.text = data['kamar_tersedia'].toString();
     currentPosition.value = LatLng(data['latitude'], data['longitude']);
     update();
     await _updateAlamatFromLatLng(currentPosition.value!);
@@ -129,6 +131,7 @@ class ManagementKostEditKostController extends GetxController {
         'tersedia': kosTersedia.value,
         'latitude': currentPosition.value?.latitude,
         'longitude': currentPosition.value?.longitude,
+        'kamar_tersedia': int.tryParse(kamarTersediaController.text) ?? 0,
         'updated_at': FieldValue.serverTimestamp(),
       };
 
@@ -142,7 +145,7 @@ class ManagementKostEditKostController extends GetxController {
         kostPageController.loadKos(firstLoad: true);
         Get.snackbar('Berhasil', 'Kosan berhasil diperbarui');
 
-        Get.offNamed(Routes.KOST_PAGE);
+        Get.back();
       } catch (e) {
         Get.snackbar('Error', 'Gagal memperbarui data: $e');
       }
@@ -163,8 +166,8 @@ class ManagementKostEditKostController extends GetxController {
       return;
     }
 
-    localImagePath = pickedFile.path; // preview gambar lokal
-    update(); // trigger rebuild widget GetBuilder
+    localImagePath = pickedFile.path;
+    update();
 
     final file = File(pickedFile.path);
     final fileName = basename(file.path);

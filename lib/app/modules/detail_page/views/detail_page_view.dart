@@ -54,8 +54,7 @@ class DetailPageView extends GetView<DetailPageController> {
                           Expanded(
                             child: Text(
                               controller.dataKost.nama,
-                              style: TextStyle(
-                                fontSize: 22,
+                              style: Get.theme.textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.w600,
                               ),
                               maxLines: 2,
@@ -95,28 +94,21 @@ class DetailPageView extends GetView<DetailPageController> {
                                 Expanded(
                                   child: Text(
                                     controller.dataKost.alamat,
-                                    style: TextStyle(color: Colors.grey),
+                                    style: Get.theme.textTheme.bodyMedium
+                                        ?.copyWith(color: Colors.grey),
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                RichText(
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: '  ',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                    ],
                                   ),
                                 ),
                               ],
                             ),
                           ),
                         ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        'Tap alamat untuk mengunjungi kost',
+                        style: Get.theme.textTheme.bodySmall,
                       ),
                       const SizedBox(height: 12),
                       RichText(
@@ -150,7 +142,10 @@ class DetailPageView extends GetView<DetailPageController> {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.orange.shade100,
+                              color:
+                                  Get.isDarkMode
+                                      ? Colors.grey.shade800
+                                      : Colors.orange.shade100,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(
@@ -218,8 +213,8 @@ class DetailPageView extends GetView<DetailPageController> {
                               return SizedBox(
                                 width: Get.width,
                                 child: Text(
-                                  '${index + 1}. ${controller.dataKost.fasilitas[index]}',
-                                  style: TextStyle(fontSize: 13),
+                                  ' ${controller.dataKost.fasilitas[index]}',
+                                  style: Get.theme.textTheme.bodySmall,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines:
                                       controller.isFasilitasExpanded ? null : 1,
@@ -231,24 +226,10 @@ class DetailPageView extends GetView<DetailPageController> {
                         ),
                       ),
 
-                      // Kebijakan Properti
-                      _sectionTitleWithLink('Kebijakan Properti', 'kebijakan'),
-                      if (controller.isKebijakanExpanded)
-                        ...List.generate(10, (index) {
-                          return _bulletText(
-                            'Seluruh fasilitas kost hanya diperuntukkan bagi penyewa kamar.',
-                          );
-                        })
-                      else
-                        _bulletText(
-                          'Seluruh fasilitas kost hanya diperuntukkan bagi penyewa kamar.',
-                        ),
-
-                      // Deskripsi Properti
-                      _sectionTitleWithLink('Deskripsi Properti', 'deskripsi'),
+                      _sectionTitleWithLink('Deskripsi', 'deskripsi'),
                       Text(
                         controller.dataKost.deskripsi,
-                        style: TextStyle(fontSize: 14),
+                        style: Get.theme.textTheme.bodyMedium,
                         overflow: TextOverflow.ellipsis,
                         maxLines: controller.isDeskripsiExpanded ? null : 3,
                       ),
@@ -279,9 +260,7 @@ class DetailPageView extends GetView<DetailPageController> {
       children: [
         Text(
           title,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 16,
+          style: Get.theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -291,7 +270,7 @@ class DetailPageView extends GetView<DetailPageController> {
           },
           child: Text(
             isExpanded ? 'Sembunyikan' : 'Lihat semua',
-            style: TextStyle(color: Colors.blue, fontSize: 13),
+            style: Get.theme.textTheme.bodySmall?.copyWith(color: Colors.blue),
           ),
         ),
       ],

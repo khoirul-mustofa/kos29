@@ -26,7 +26,8 @@ class ManagementKostAddKostView
                     child: Container(
                       height: 200,
                       width: Get.width,
-                      color: Colors.grey[200],
+                      color:
+                          Get.isDarkMode ? Colors.grey[800] : Colors.grey[200],
                       child:
                           controller.localImagePath != null
                               ? Image.file(
@@ -84,6 +85,15 @@ class ManagementKostAddKostView
                 ],
                 onChanged: (val) => controller.jenis.value = val!,
               ),
+              const SizedBox(height: 12),
+              buildTextInput(
+                controller: controller.kamarTersediaController,
+                label: "Kamar Tersedia",
+                icon: Icons.bed,
+                keyboardType: TextInputType.number,
+                validator: (v) => v!.isEmpty ? "Wajib diisi" : null,
+              ),
+
               const SizedBox(height: 12),
               TextFormField(
                 controller: controller.deskripsiController,
@@ -178,9 +188,8 @@ class ManagementKostAddKostView
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
+      bottomNavigationBar: Container(
+        margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
         width: Get.width,
         child: FilledButton.icon(
           icon: const Icon(Icons.save),

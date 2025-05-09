@@ -69,7 +69,6 @@ class _SearchPageViewState extends State<SearchPageView> {
                       return Padding(
                         padding: const EdgeInsets.only(left: 16, right: 5),
                         child: ChoiceChip(
-                          selectedColor: Colors.teal.shade100,
                           label: Text(controller.category[index]),
                           selected: controller.selectedCategory == index,
                           onSelected: (value) {

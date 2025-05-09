@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../modules/auth/edit_profile/bindings/edit_profile_binding.dart';
+import '../modules/auth/edit_profile/views/edit_profile_view.dart';
 import '../modules/auth/sign_in/bindings/sign_in_binding.dart';
 import '../modules/auth/sign_in/views/sign_in_view.dart';
 import '../modules/bottom_nav/bindings/bottom_nav_binding.dart';
@@ -116,6 +118,11 @@ class AppPages {
       name: _Paths.MANAGEMENT_KOST_EDIT_KOST,
       page: () => ManagementKostEditKostView(),
       binding: ManagementKostEditKostBinding(),
+    ),
+    GetPage(
+      name: _Paths.EDIT_PROFILE,
+      page: () => const EditProfileView(),
+      binding: EditProfileBinding(),
     ),
   ];
 }

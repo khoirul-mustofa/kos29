@@ -17,7 +17,6 @@ class ManagementKostEditKostView
     return Scaffold(
       appBar: AppBar(
         title: const Text("Edit Kosan"),
-        backgroundColor: Colors.white,
         scrolledUnderElevation: 0,
         elevation: 0,
       ),
@@ -119,7 +118,14 @@ class ManagementKostEditKostView
                 onChanged: (val) => controller.jenis.value = val!,
               ),
               const SizedBox(height: 12),
-
+              buildTextInput(
+                controller: controller.kamarTersediaController,
+                label: "Kamar Tersedia",
+                icon: Icons.bed,
+                keyboardType: TextInputType.number,
+                validator: (v) => v!.isEmpty ? "Wajib diisi" : null,
+              ),
+              const SizedBox(height: 12),
               buildTextInput(
                 controller: controller.deskripsiController,
                 label: "Deskripsi Kosan",

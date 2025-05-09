@@ -8,15 +8,24 @@ import 'package:kos29/app/modules/history_search/controllers/history_search_cont
 import 'package:kos29/app/modules/home/controllers/home_controller.dart';
 import 'package:kos29/app/routes/app_pages.dart';
 import 'package:kos29/app/services/visit_history_service.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class ProfileController extends GetxController {
   User? currentUser;
   Map<String, dynamic>? userData;
+  var appVersion = '';
 
   @override
   void onInit() {
     super.onInit();
     getCurrentUser();
+    loadAppVersion();
+  }
+
+  void loadAppVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    appVersion = '${info.version} (${info.buildNumber})';
+    update();
   }
 
   getCurrentUser() {

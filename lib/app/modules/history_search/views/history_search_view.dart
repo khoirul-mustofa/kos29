@@ -15,18 +15,12 @@ class HistorySearchView extends GetView<HistorySearchController> {
       appBar: AppBar(
         title: Text(
           'Riwayat Kunjungan',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 16,
+          style: Get.textTheme.titleLarge!.copyWith(
             fontWeight: FontWeight.w600,
           ),
         ),
         centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
       ),
-      backgroundColor: const Color(0xFFF2F2F2),
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
@@ -61,11 +55,14 @@ class HistorySearchView extends GetView<HistorySearchController> {
               borderRadius: BorderRadius.circular(12),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Get.isDarkMode ? Colors.grey[900]! : Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
+                      color:
+                          Get.isDarkMode
+                              ? Colors.white.withAlpha(24)
+                              : Colors.black.withAlpha(24),
                       blurRadius: 6,
                       offset: const Offset(0, 3),
                     ),
@@ -99,29 +96,32 @@ class HistorySearchView extends GetView<HistorySearchController> {
                         children: [
                           Text(
                             kost.nama,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
+                            style: Get.textTheme.titleMedium,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 4),
                           Text(
                             kost.alamat,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: Colors.black54,
-                            ),
+                            style: Get.textTheme.labelSmall,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 4),
-                          Text(
-                            kost.jenis,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: Colors.black87,
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Get.theme.colorScheme.primary.withValues(
+                                alpha: 0.2,
+                              ),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              kost.jenis,
+                              style: Get.textTheme.titleSmall,
                             ),
                           ),
                           const SizedBox(height: 4),

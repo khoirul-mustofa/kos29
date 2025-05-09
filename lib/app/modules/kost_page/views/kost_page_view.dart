@@ -56,11 +56,11 @@ class _KostPageViewState extends State<KostPageView> {
                   onTap: () => controller.goToDetail(kost['id']),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Get.isDarkMode ? Colors.grey[800] : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.1),
+                          color: Colors.grey.withValues(alpha: 0.1),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),
@@ -77,18 +77,12 @@ class _KostPageViewState extends State<KostPageView> {
                             children: [
                               Text(
                                 kost['nama'],
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: Get.theme.textTheme.titleMedium,
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 kost['alamat'],
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
-                                ),
+                                style: Get.theme.textTheme.bodySmall,
                               ),
                             ],
                           ),
@@ -111,7 +105,7 @@ class _KostPageViewState extends State<KostPageView> {
       }),
       floatingActionButton: FloatingActionButton(
         onPressed: controller.goToAddKost,
-        backgroundColor: Colors.teal,
+        backgroundColor: Get.isDarkMode ? Colors.grey[800] : Colors.teal,
         child: const Icon(Icons.add),
       ),
     );

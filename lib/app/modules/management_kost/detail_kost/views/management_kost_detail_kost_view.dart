@@ -43,7 +43,10 @@ class ManagementKostDetailKostView
                     placeholder:
                         (context, url) => Container(
                           height: 200,
-                          color: Colors.grey[300],
+                          color:
+                              Get.isDarkMode
+                                  ? Colors.grey[800]
+                                  : Colors.grey[200],
                           child: const Center(
                             child: CircularProgressIndicator(),
                           ),

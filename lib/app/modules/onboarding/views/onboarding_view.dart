@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:kos29/app/routes/app_pages.dart';
-
+import 'package:lottie/lottie.dart';
 import '../controllers/onboarding_controller.dart';
 
 class OnboardingView extends GetView<OnboardingController> {
@@ -15,31 +14,38 @@ class OnboardingView extends GetView<OnboardingController> {
           children: [
             Expanded(
               child: PageView.builder(
-                controller: controller.pageController.value,
+                controller: controller.pageController,
                 itemCount: controller.images.length,
                 itemBuilder: (context, index) {
                   return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Image.asset(controller.images[index]),
+                        padding: const EdgeInsets.all(24.0),
+                        child: Lottie.asset(
+                          controller.images[index],
+                          height: 250,
+                        ),
                       ),
                       const SizedBox(height: 20),
-                      const Text(
-                        'Kenapa harus kami?',
-                        style: TextStyle(
+                      Text(
+                        controller.titles[index],
+                        style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
+                      const SizedBox(height: 12),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32),
                         child: Text(
-                          'Memberikan anda informasi seputar harga kost dari yang termurah dan tertinggi',
+                          controller.descriptions[index],
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 16, color: Colors.black54),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.black54,
+                          ),
                         ),
                       ),
                     ],
@@ -53,33 +59,35 @@ class OnboardingView extends GetView<OnboardingController> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton(
-                    onPressed: () {
-                      Get.offAllNamed(Routes.BOTTOM_NAV); // Lewati onboarding
-                    },
+                    onPressed: controller.completeOnboarding,
                     child: const Text(
                       'Lewatkan',
                       style: TextStyle(color: Colors.grey),
                     ),
                   ),
-                  Row(
-                    children: List.generate(
-                      controller.images.length,
-                      (index) => Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: CircleAvatar(
-                          radius: 5,
-                          backgroundColor: Colors.blue,
+                  Obx(
+                    () => Row(
+                      children: List.generate(
+                        controller.images.length,
+                        (index) => Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: CircleAvatar(
+                            radius: 5,
+                            backgroundColor:
+                                controller.currentPage.value == index
+                                    ? Colors.teal
+                                    : Colors.grey,
+                          ),
                         ),
                       ),
                     ),
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      if (controller.pageController.page ==
-                          controller.images.length - 1) {
-                        Get.offAllNamed(
-                          Routes.BOTTOM_NAV,
-                        ); // Selesai onboarding
+                      final currentPage =
+                          controller.pageController.page?.round() ?? 0;
+                      if (currentPage == controller.images.length - 1) {
+                        controller.completeOnboarding();
                       } else {
                         controller.pageController.nextPage(
                           duration: const Duration(milliseconds: 300),
@@ -91,14 +99,14 @@ class OnboardingView extends GetView<OnboardingController> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      backgroundColor: Colors.blue[900],
+                      backgroundColor: Colors.teal,
                       padding: const EdgeInsets.symmetric(
                         vertical: 12,
                         horizontal: 24,
                       ),
                     ),
-                    child: Row(
-                      children: const [
+                    child: const Row(
+                      children: [
                         Text('Lanjut'),
                         SizedBox(width: 8),
                         Icon(Icons.arrow_forward),
@@ -113,10 +121,4 @@ class OnboardingView extends GetView<OnboardingController> {
       ),
     );
   }
-}
-
-extension on Rx<PageController> {
-  get page => null;
-
-  void nextPage({required Duration duration, required Cubic curve}) {}
 }
