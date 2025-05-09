@@ -137,7 +137,6 @@ class HomeController extends GetxController {
 
   void showLanguageDialog(BuildContext context) {
     final currentLang = Get.locale?.languageCode ?? 'id';
-
     Get.defaultDialog(
       title: 'Pilih Bahasa',
       content: Column(

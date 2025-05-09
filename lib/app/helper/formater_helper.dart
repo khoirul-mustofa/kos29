@@ -9,4 +9,8 @@ class FormatterHelper {
     );
     return formatter.format(harga);
   }
+
+  static String formatDate(DateTime tanggal) {
+    return DateFormat('dd MMM yyyy', 'id_ID').format(tanggal);
+  }
 }

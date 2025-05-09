@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:kos29/app/routes/app_pages.dart';
 
 class OnboardingController extends GetxController {
@@ -27,6 +28,9 @@ class OnboardingController extends GetxController {
   ];
 
   void completeOnboarding() {
+    final box = GetStorage();
+    box.write('onboarding', true);
+
     Get.offAllNamed(Routes.BOTTOM_NAV);
   }
 

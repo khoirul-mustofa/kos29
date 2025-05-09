@@ -6,13 +6,14 @@ import 'package:kos29/app/lang/translation.dart';
 import 'package:kos29/app/style/theme/theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:kos29/app/style/theme/theme_controller.dart';
-
+import 'package:intl/date_symbol_data_local.dart';
 import 'app/routes/app_pages.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await GetStorage.init();
+  await initializeDateFormatting('id_ID', null);
   await Supabase.initialize(
     url: 'https://lnhdhgvokxpmbhgdvxtq.supabase.co',
     anonKey:
@@ -28,8 +29,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final box = GetStorage();
-    final hasSeenOnboarding = box.read('onboarding_seen') ?? false;
     return GetMaterialApp(
       defaultTransition: Transition.cupertino,
       transitionDuration: const Duration(milliseconds: 300),
@@ -40,8 +39,8 @@ class MyApp extends StatelessWidget {
       themeMode: themeController.theme,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      title: "Indikost",
-      initialRoute: hasSeenOnboarding ? Routes.BOTTOM_NAV : Routes.ONBOARDING,
+      title: "Kos29",
+      initialRoute: Routes.SPLASH_SCREEN,
       getPages: AppPages.routes,
     );
   }

@@ -36,7 +36,7 @@ class HomeView extends GetView<HomeController> {
                 )
                 : null,
         title: Text(
-          'IndiKos',
+          'Kos29',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -59,7 +59,6 @@ class HomeView extends GetView<HomeController> {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: GetBuilder<ThemeController>(
-              init: Get.find<ThemeController>(),
               builder:
                   (themeController) => IconButton(
                     onPressed: themeController.toggleTheme,
