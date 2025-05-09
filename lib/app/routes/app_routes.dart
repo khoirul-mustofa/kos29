@@ -20,6 +20,7 @@ abstract class Routes {
   static const MANAGEMENT_KOST_ADD_KOST = _Paths.MANAGEMENT_KOST_ADD_KOST;
   static const MANAGEMENT_KOST_EDIT_KOST = _Paths.MANAGEMENT_KOST_EDIT_KOST;
   static const EDIT_PROFILE = _Paths.EDIT_PROFILE;
+  static const REVIEW_MANAGEMENT = _Paths.REVIEW_MANAGEMENT;
 }
 
 abstract class _Paths {
@@ -41,4 +42,5 @@ abstract class _Paths {
   static const MANAGEMENT_KOST_ADD_KOST = '/add-kost';
   static const MANAGEMENT_KOST_EDIT_KOST = '/edit-kost';
   static const EDIT_PROFILE = '/edit-profile';
+  static const REVIEW_MANAGEMENT = '/review-management';
 }

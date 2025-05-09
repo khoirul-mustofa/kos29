@@ -22,6 +22,8 @@ import '../modules/management_kost/detail_kost/bindings/management_kost_detail_k
 import '../modules/management_kost/detail_kost/views/management_kost_detail_kost_view.dart';
 import '../modules/management_kost/edit_kost/bindings/management_kost_edit_kost_binding.dart';
 import '../modules/management_kost/edit_kost/views/management_kost_edit_kost_view.dart';
+import '../modules/management_kost/review_management/bindings/review_management_binding.dart';
+import '../modules/management_kost/review_management/views/review_management_view.dart';
 import '../modules/notification_page/bindings/notification_page_binding.dart';
 import '../modules/notification_page/views/notification_page_view.dart';
 import '../modules/onboarding/bindings/onboarding_binding.dart';
@@ -86,7 +88,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.DETAIL_PAGE,
-      page: () => const DetailPageView(),
+      page: () => DetailPageView(),
       binding: DetailPageBinding(),
     ),
     GetPage(
@@ -123,6 +125,11 @@ class AppPages {
       name: _Paths.EDIT_PROFILE,
       page: () => EditProfileView(),
       binding: EditProfileBinding(),
+    ),
+    GetPage(
+      name: _Paths.REVIEW_MANAGEMENT,
+      page: () => const ReviewManagementView(),
+      binding: ReviewManagementBinding(),
     ),
   ];
 }

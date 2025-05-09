@@ -85,7 +85,7 @@ class HistorySearchController extends GetxController {
 
       final data = snapshot.data();
       if (data == null) {
-        Get.snackbar('Error', 'Data kosan tidak ditemukan');
+        // Get.snackbar('Error', 'Data kosan tidak ditemukan');
         return;
       }
 

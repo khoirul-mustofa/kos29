@@ -14,6 +14,7 @@ class AppTranslation extends Translations {
       'clear_history': 'Clear History',
       'logout': 'Logout',
       'app_version': 'App Version',
+      'manage_review': 'Manage Review',
     },
     'id_ID': {
       'hello': 'Halo',
@@ -26,6 +27,7 @@ class AppTranslation extends Translations {
       'clear_history': 'Hapus Riwayat',
       'logout': 'Keluar',
       'app_version': 'Versi Aplikasi',
+      'manage_review': 'Pengelolaan Ulasan',
     },
   };
 }

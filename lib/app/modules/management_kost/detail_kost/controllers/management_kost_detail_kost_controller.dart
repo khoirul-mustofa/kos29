@@ -25,17 +25,22 @@ class ManagementKostDetailKostController extends GetxController {
 
     final data = snapshot.data();
     if (data == null) {
-      Get.snackbar('Error', 'Data kosan tidak ditemukan');
+      // Get.snackbar('Error', 'Data kosan tidak ditemukan');
       return;
     }
 
     kostData.value = data;
     imageUrl = data['gambar'] ?? '';
-    update();
   }
 
-  void goToEdit() {
-    Get.toNamed(Routes.MANAGEMENT_KOST_EDIT_KOST, arguments: {'id': id});
+  void goToEdit() async {
+    final result = await Get.toNamed(
+      Routes.MANAGEMENT_KOST_EDIT_KOST,
+      arguments: {'id': id},
+    );
+    if (result == true) {
+      loadKost(id);
+    }
   }
 
   Future<void> deleteImage() async {

@@ -55,7 +55,7 @@ class ManagementKostEditKostController extends GetxController {
 
     final data = snapshot.data();
     if (data == null) {
-      Get.snackbar('Error', 'Data kosan tidak ditemukan');
+      logger.e('Data kosan tidak ditemukan');
       return;
     }
     namaController.text = data['nama'];
@@ -143,11 +143,15 @@ class ManagementKostEditKostController extends GetxController {
 
         final kostPageController = Get.find<KostPageController>();
         kostPageController.loadKos(firstLoad: true);
-        Get.snackbar('Berhasil', 'Kosan berhasil diperbarui');
+        final detailKosController =
+            Get.find<ManagementKostDetailKostController>();
+        detailKosController.loadKost(idKost);
 
-        Get.back();
+        Get.back(result: true);
+        Get.snackbar('Berhasil', 'Kosan berhasil diperbarui');
       } catch (e) {
-        Get.snackbar('Error', 'Gagal memperbarui data: $e');
+        Get.snackbar('Gagal', 'Gagal memperbarui data');
+        logger.e('Gagal memperbarui data: $e');
       }
     }
   }

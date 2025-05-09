@@ -75,6 +75,13 @@ class ProfileView extends GetView<ProfileController> {
                       Get.toNamed(Routes.KOST_PAGE);
                     },
                   ),
+                  _buildMenuItem(
+                    Icons.rate_review_outlined,
+                    'manage_review'.tr,
+                    () {
+                      Get.toNamed(Routes.REVIEW_MANAGEMENT);
+                    },
+                  ),
                   const Divider(),
                   _buildMenuItem(Icons.history, 'clear_history'.tr, () {
                     controller.clearHistory();

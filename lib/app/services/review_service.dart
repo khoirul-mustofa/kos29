@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:kos29/app/data/models/review_model.dart';
+import 'package:kos29/app/helper/logger_app.dart';
 
 class ReviewService {
   final _reviewCollection = FirebaseFirestore.instance.collection('reviews');
@@ -10,14 +11,19 @@ class ReviewService {
   }
 
   Future<List<ReviewModel>> getReviews(String kostId) async {
-    final snapshot =
-        await _reviewCollection
-            .where('kostId', isEqualTo: kostId)
-            .orderBy('timestamp', descending: true)
-            .get();
+    try {
+      final snapshot =
+          await FirebaseFirestore.instance
+              .collection('reviews')
+              .where('kostId', isEqualTo: kostId)
+              .where('hidden', isEqualTo: false)
+              .orderBy('createdAt', descending: true)
+              .get();
 
-    return snapshot.docs
-        .map((doc) => ReviewModel.fromJson(doc.data()))
-        .toList();
+      return snapshot.docs.map((doc) => ReviewModel.fromDoc(doc)).toList();
+    } catch (e) {
+      logger.e('Gagal memuat ulasan: $e');
+      return [];
+    }
   }
 }

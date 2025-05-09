@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:kos29/app/helper/logger_app.dart';
 import 'package:kos29/app/modules/home/controllers/home_controller.dart';
 
 import 'package:kos29/app/routes/app_pages.dart';
@@ -36,6 +38,7 @@ class KostPageController extends GetxController {
     try {
       Query<Map<String, dynamic>> query = FirebaseFirestore.instance
           .collection('kosts')
+          .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
           .orderBy('created_at', descending: true)
           .limit(limit);
 
@@ -66,7 +69,7 @@ class KostPageController extends GetxController {
         hasMore.value = false;
       }
     } catch (e) {
-      Get.snackbar('Error', 'Gagal memuat data kost: $e');
+      logger.e('Gagal memuat data kost: $e');
     } finally {
       isLoading.value = false;
       isLoadingMore.value = false;
