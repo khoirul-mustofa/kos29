@@ -1,17 +1,26 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:kos29/app/data/models/kost_model.dart';
 import 'package:kos29/app/data/models/review_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:kos29/app/data/models/review_with_user_model.dart';
+import 'package:kos29/app/modules/home/controllers/home_controller.dart';
+import 'package:kos29/app/routes/app_pages.dart';
 import 'package:kos29/app/services/review_service.dart';
+import 'package:kos29/app/services/user_service.dart';
+import 'package:kos29/app/services/visit_history_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DetailPageController extends GetxController {
   final KostModel dataKost = Get.arguments;
-  final _reviewService = ReviewService(); // Service untuk mengelola ulasan
+  final _reviewService = ReviewService();
+  final _userService = UserService();
+  final jumlahUlasan = 0.obs;
+  final rataRating = 0.0.obs;
 
   var isFasilitasExpanded = false;
   var isDeskripsiExpanded = false;
@@ -49,6 +58,41 @@ class DetailPageController extends GetxController {
     }
   }
 
+  Future<void> calculateRating() async {
+    final reviewsSnapshot =
+        await FirebaseFirestore.instance
+            .collection('reviews')
+            .where('kostId', isEqualTo: dataKost.idKos)
+            .get();
+
+    final reviews = reviewsSnapshot.docs.map((doc) => doc.data()).toList();
+
+    if (reviews.isEmpty) {
+      jumlahUlasan.value = 0;
+      rataRating.value = 0.0;
+      return;
+    }
+
+    final totalRating = reviews.fold<double>(
+      0.0,
+      (jumlah, review) => jumlah + (review['rating'] as num).toDouble(),
+    );
+
+    jumlahUlasan.value = reviews.length;
+    rataRating.value =
+        jumlahUlasan.value == 0 ? 0.0 : totalRating / jumlahUlasan.value;
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    VisitHistoryService().saveVisit(dataKost.idKos);
+    Get.find<HomeController>().refreshHomePage();
+    getReviewsWithUser(dataKost.idKos);
+    calculateRating();
+  }
+
   void toggleiExpanded(String section) {
     if (section == 'fasilitas') {
       isFasilitasExpanded = !isFasilitasExpanded;
@@ -59,11 +103,43 @@ class DetailPageController extends GetxController {
   }
 
   Future<List<ReviewModel>> getReviews(String kostId) async {
-    log('getReviews $kostId');
     return await _reviewService.getReviews(kostId);
   }
 
+  Future<List<ReviewWithUserModel>> getReviewsWithUser(String kostId) async {
+    final reviews = await _reviewService.getReviews(kostId);
+    final usersFutures =
+        reviews.map((r) => _userService.getUserById(r.userId)).toList();
+    final users = await Future.wait(usersFutures);
+
+    return List.generate(reviews.length, (i) {
+      final user = users[i];
+      if (user == null) throw Exception('User tidak ditemukan');
+      return ReviewWithUserModel(review: reviews[i], user: user);
+    });
+  }
+
   Future<void> showReviewDialog(BuildContext context) async {
+    if (FirebaseAuth.instance.currentUser == null) {
+      await showDialog(
+        context: context,
+        builder:
+            (context) => AlertDialog(
+              title: const Text('Belum Login'),
+              content: const Text(
+                'Silakan login terlebih dahulu untuk menuliskan review',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Get.offAllNamed(Routes.SIGN_IN),
+                  child: const Text('Login'),
+                ),
+              ],
+            ),
+      );
+      return;
+    }
+
     final TextEditingController commentController = TextEditingController();
     double selectedRating = 5;
 
@@ -171,12 +247,13 @@ class DetailPageController extends GetxController {
                             kostId: dataKost.idKos,
                             comment: commentController.text,
                             rating: selectedRating,
-                            timestamp: DateTime.now(),
+                            createdAt: DateTime.now(),
                             hidden: false,
                             ownerResponse: null,
                           );
                           await _reviewService.submitReview(review);
                           update();
+                          calculateRating();
                         }
                         Get.back();
                       },
@@ -189,12 +266,12 @@ class DetailPageController extends GetxController {
 
   void launchMapOnAndroid(BuildContext context, double lat, double lng) async {
     final url = 'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
-    if (await canLaunchUrl(Uri.parse(url))) {
+    if (await launchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Tidak dapat membuka Maps')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Tidak dapat membuka Google Maps')),
+      );
     }
   }
 }

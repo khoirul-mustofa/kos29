@@ -1,21 +1,26 @@
+import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kos29/app/data/models/review_with_user_model.dart';
 import 'package:kos29/app/helper/formater_helper.dart';
+import 'package:kos29/app/helper/logger_app.dart';
 import '../controllers/detail_page_controller.dart';
 
 class DetailPageView extends GetView<DetailPageController> {
-  const DetailPageView({super.key});
-
+  DetailPageView({super.key});
+  final controller = Get.put(DetailPageController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: ElevatedButton.icon(
         icon: const Icon(Icons.rate_review),
         label: const Text("Tulis Ulasan"),
-        onPressed: () => controller.showReviewDialog(context),
+        onPressed: () {
+          controller.showReviewDialog(context);
+        },
       ),
       body: GetBuilder<DetailPageController>(
-        builder: (_) {
+        builder: (controller) {
           return SafeArea(
             child: ListView(
               children: [
@@ -170,13 +175,17 @@ class DetailPageView extends GetView<DetailPageController> {
                 Get.isDarkMode ? Colors.grey.shade800 : Colors.orange.shade100,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Row(
-            children: const [
-              Icon(Icons.star, size: 16, color: Colors.orange),
-              SizedBox(width: 4),
-              Text('4.5 | 100 ulasan'),
-            ],
-          ),
+          child: Obx(() {
+            return Row(
+              children: [
+                const Icon(Icons.star, size: 16, color: Colors.orange),
+                const SizedBox(width: 4),
+                Text(
+                  '${controller.rataRating.value.toStringAsFixed(1)} | ${controller.jumlahUlasan.value} ulasan',
+                ),
+              ],
+            );
+          }),
         ),
         const SizedBox(width: 12),
         const Icon(Icons.check_circle, color: Colors.green, size: 18),
@@ -224,11 +233,45 @@ class DetailPageView extends GetView<DetailPageController> {
                 fontWeight: FontWeight.w600,
               ),
             ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: DottedLine(
+                dashColor: Colors.teal.shade700,
+                lineThickness: 1.5,
+                dashLength: 6,
+                dashGapLength: 4,
+              ),
+            ),
+
             TextButton(
+              style: TextButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+              ),
               onPressed: () => controller.toggleiExpanded(key),
-              child: Text(
-                isExpanded ? 'Sembunyikan' : 'Lihat semua',
-                style: Get.textTheme.bodySmall?.copyWith(color: Colors.blue),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    isExpanded ? 'Sembunyikan' : 'Lihat semua',
+                    style: Get.textTheme.bodyMedium?.copyWith(
+                      color: Colors.teal.shade800,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+
+                  const SizedBox(width: 6),
+                  Icon(
+                    isExpanded ? Icons.expand_less : Icons.expand_more,
+                    color: Colors.teal.shade800,
+                    size: 20,
+                  ),
+                ],
               ),
             ),
           ],
@@ -238,11 +281,29 @@ class DetailPageView extends GetView<DetailPageController> {
             .map(
               (e) => Padding(
                 padding: const EdgeInsets.symmetric(vertical: 2.0),
-                child: Text(
-                  e,
-                  style: Get.textTheme.bodySmall,
-                  maxLines: isExpanded ? null : 1,
-                  overflow: TextOverflow.ellipsis,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (key == 'fasilitas') ...[
+                      Container(
+                        margin: const EdgeInsets.only(top: 8, right: 8),
+                        width: 4,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: Colors.teal.shade800,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ],
+                    Expanded(
+                      child: Text(
+                        e,
+                        style: Get.textTheme.bodyMedium,
+                        maxLines: isExpanded ? null : 1,
+                        overflow: TextOverflow.visible,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -261,8 +322,8 @@ class DetailPageView extends GetView<DetailPageController> {
           ),
         ),
         const SizedBox(height: 8),
-        FutureBuilder(
-          future: controller.getReviews(controller.dataKost.idKos),
+        FutureBuilder<List<ReviewWithUserModel>>(
+          future: controller.getReviewsWithUser(controller.dataKost.idKos),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -273,16 +334,25 @@ class DetailPageView extends GetView<DetailPageController> {
             final reviews = snapshot.data!;
             return Column(
               children:
-                  reviews.map((review) {
+                  reviews.map((rwu) {
+                    logger.i(
+                      "rwu: ${rwu.review.id}, ${rwu.user.uid}, ${rwu.user.name}, ${rwu.user.email}, ${rwu.user.photoUrl}, ${rwu.review.rating}, ${rwu.review.comment}, ${rwu.review.ownerResponse}, ${rwu.review.createdAt}",
+                    );
+
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6.0),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(
-                            Icons.person,
-                            size: 24,
-                            color: Colors.grey,
+                          CircleAvatar(
+                            backgroundImage:
+                                rwu.user.photoUrl != null
+                                    ? NetworkImage(rwu.user.photoUrl!)
+                                    : null,
+                            child:
+                                rwu.user.photoUrl == null
+                                    ? const Icon(Icons.person)
+                                    : null,
                           ),
                           const SizedBox(width: 8),
                           Expanded(
@@ -290,17 +360,34 @@ class DetailPageView extends GetView<DetailPageController> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  '${review.rating} ★',
+                                  rwu.user.name,
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
+                                Text('${rwu.review.rating} ★'),
+                                Text(rwu.review.comment),
+                                if (rwu.review.ownerResponse != null)
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 4),
+                                    padding: const EdgeInsets.all(6),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[100],
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Text(
+                                      "Balasan Pemilik: ${rwu.review.ownerResponse}",
+                                      style: TextStyle(
+                                        color: Colors.grey[700],
+                                        fontStyle: FontStyle.italic,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
                                 Text(
-                                  review.comment,
-                                  style: Get.textTheme.bodySmall,
-                                ),
-                                Text(
-                                  FormatterHelper.formatDate(review.timestamp),
+                                  FormatterHelper.formatDate(
+                                    rwu.review.createdAt,
+                                  ),
                                   style: Get.textTheme.bodySmall?.copyWith(
                                     fontSize: 10,
                                     color: Colors.grey,
@@ -316,7 +403,8 @@ class DetailPageView extends GetView<DetailPageController> {
             );
           },
         ),
-        const SizedBox(height: 12),
+
+        const SizedBox(height: 50),
       ],
     );
   }
