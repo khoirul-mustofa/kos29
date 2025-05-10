@@ -46,14 +46,14 @@ class HomeView extends GetView<HomeController> {
           ),
         ),
         actions: [
-          // IconButton(
-          //   onPressed: () {
-          //     Get.toNamed(Routes.NOTIFICATION_PAGE);
-          //   },
-          //   icon: Icon(Icons.notifications_outlined),
-          //   constraints: BoxConstraints(minWidth: 40, minHeight: 40),
-          //   padding: EdgeInsets.zero,
-          // ),
+          IconButton(
+            onPressed: () {
+              Get.toNamed(Routes.NOTIFICATION_PAGE);
+            },
+            icon: Icon(Icons.notifications_outlined),
+            constraints: BoxConstraints(minWidth: 40, minHeight: 40),
+            padding: EdgeInsets.zero,
+          ),
           IconButton(
             onPressed: () {
               controller.showLanguageDialog(context);

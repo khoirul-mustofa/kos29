@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
       translations: AppTranslation(),
       locale: Get.deviceLocale ?? const Locale('id', 'ID'),
       fallbackLocale: const Locale('en', 'US'),
-      themeMode: ThemeMode.system,
+      themeMode: themeController.theme,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       title: "Kos29",
