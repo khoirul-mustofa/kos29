@@ -22,6 +22,10 @@ abstract class Routes {
   static const EDIT_PROFILE = _Paths.EDIT_PROFILE;
   static const REVIEW_MANAGEMENT = _Paths.REVIEW_MANAGEMENT;
   static const CHANGE_LOCATION = _Paths.CHANGE_LOCATION;
+  static const REGISTER = _Paths.REGISTER;
+  static const RESET_PASSWORD = _Paths.RESET_PASSWORD;
+  static const AUTH_REGISTER = _Paths.REGISTER;
+  static const AUTH_RESET_PASSWORD = _Paths.RESET_PASSWORD;
 }
 
 abstract class _Paths {
@@ -45,4 +49,8 @@ abstract class _Paths {
   static const EDIT_PROFILE = '/edit-profile';
   static const REVIEW_MANAGEMENT = '/review-management';
   static const CHANGE_LOCATION = '/change-location';
+  static const REGISTER = '/register';
+  static const RESET_PASSWORD = '/reset-password';
+  static const AUTH_REGISTER = '/register';
+  static const AUTH_RESET_PASSWORD = '/reset-password';
 }

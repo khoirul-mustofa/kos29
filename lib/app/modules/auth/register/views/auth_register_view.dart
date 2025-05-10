@@ -1,16 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:kos29/app/helper/logger_app.dart';
-import 'package:kos29/app/modules/auth/sign_in/controllers/sign_in_controller.dart';
-import 'package:kos29/app/routes/app_pages.dart';
-
 import 'package:lottie/lottie.dart';
+import '../controllers/auth_register_controller.dart';
 
-class SignInView extends GetView<SignInController> {
-  SignInView({super.key});
-  @override
-  final controller = Get.put(SignInController());
+class AuthRegisterView extends GetView<AuthRegisterController> {
+  const AuthRegisterView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,12 +22,12 @@ class SignInView extends GetView<SignInController> {
             ),
           ),
 
-          // Login Card
+          // Register Card
           Center(
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: GetBuilder<SignInController>(
+                child: GetBuilder<AuthRegisterController>(
                   builder: (_) {
                     return AnimatedOpacity(
                       duration: const Duration(milliseconds: 700),
@@ -56,14 +50,14 @@ class SignInView extends GetView<SignInController> {
                           children: [
                             // Lottie animation
                             Lottie.asset(
-                              'assets/lottie/Animation-login.json',
+                              'assets/lottie/Animation-register.json',
                               height: 120,
                             ),
 
                             const SizedBox(height: 10),
 
                             Text(
-                              'Selamat Datang!',
+                              'Buat Akun Baru',
                               style: Theme.of(
                                 context,
                               ).textTheme.titleLarge?.copyWith(
@@ -72,6 +66,19 @@ class SignInView extends GetView<SignInController> {
                               ),
                             ),
                             const SizedBox(height: 30),
+
+                            // Name Field
+                            TextFormField(
+                              controller: controller.nameController,
+                              decoration: InputDecoration(
+                                labelText: 'Nama Lengkap',
+                                prefixIcon: const Icon(Icons.person),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
 
                             // Email Field
                             TextFormField(
@@ -112,85 +119,67 @@ class SignInView extends GetView<SignInController> {
                               ),
                             ),
 
-                            const SizedBox(height: 8),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: TextButton(
-                                onPressed:
-                                    () => Get.toNamed(Routes.RESET_PASSWORD),
-                                child: const Text('Lupa Password?'),
-                              ),
-                            ),
-
                             const SizedBox(height: 16),
 
-                            // Email/Password Sign In Button
-                            SizedBox(
-                              width: double.infinity,
-                              height: 50,
-                              child: ElevatedButton(
-                                onPressed: () => controller.signInWithEmail(),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.teal,
-                                  foregroundColor: Colors.white,
-                                  elevation: 3,
-                                  shape: RoundedRectangleBorder(
+                            // Confirm Password Field
+                            Obx(
+                              () => TextFormField(
+                                controller:
+                                    controller.confirmPasswordController,
+                                decoration: InputDecoration(
+                                  labelText: 'Konfirmasi Password',
+                                  prefixIcon: const Icon(Icons.lock_outline),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      controller.isConfirmPasswordVisible.value
+                                          ? Icons.visibility_off
+                                          : Icons.visibility,
+                                    ),
+                                    onPressed:
+                                        controller
+                                            .toggleConfirmPasswordVisibility,
+                                  ),
+                                  border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
-                                child: const Text(
-                                  'Login',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
+                                obscureText:
+                                    !controller.isConfirmPasswordVisible.value,
                               ),
                             ),
 
-                            const SizedBox(height: 16),
-                            const Row(
-                              children: [
-                                Expanded(child: Divider()),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 16),
-                                  child: Text('atau'),
-                                ),
-                                Expanded(child: Divider()),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 24),
 
-                            // Google Sign-In Button
+                            // Register Button
                             SizedBox(
                               width: double.infinity,
                               height: 50,
-                              child: ElevatedButton.icon(
-                                onPressed: () async {
-                                  User? user =
-                                      await controller.signInWithGoogle();
-                                  if (user != null) {
-                                    logger.i(
-                                      'Login successful: ${user.displayName}',
-                                    );
-                                    Get.offAllNamed(Routes.BOTTOM_NAV);
-                                  }
-                                },
-                                icon: Image.asset(
-                                  'assets/icons/google.png',
-                                  width: 24,
-                                ),
-                                label: const Text(
-                                  'Login dengan Google',
-                                  style: TextStyle(fontWeight: FontWeight.w600),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: Colors.black,
-                                  elevation: 3,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                              child: Obx(
+                                () => ElevatedButton(
+                                  onPressed:
+                                      controller.isLoading.value
+                                          ? null
+                                          : () => controller.register(),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.teal,
+                                    foregroundColor: Colors.white,
+                                    elevation: 3,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
                                   ),
+                                  child:
+                                      controller.isLoading.value
+                                          ? const CircularProgressIndicator(
+                                            color: Colors.white,
+                                          )
+                                          : const Text(
+                                            'Daftar',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
                                 ),
                               ),
                             ),
@@ -199,10 +188,10 @@ class SignInView extends GetView<SignInController> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Text("Belum punya akun?"),
+                                const Text("Sudah punya akun?"),
                                 TextButton(
-                                  onPressed: () => Get.toNamed(Routes.REGISTER),
-                                  child: const Text('Daftar'),
+                                  onPressed: () => Get.back(),
+                                  child: const Text('Login'),
                                 ),
                               ],
                             ),

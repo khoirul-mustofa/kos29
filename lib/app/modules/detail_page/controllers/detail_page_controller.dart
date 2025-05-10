@@ -16,14 +16,16 @@ import 'package:kos29/app/services/visit_history_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DetailPageController extends GetxController {
-  final KostModel dataKost = Get.arguments;
   final _reviewService = ReviewService();
   final _userService = UserService();
   final jumlahUlasan = 0.obs;
   final rataRating = 0.0.obs;
+  final isLoading = false.obs;
+  final KostModel dataKost = Get.arguments;
 
   var isFasilitasExpanded = false;
   var isDeskripsiExpanded = false;
+
   String ratingLabel(double rating) {
     switch (rating.round()) {
       case 1:

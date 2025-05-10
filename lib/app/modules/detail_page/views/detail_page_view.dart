@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:kos29/app/data/models/review_with_user_model.dart';
 import 'package:kos29/app/helper/formater_helper.dart';
 import 'package:kos29/app/helper/logger_app.dart';
+import 'package:shimmer/shimmer.dart';
 import '../controllers/detail_page_controller.dart';
 
 class DetailPageView extends GetView<DetailPageController> {
@@ -21,43 +22,228 @@ class DetailPageView extends GetView<DetailPageController> {
       ),
       body: GetBuilder<DetailPageController>(
         builder: (controller) {
-          return SafeArea(
-            child: ListView(
-              children: [
-                _buildHeaderImage(),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildTitleSection(),
-                      const SizedBox(height: 12),
-                      _buildLocationSection(context),
-                      const SizedBox(height: 8),
-                      _buildDistanceInfo(),
-                      const SizedBox(height: 12),
-                      _buildRatingAndAvailability(),
-                      const SizedBox(height: 12),
-                      _buildPriceSection(),
-                      const SizedBox(height: 16),
-                      _buildExpandableSection(
-                        'Fasilitas',
-                        'fasilitas',
-                        controller.dataKost.fasilitas,
-                      ),
-                      _buildExpandableSection('Deskripsi', 'deskripsi', [
-                        controller.dataKost.deskripsi,
-                      ]),
-                      const SizedBox(height: 24),
-                      _buildReviewSection(context),
-                      const SizedBox(height: 24),
-                    ],
+          return Obx(() {
+            if (controller.isLoading.value) {
+              return _buildShimmerLoading();
+            }
+            return SafeArea(
+              child: ListView(
+                children: [
+                  _buildHeaderImage(),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildTitleSection(),
+                        const SizedBox(height: 12),
+                        _buildLocationSection(context),
+                        const SizedBox(height: 8),
+                        _buildDistanceInfo(),
+                        const SizedBox(height: 12),
+                        _buildRatingAndAvailability(),
+                        const SizedBox(height: 12),
+                        _buildPriceSection(),
+                        const SizedBox(height: 16),
+                        _buildExpandableSection(
+                          'Fasilitas',
+                          'fasilitas',
+                          controller.dataKost.fasilitas,
+                        ),
+                        _buildExpandableSection('Deskripsi', 'deskripsi', [
+                          controller.dataKost.deskripsi,
+                        ]),
+                        const SizedBox(height: 24),
+                        _buildReviewSection(context),
+                        const SizedBox(height: 24),
+                      ],
+                    ),
                   ),
+                ],
+              ),
+            );
+          });
+        },
+      ),
+    );
+  }
+
+  Widget _buildShimmerLoading() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Column(
+        children: [
+          // Header Image Shimmer
+          Container(height: 250, color: Colors.white),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title Shimmer
+                Container(
+                  width: double.infinity,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                // Location Section Shimmer
+                Container(
+                  width: double.infinity,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // Distance Info Shimmer
+                Container(
+                  width: 120,
+                  height: 16,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                // Rating and Availability Shimmer
+                Row(
+                  children: [
+                    Container(
+                      width: 100,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Container(
+                      width: 120,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                // Price Section Shimmer
+                Container(
+                  width: 150,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Fasilitas Section Shimmer
+                Container(
+                  width: 100,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  width: double.infinity,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Deskripsi Section Shimmer
+                Container(
+                  width: 100,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  width: double.infinity,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                // Review Section Shimmer
+                Container(
+                  width: 100,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: 3,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 120,
+                                  height: 16,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Container(
+                                  width: double.infinity,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
@@ -74,6 +260,18 @@ class DetailPageView extends GetView<DetailPageController> {
             width: double.infinity,
             height: 250,
             fit: BoxFit.cover,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Shimmer.fromColors(
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
+                child: Container(
+                  width: double.infinity,
+                  height: 250,
+                  color: Colors.white,
+                ),
+              );
+            },
           ),
         ),
         Positioned(

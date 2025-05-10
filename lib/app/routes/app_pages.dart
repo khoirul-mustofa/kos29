@@ -2,6 +2,10 @@ import 'package:get/get.dart';
 
 import '../modules/auth/edit_profile/bindings/edit_profile_binding.dart';
 import '../modules/auth/edit_profile/views/edit_profile_view.dart';
+import '../modules/auth/register/bindings/auth_register_binding.dart';
+import '../modules/auth/register/views/auth_register_view.dart';
+import '../modules/auth/reset_password/bindings/auth_reset_password_binding.dart';
+import '../modules/auth/reset_password/views/auth_reset_password_view.dart';
 import '../modules/auth/sign_in/bindings/sign_in_binding.dart';
 import '../modules/auth/sign_in/views/sign_in_view.dart';
 import '../modules/bottom_nav/bindings/bottom_nav_binding.dart';
@@ -137,6 +141,16 @@ class AppPages {
       name: _Paths.CHANGE_LOCATION,
       page: () => const ChangeLocationView(),
       binding: ChangeLocationBinding(),
+    ),
+    GetPage(
+      name: _Paths.AUTH_REGISTER,
+      page: () => const AuthRegisterView(),
+      binding: AuthRegisterBinding(),
+    ),
+    GetPage(
+      name: _Paths.AUTH_RESET_PASSWORD,
+      page: () => const AuthResetPasswordView(),
+      binding: AuthResetPasswordBinding(),
     ),
   ];
 }
