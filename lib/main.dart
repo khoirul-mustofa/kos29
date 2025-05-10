@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:kos29/app/lang/translation.dart';
 import 'package:kos29/app/style/theme/theme.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:kos29/app/style/theme/theme_controller.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'app/routes/app_pages.dart';
 
@@ -25,17 +25,18 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
-  final themeController = Get.put(ThemeController());
 
   @override
   Widget build(BuildContext context) {
+    final themeController = Get.put(ThemeController());
+
     return GetMaterialApp(
       defaultTransition: Transition.cupertino,
       transitionDuration: const Duration(milliseconds: 300),
       debugShowCheckedModeBanner: false,
       translations: AppTranslation(),
       locale: Get.deviceLocale ?? const Locale('id', 'ID'),
-      fallbackLocale: Locale('en', 'US'),
+      fallbackLocale: const Locale('en', 'US'),
       themeMode: themeController.theme,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,

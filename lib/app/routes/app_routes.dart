@@ -26,6 +26,7 @@ abstract class Routes {
   static const RESET_PASSWORD = _Paths.RESET_PASSWORD;
   static const AUTH_REGISTER = _Paths.REGISTER;
   static const AUTH_RESET_PASSWORD = _Paths.RESET_PASSWORD;
+  static const AUTH_MANAGE_USER = _Paths.AUTH_MANAGE_USER;
 }
 
 abstract class _Paths {
@@ -53,4 +54,5 @@ abstract class _Paths {
   static const RESET_PASSWORD = '/reset-password';
   static const AUTH_REGISTER = '/register';
   static const AUTH_RESET_PASSWORD = '/reset-password';
+  static const AUTH_MANAGE_USER = '/manage-user';
 }

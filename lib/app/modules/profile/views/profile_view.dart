@@ -80,6 +80,19 @@ class ProfileView extends GetView<ProfileController> {
                       Get.toNamed(Routes.REVIEW_MANAGEMENT);
                     },
                   ),
+                  const SizedBox(height: 12),
+                  Obx(
+                    () =>
+                        controller.isAdmin.value
+                            ? _buildMenuItem(
+                              Icons.person_outline,
+                              'Manage User',
+                              () {
+                                Get.toNamed(Routes.AUTH_MANAGE_USER);
+                              },
+                            )
+                            : const SizedBox.shrink(),
+                  ),
                   const Divider(),
                   _buildMenuItem(Icons.history, 'clear_history'.tr, () {
                     controller.clearHistory();

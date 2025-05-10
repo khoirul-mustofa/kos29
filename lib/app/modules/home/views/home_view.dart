@@ -42,7 +42,7 @@ class HomeView extends GetView<HomeController> {
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.teal,
+            color: Get.theme.colorScheme.primary,
           ),
         ),
         actions: [
@@ -51,31 +51,33 @@ class HomeView extends GetView<HomeController> {
               Get.toNamed(Routes.NOTIFICATION_PAGE);
             },
             icon: Icon(Icons.notifications_outlined),
+            constraints: BoxConstraints(minWidth: 40, minHeight: 40),
+            padding: EdgeInsets.zero,
           ),
           IconButton(
             onPressed: () {
               controller.showLanguageDialog(context);
             },
             icon: Icon(Icons.language),
+            constraints: BoxConstraints(minWidth: 40, minHeight: 40),
+            padding: EdgeInsets.zero,
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: GetBuilder<ThemeController>(
-              builder:
-                  (themeController) => IconButton(
-                    onPressed: themeController.toggleTheme,
-                    tooltip:
-                        themeController.theme == ThemeMode.dark
-                            ? 'Dark theme'
-                            : 'Light theme',
-                    icon: Icon(
-                      themeController.theme == ThemeMode.dark
-                          ? Icons.dark_mode
-                          : Icons.light_mode,
-                    ),
-                  ),
+          IconButton(
+            onPressed: () => controller.toggleTheme(),
+            tooltip: controller.isDarkMode.value ? 'Light theme' : 'Dark theme',
+            icon: Obx(
+              () => Icon(
+                controller.isDarkMode.value
+                    ? Icons.dark_mode
+                    : Icons.light_mode,
+                color:
+                    controller.isDarkMode.value ? Colors.amber : Colors.orange,
+              ),
             ),
+            constraints: BoxConstraints(minWidth: 40, minHeight: 40),
+            padding: EdgeInsets.zero,
           ),
+          SizedBox(width: 8),
         ],
       ),
       body: SafeArea(
@@ -96,7 +98,7 @@ class HomeView extends GetView<HomeController> {
                   Text(
                     'Hey ${controller.prfController.currentUser?.displayName ?? 'kamu'} 😎',
                     style: Get.textTheme.titleMedium!.copyWith(
-                      color: Colors.teal,
+                      color: Get.theme.colorScheme.primary,
                     ),
                   ),
                   SizedBox(height: 5),
@@ -115,12 +117,12 @@ class HomeView extends GetView<HomeController> {
                         vertical: 10,
                       ),
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
+                        border: Border.all(color: Get.theme.dividerColor),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.search),
+                          Icon(Icons.search, color: Get.theme.iconTheme.color),
                           Text('Cari kos dimana?'),
                         ],
                       ),

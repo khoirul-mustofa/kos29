@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kos29/app/modules/auth/sign_in/views/sign_in_view.dart';
@@ -13,7 +15,7 @@ class BottomNavView extends GetView<BottomNavController> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(BottomNavController());
-
+    log(' is dark mode${Get.isDarkMode.toString()}');
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {

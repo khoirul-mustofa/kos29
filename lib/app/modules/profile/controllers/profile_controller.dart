@@ -14,6 +14,7 @@ class ProfileController extends GetxController {
   User? currentUser;
   Map<String, dynamic>? userData;
   var appVersion = '';
+  var isAdmin = false.obs;
 
   @override
   void onInit() {
@@ -45,6 +46,8 @@ class ProfileController extends GetxController {
                 .get();
         if (userDoc.exists) {
           userData = userDoc.data() as Map<String, dynamic>;
+          // Check if user is admin
+          isAdmin.value = userData?['role'] == 'admin';
           update();
         }
         update();

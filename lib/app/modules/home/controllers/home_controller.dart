@@ -9,9 +9,11 @@ import 'package:kos29/app/helper/request_permission_location_helper.dart';
 import 'package:kos29/app/modules/profile/controllers/profile_controller.dart';
 import 'package:kos29/app/services/haversine_service.dart';
 import 'package:kos29/app/services/visit_history_service.dart';
+import 'package:kos29/app/style/theme/theme_controller.dart';
 
 class HomeController extends GetxController {
   final prfController = Get.put(ProfileController());
+  final themeController = Get.put(ThemeController());
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final VisitHistoryService _visitHistoryService = VisitHistoryService();
@@ -19,10 +21,19 @@ class HomeController extends GetxController {
   final kunjunganTerakhir = Rxn<KostModel>();
   final rekomendasiKosts = <KostModel>[].obs;
   final isLoading = false.obs;
+  final isDarkMode = false.obs;
+
+  ThemeMode get theme => themeController.theme;
+
+  void toggleTheme() {
+    themeController.toggleTheme();
+    isDarkMode.value = themeController.isDarkMode;
+  }
 
   @override
   void onInit() {
     super.onInit();
+    isDarkMode.value = themeController.isDarkMode;
     refreshHomePage();
   }
 

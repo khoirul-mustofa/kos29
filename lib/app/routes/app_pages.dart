@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
-
+import 'package:kos29/app/modules/auth/manage_user/bindings/manage_user_binding.dart';
+import 'package:kos29/app/modules/auth/manage_user/views/manage_user_view.dart';
 import '../modules/auth/edit_profile/bindings/edit_profile_binding.dart';
 import '../modules/auth/edit_profile/views/edit_profile_view.dart';
 import '../modules/auth/register/bindings/auth_register_binding.dart';
@@ -151,6 +152,11 @@ class AppPages {
       name: _Paths.AUTH_RESET_PASSWORD,
       page: () => const AuthResetPasswordView(),
       binding: AuthResetPasswordBinding(),
+    ),
+    GetPage(
+      name: _Paths.AUTH_MANAGE_USER,
+      page: () => const ManageUserView(),
+      binding: ManageUserBinding(),
     ),
   ];
 }
