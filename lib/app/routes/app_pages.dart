@@ -21,6 +21,8 @@ import '../modules/history_search/bindings/history_search_binding.dart';
 import '../modules/history_search/views/history_search_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
+import '../modules/home/bindings/category_binding.dart';
+import '../modules/home/views/category_view.dart';
 import '../modules/kost_page/bindings/kost_page_binding.dart';
 import '../modules/kost_page/views/kost_page_view.dart';
 import '../modules/management_kost/add_kost/bindings/management_kost_add_kost_binding.dart';
@@ -157,6 +159,11 @@ class AppPages {
       name: _Paths.AUTH_MANAGE_USER,
       page: () => const ManageUserView(),
       binding: ManageUserBinding(),
+    ),
+    GetPage(
+      name: _Paths.CATEGORY_PAGE,
+      page: () => const CategoryView(),
+      binding: CategoryBinding(),
     ),
   ];
 }

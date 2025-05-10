@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:kos29/app/helper/formater_helper.dart';
 import 'package:kos29/app/routes/app_pages.dart';
 import 'package:kos29/app/style/app_colors.dart';
-import 'package:kos29/app/style/theme/theme_controller.dart';
+
 import 'package:shimmer/shimmer.dart';
 import 'package:kos29/app/data/models/kost_model.dart';
 
@@ -129,6 +129,8 @@ class HomeView extends GetView<HomeController> {
                     ),
                   ),
                   SizedBox(height: 10),
+
+                  // Kategori
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     physics: BouncingScrollPhysics(),
@@ -149,21 +151,28 @@ class HomeView extends GetView<HomeController> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Container(
-                                height: 64,
-                                width: 74,
-                                decoration: BoxDecoration(
-                                  color:
-                                      index == 0
-                                          ? Colors.blue.shade50
-                                          : index == 1
-                                          ? Colors.green.shade50
-                                          : index == 2
-                                          ? Colors.red.shade50
-                                          : Colors.yellow.shade50,
-                                  borderRadius: BorderRadius.circular(8),
+                              GestureDetector(
+                                onTap:
+                                    () => Get.toNamed(
+                                      Routes.CATEGORY_PAGE,
+                                      arguments: category[index],
+                                    ),
+                                child: Container(
+                                  height: 64,
+                                  width: 74,
+                                  decoration: BoxDecoration(
+                                    color:
+                                        index == 0
+                                            ? Colors.blue.shade50
+                                            : index == 1
+                                            ? Colors.green.shade50
+                                            : index == 2
+                                            ? Colors.red.shade50
+                                            : Colors.yellow.shade50,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Center(child: Icon(Icons.home)),
                                 ),
-                                child: Center(child: Icon(Icons.home)),
                               ),
                               SizedBox(height: 4),
                               Text(
