@@ -15,7 +15,7 @@ class DetailPageView extends GetView<DetailPageController> {
     return Scaffold(
       floatingActionButton: ElevatedButton.icon(
         icon: const Icon(Icons.rate_review),
-        label: const Text("Tulis Ulasan"),
+        label: Text("write_review".tr),
         onPressed: () {
           controller.showReviewDialog(context);
         },
@@ -46,11 +46,11 @@ class DetailPageView extends GetView<DetailPageController> {
                         _buildPriceSection(),
                         const SizedBox(height: 16),
                         _buildExpandableSection(
-                          'Fasilitas',
+                          'fasilitas'.tr,
                           'fasilitas',
                           controller.dataKost.fasilitas,
                         ),
-                        _buildExpandableSection('Deskripsi', 'deskripsi', [
+                        _buildExpandableSection('deskripsi'.tr, 'deskripsi', [
                           controller.dataKost.deskripsi,
                         ]),
                         const SizedBox(height: 24),
@@ -337,7 +337,7 @@ class DetailPageView extends GetView<DetailPageController> {
         ),
         const SizedBox(height: 4),
         Text(
-          'Tap alamat untuk mengunjungi kos',
+          'tap_alamat_for_visit'.tr,
           style: Get.textTheme.bodySmall?.copyWith(color: Colors.grey),
         ),
       ],
@@ -345,21 +345,21 @@ class DetailPageView extends GetView<DetailPageController> {
   }
 
   Widget _buildDistanceInfo() {
-    return RichText(
-      text: TextSpan(
-        text: '${controller.dataKost.distance.toStringAsFixed(2)} km',
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Colors.teal,
-          fontSize: 12,
-        ),
-        children: const [
-          TextSpan(
-            text: ' dari lokasi Anda',
-            style: TextStyle(color: Colors.grey, fontSize: 12),
+    return Row(
+      children: [
+        Text(
+          '${controller.dataKost.distance.toStringAsFixed(2)} km',
+          style: Get.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Colors.teal,
           ),
-        ],
-      ),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          'distance_from_your_location'.tr,
+          style: Get.textTheme.bodyMedium?.copyWith(color: Colors.grey),
+        ),
+      ],
     );
   }
 
@@ -388,7 +388,7 @@ class DetailPageView extends GetView<DetailPageController> {
         const SizedBox(width: 12),
         const Icon(Icons.check_circle, color: Colors.green, size: 18),
         const SizedBox(width: 4),
-        const Text('3 Kamar Tersedia'),
+        Text('room_available'.tr),
       ],
     );
   }
@@ -405,7 +405,7 @@ class DetailPageView extends GetView<DetailPageController> {
         ),
         children: [
           TextSpan(
-            text: ' /bulan',
+            text: ' /${'month'.tr}',
             style: TextStyle(fontSize: 14, color: Colors.grey[700]),
           ),
         ],
@@ -456,7 +456,7 @@ class DetailPageView extends GetView<DetailPageController> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    isExpanded ? 'Sembunyikan' : 'Lihat semua',
+                    isExpanded ? 'sembunyikan'.tr : 'lihat_semua'.tr,
                     style: Get.textTheme.bodyMedium?.copyWith(
                       color: Colors.teal.shade800,
                       fontWeight: FontWeight.w600,
@@ -514,7 +514,7 @@ class DetailPageView extends GetView<DetailPageController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Ulasan',
+          'ulasan'.tr,
           style: Get.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
           ),
@@ -526,7 +526,7 @@ class DetailPageView extends GetView<DetailPageController> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Text("Belum ada ulasan.", style: Get.textTheme.bodySmall);
+              return Text("no_review".tr, style: Get.textTheme.bodySmall);
             }
 
             final reviews = snapshot.data!;
@@ -574,7 +574,7 @@ class DetailPageView extends GetView<DetailPageController> {
                                       borderRadius: BorderRadius.circular(6),
                                     ),
                                     child: Text(
-                                      "Balasan Pemilik: ${rwu.review.ownerResponse}",
+                                      "${"owner_response".tr} ${rwu.review.ownerResponse}",
                                       style: TextStyle(
                                         color: Colors.grey[700],
                                         fontStyle: FontStyle.italic,

@@ -153,12 +153,12 @@ class HomeController extends GetxController {
   void showLanguageDialog(BuildContext context) {
     final currentLang = Get.locale?.languageCode ?? 'id';
     Get.defaultDialog(
-      title: 'Pilih Bahasa',
+      title: 'home_language_title'.tr,
       content: Column(
         children: [
           ListTile(
             leading: const Text('🇮🇩', style: TextStyle(fontSize: 24)),
-            title: const Text('Indonesia'),
+            title: Text('home_language_indonesia'.tr),
             trailing:
                 currentLang == 'id'
                     ? const Icon(Icons.check, color: Colors.teal)

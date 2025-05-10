@@ -29,15 +29,15 @@ class DetailPageController extends GetxController {
   String ratingLabel(double rating) {
     switch (rating.round()) {
       case 1:
-        return 'Buruk';
+        return 'bad'.tr;
       case 2:
-        return 'Lumayan';
+        return 'okay'.tr;
       case 3:
-        return 'Bagus';
+        return 'good'.tr;
       case 4:
-        return 'Sangat Bagus';
+        return 'very_good'.tr;
       case 5:
-        return 'Luar Biasa';
+        return 'excellent'.tr;
       default:
         return '';
     }
@@ -161,9 +161,11 @@ class DetailPageController extends GetxController {
                     horizontal: 16,
                     vertical: 8,
                   ),
-                  title: const Text(
-                    'Tulis Ulasan Kost & Bintang',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  title: Text(
+                    'write_review_kost_and_star'.tr,
+                    style: Get.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   content: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.8,
@@ -173,8 +175,8 @@ class DetailPageController extends GetxController {
                         TextField(
                           controller: commentController,
                           decoration: InputDecoration(
-                            labelText: 'Komentar',
-                            hintText: 'Tulis ulasan Anda...',
+                            labelText: 'comment'.tr,
+                            hintText: 'write_your_review'.tr,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -224,14 +226,16 @@ class DetailPageController extends GetxController {
                   actions: [
                     TextButton(
                       onPressed: () => Get.back(),
-                      child: const Text(
-                        'Batal',
-                        style: TextStyle(color: Colors.grey),
+                      child: Text(
+                        'cancel'.tr,
+                        style: Get.textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey,
+                        ),
                       ),
                     ),
                     ElevatedButton.icon(
                       icon: const Icon(Icons.send),
-                      label: const Text('Kirim'),
+                      label: Text('send'.tr),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 20,

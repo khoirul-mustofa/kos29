@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:kos29/app/helper/logger_app.dart';
 import 'package:kos29/app/modules/auth/sign_in/controllers/sign_in_controller.dart';
 import 'package:kos29/app/routes/app_pages.dart';
+import 'package:kos29/app/widgets/swipe_indicator.dart';
 
 import 'package:lottie/lottie.dart';
 
@@ -41,11 +42,11 @@ class SignInView extends GetView<SignInController> {
                       child: Container(
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.95),
+                          color: Colors.white.withValues(alpha: 0.95),
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 10,
                               offset: const Offset(0, 5),
                             ),
@@ -194,7 +195,8 @@ class SignInView extends GetView<SignInController> {
                                 ),
                               ),
                             ),
-
+                            const SizedBox(height: 27),
+                            SwipeIndicator(),
                             const SizedBox(height: 16),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,

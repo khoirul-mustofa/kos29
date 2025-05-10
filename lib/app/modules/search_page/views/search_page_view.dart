@@ -58,7 +58,7 @@ class _SearchPageViewState extends State<SearchPageView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Cari Kos'), centerTitle: true),
+      appBar: AppBar(title: Text('search_kost'.tr), centerTitle: true),
       body: GetBuilder<SearchPageController>(
         builder: (controller) {
           return RefreshIndicator(
@@ -69,7 +69,7 @@ class _SearchPageViewState extends State<SearchPageView> {
                   padding: const EdgeInsets.all(16),
                   child: TextFormField(
                     decoration: InputDecoration(
-                      labelText: 'Cari Kost',
+                      labelText: 'search_kost'.tr,
                       suffixIcon: const Icon(Icons.search),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -107,7 +107,7 @@ class _SearchPageViewState extends State<SearchPageView> {
                                 (context, index) => _buildShimmerCard(),
                           )
                           : controller.kostList.isEmpty
-                          ? const Center(
+                          ? Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -118,7 +118,7 @@ class _SearchPageViewState extends State<SearchPageView> {
                                 ),
                                 SizedBox(height: 16),
                                 Text(
-                                  'Tidak ada data kos',
+                                  'no_data_kos'.tr,
                                   style: TextStyle(
                                     fontSize: 16,
                                     color: Colors.grey,

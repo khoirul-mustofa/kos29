@@ -5,11 +5,10 @@ import 'package:kos29/app/data/models/kost_model.dart';
 import 'package:kos29/app/helper/logger_app.dart';
 import 'package:kos29/app/routes/app_pages.dart';
 import 'package:kos29/app/services/haversine_service.dart';
-import 'package:kos29/app/services/visit_history_service.dart';
 
 class SearchPageController extends GetxController {
   List<KostModel> kostList = [];
-  List<String> category = ["Semua", "Putra", "Putri", "Campur"];
+  List<String> category = ["semua", "putra", "putri", "campur"];
   int selectedCategory = 0;
   bool isLoading = false;
   bool hasMore = true;

@@ -101,7 +101,9 @@ class CardKost extends StatelessWidget {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: Get.theme.colorScheme.primary.withOpacity(0.2),
+                          color: Get.theme.colorScheme.primary.withValues(
+                            alpha: 0.2,
+                          ),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
@@ -125,7 +127,7 @@ class CardKost extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          "${kost.distance.toStringAsFixed(2)} km dari lokasi Anda",
+                          "${kost.distance.toStringAsFixed(2)} km ${'distance_from_your_location'.tr}",
                           style: Get.theme.textTheme.bodySmall,
                         ),
                       ],

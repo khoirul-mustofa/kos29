@@ -16,7 +16,7 @@ class HistorySearchView extends GetView<HistorySearchController> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Riwayat Kunjungan',
+          'history_visit'.tr,
           style: Get.textTheme.titleLarge!.copyWith(
             fontWeight: FontWeight.w600,
           ),
@@ -29,7 +29,7 @@ class HistorySearchView extends GetView<HistorySearchController> {
         }
 
         if (controller.kostData.isEmpty) {
-          return const Center(child: Text('Belum ada riwayat kunjungan'));
+          return Center(child: Text('no_history_visit'.tr));
         }
 
         return ListView.separated(
@@ -141,7 +141,7 @@ class HistorySearchView extends GetView<HistorySearchController> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                '${FormatterHelper.formatHarga(kost.harga)} / bulan',
+                                '${FormatterHelper.formatHarga(kost.harga)} / ${'month'.tr}',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.green,
@@ -152,7 +152,7 @@ class HistorySearchView extends GetView<HistorySearchController> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Dikunjungi ${timeAgoHelper(kost.visitedAt)}',
+                            '${'visited_at'.tr} ${timeAgoHelper(kost.visitedAt)}',
                             style: const TextStyle(
                               fontSize: 12,
                               color: Colors.grey,

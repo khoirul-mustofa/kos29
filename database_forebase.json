@@ -1,0 +1,44 @@
+{
+    "user":
+        {
+            "uid": "1",
+            "displayName": "John Doe",
+            "email": "john@example.com",
+            "password": "password",
+            "role": "user",
+            "phone": "081234567890",
+            "photo_url": "https://via.placeholder.com/150",
+            "address": "Jl. A",
+            "createdAt": "2021-01-01",
+            "updatedAt": "2021-01-01"
+        },
+
+    "kost":
+        {
+            "id_kos": "1",
+            "nama": "Kost A",
+            "harga": 1000000,
+            "alamat": "Jl. A",
+            "gambar": "https://via.placeholder.com/150",
+            "deskripsi": "Deskripsi Kost A",
+            "latitude": -6.208123,
+            "longitude": 106.8456,
+            "fasilitas": ["fasilitas 1", "fasilitas 2", "fasilitas 3"],
+            "jenis": "putra",
+            "status": "aktif",
+            "kamar_tersedia": 10,
+            "kebijakan":["kebijakan 1", "kebijakan 2", "kebijakan 3"],
+            "uid": "1",
+            "createdAt": "2021-01-01"
+        },
+
+        "ulasan":{
+            "id_kos": "1",
+            "uid": "1",
+            "ulasan": "Ulasan Kost A",
+            "rating": 5,
+            "hidden": false,
+            "owner_response": "Balasan Pemilik: Ulasan Kost A",
+            "createdAt": "2021-01-01"
+        }
+}

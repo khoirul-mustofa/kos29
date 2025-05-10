@@ -61,11 +61,11 @@ class ProfileView extends GetView<ProfileController> {
                       style: TextStyle(color: Colors.teal),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  // const SizedBox(height: 24),
 
-                  _buildMenuItem(Icons.location_on_outlined, 'location'.tr, () {
-                    Get.toNamed(Routes.CHANGE_LOCATION);
-                  }),
+                  // _buildMenuItem(Icons.location_on_outlined, 'location'.tr, () {
+                  //   Get.toNamed(Routes.CHANGE_LOCATION);
+                  // }),
                   _buildMenuItem(
                     Icons.apartment_outlined,
                     'manage_kost'.tr,

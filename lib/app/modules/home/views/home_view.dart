@@ -46,14 +46,14 @@ class HomeView extends GetView<HomeController> {
           ),
         ),
         actions: [
-          IconButton(
-            onPressed: () {
-              Get.toNamed(Routes.NOTIFICATION_PAGE);
-            },
-            icon: Icon(Icons.notifications_outlined),
-            constraints: BoxConstraints(minWidth: 40, minHeight: 40),
-            padding: EdgeInsets.zero,
-          ),
+          // IconButton(
+          //   onPressed: () {
+          //     Get.toNamed(Routes.NOTIFICATION_PAGE);
+          //   },
+          //   icon: Icon(Icons.notifications_outlined),
+          //   constraints: BoxConstraints(minWidth: 40, minHeight: 40),
+          //   padding: EdgeInsets.zero,
+          // ),
           IconButton(
             onPressed: () {
               controller.showLanguageDialog(context);
@@ -62,21 +62,21 @@ class HomeView extends GetView<HomeController> {
             constraints: BoxConstraints(minWidth: 40, minHeight: 40),
             padding: EdgeInsets.zero,
           ),
-          IconButton(
-            onPressed: () => controller.toggleTheme(),
-            tooltip: controller.isDarkMode.value ? 'Light theme' : 'Dark theme',
-            icon: Obx(
-              () => Icon(
-                controller.isDarkMode.value
-                    ? Icons.dark_mode
-                    : Icons.light_mode,
-                color:
-                    controller.isDarkMode.value ? Colors.amber : Colors.orange,
-              ),
-            ),
-            constraints: BoxConstraints(minWidth: 40, minHeight: 40),
-            padding: EdgeInsets.zero,
-          ),
+          // IconButton(
+          //   onPressed: () => controller.toggleTheme(),
+          //   tooltip: controller.isDarkMode.value ? 'Light theme' : 'Dark theme',
+          //   icon: Obx(
+          //     () => Icon(
+          //       controller.isDarkMode.value
+          //           ? Icons.dark_mode
+          //           : Icons.light_mode,
+          //       color:
+          //           controller.isDarkMode.value ? Colors.amber : Colors.orange,
+          //     ),
+          //   ),
+          //   constraints: BoxConstraints(minWidth: 40, minHeight: 40),
+          //   padding: EdgeInsets.zero,
+          // ),
           SizedBox(width: 8),
         ],
       ),
@@ -96,15 +96,18 @@ class HomeView extends GetView<HomeController> {
                 children: [
                   SizedBox(height: 16),
                   Text(
-                    'Hey ${controller.prfController.currentUser?.displayName ?? 'kamu'} 😎',
+                    '${'hello'.tr} ${controller.prfController.currentUser?.displayName ?? 'kamu'} ${'home_welcome'.tr} 😎',
                     style: Get.textTheme.titleMedium!.copyWith(
                       color: Get.theme.colorScheme.primary,
                     ),
                   ),
                   SizedBox(height: 5),
-                  Text('#Dapatkan Kemudahan', style: Get.textTheme.titleMedium),
                   Text(
-                    'Cari dan Temukan Kos Terdekat!',
+                    'home_search_title'.tr,
+                    style: Get.textTheme.titleMedium,
+                  ),
+                  Text(
+                    'home_search_sub'.tr,
                     textAlign: TextAlign.left,
                     style: Get.textTheme.bodyMedium,
                   ),
@@ -123,13 +126,14 @@ class HomeView extends GetView<HomeController> {
                       child: Row(
                         children: [
                           Icon(Icons.search, color: Get.theme.iconTheme.color),
-                          Text('Cari kos dimana?'),
+                          Text('home_search'.tr),
                         ],
                       ),
                     ),
                   ),
                   SizedBox(height: 10),
-
+                  Text('home_categories'.tr, style: Get.textTheme.titleMedium),
+                  SizedBox(height: 10),
                   // Kategori
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -140,10 +144,10 @@ class HomeView extends GetView<HomeController> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: List.generate(4, (index) {
                         final List category = [
-                          'Terdekat',
-                          'Termurah',
-                          'Termahal',
-                          'Terbaik',
+                          'home_nearby'.tr,
+                          'home_cheapest'.tr,
+                          'home_expensive'.tr,
+                          'home_best'.tr,
                         ];
 
                         return Padding(
@@ -188,10 +192,7 @@ class HomeView extends GetView<HomeController> {
                   SizedBox(height: 20),
                   _buildKunjunganTerakhir(),
                   SizedBox(height: 10),
-                  Text(
-                    'Rekomendasi Terdekat',
-                    style: Get.textTheme.titleMedium,
-                  ),
+                  Text('home_recommended'.tr, style: Get.textTheme.titleMedium),
                   SizedBox(height: 10),
                   _buildRekomendasiList(),
                 ],
@@ -207,7 +208,7 @@ class HomeView extends GetView<HomeController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Kunjungan Terakhir', style: Get.textTheme.titleMedium),
+        Text('home_last_visit'.tr, style: Get.textTheme.titleMedium),
         const SizedBox(height: 10),
         Obx(() {
           if (controller.isLoading.value) {
@@ -489,22 +490,17 @@ Widget buildKostCard(KostModel kost) {
                         color: Colors.red,
                       ),
                       const SizedBox(width: 4),
-                      RichText(
-                        overflow: TextOverflow.ellipsis,
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: '${kost.distance.toStringAsFixed(2)} km',
-                              style: Get.textTheme.labelSmall!.copyWith(
-                                color: Colors.teal,
-                              ),
-                            ),
-                            TextSpan(
-                              text: ' dari lokasi Anda',
-                              style: Get.textTheme.labelSmall,
-                            ),
-                          ],
+                      Text(
+                        '${kost.distance.toStringAsFixed(2)} km',
+                        style: Get.textTheme.bodyMedium!.copyWith(
+                          color: Colors.teal,
+                          fontWeight: FontWeight.bold,
                         ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'distance_from_your_location'.tr,
+                        style: Get.textTheme.bodyMedium,
                       ),
                     ],
                   ),
@@ -512,7 +508,7 @@ Widget buildKostCard(KostModel kost) {
                     padding: const EdgeInsets.only(left: 8.0, top: 10),
                     child: Text(
                       kost.alamat,
-                      style: Get.textTheme.labelSmall,
+                      style: Get.textTheme.bodyMedium,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),

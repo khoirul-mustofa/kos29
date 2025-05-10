@@ -24,7 +24,7 @@ class SignInController extends GetxController {
       Get.snackbar(
         'Error',
         'Email dan password harus diisi',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
@@ -55,7 +55,7 @@ class SignInController extends GetxController {
       Get.snackbar(
         'Error',
         message,
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
