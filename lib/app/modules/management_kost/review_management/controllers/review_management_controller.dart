@@ -2,10 +2,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kos29/app/data/models/review_model.dart';
+import 'package:kos29/app/data/models/review_with_user_model.dart';
+import 'package:kos29/app/services/user_service.dart';
 
 class ReviewManagementController extends GetxController {
-  final reviews = <ReviewModel>[].obs;
+  final reviews = <ReviewWithUserModel>[].obs;
+  final filteredReviews = <ReviewWithUserModel>[].obs;
   final isLoading = false.obs;
+  final searchController = TextEditingController();
+  final selectedFilter = 'all'.obs;
+  final selectedRating = 0.obs; // 0 means no rating filter
+  final _userService = UserService();
 
   @override
   void onInit() {
@@ -21,8 +28,97 @@ class ReviewManagementController extends GetxController {
             .orderBy('createdAt', descending: true)
             .get();
 
-    reviews.value = query.docs.map((doc) => ReviewModel.fromDoc(doc)).toList();
+    final reviewsList =
+        query.docs.map((doc) => ReviewModel.fromDoc(doc)).toList();
+
+    // Fetch user data for each review
+    final reviewsWithUser = await Future.wait(
+      reviewsList.map((review) async {
+        final user = await _userService.getUserById(review.userId);
+        if (user == null) throw Exception('User tidak ditemukan');
+        return ReviewWithUserModel(review: review, user: user);
+      }),
+    );
+
+    reviews.clear();
+    reviews.addAll(reviewsWithUser);
+    filterReviews();
     isLoading.value = false;
+  }
+
+  void searchReviews(String query) {
+    if (query.isEmpty) {
+      filterReviews();
+      return;
+    }
+
+    final lowercaseQuery = query.toLowerCase();
+    final filtered =
+        reviews.where((reviewWithUser) {
+          final comment = reviewWithUser.review.comment.toLowerCase();
+          final response =
+              reviewWithUser.review.ownerResponse?.toLowerCase() ?? '';
+          final userName = reviewWithUser.user.name.toLowerCase();
+
+          return comment.contains(lowercaseQuery) ||
+              response.contains(lowercaseQuery) ||
+              userName.contains(lowercaseQuery);
+        }).toList();
+
+    filteredReviews.clear();
+    filteredReviews.addAll(filtered);
+  }
+
+  void filterReviews() {
+    var filtered = reviews.toList(); // Convert RxList to List for filtering
+
+    // Apply status filter
+    switch (selectedFilter.value) {
+      case 'hidden':
+        filtered = filtered.where((r) => r.review.hidden == true).toList();
+        break;
+      case 'responded':
+        filtered =
+            filtered
+                .where(
+                  (r) =>
+                      r.review.ownerResponse != null &&
+                      r.review.ownerResponse!.isNotEmpty,
+                )
+                .toList();
+        break;
+      case 'unresponded':
+        filtered =
+            filtered
+                .where(
+                  (r) =>
+                      r.review.ownerResponse == null ||
+                      r.review.ownerResponse!.isEmpty,
+                )
+                .toList();
+        break;
+    }
+
+    // Apply rating filter
+    if (selectedRating.value > 0) {
+      filtered =
+          filtered
+              .where((r) => r.review.rating == selectedRating.value)
+              .toList();
+    }
+
+    filteredReviews.clear();
+    filteredReviews.addAll(filtered);
+  }
+
+  void setFilter(String filter) {
+    selectedFilter.value = filter;
+    filterReviews();
+  }
+
+  void setRatingFilter(int rating) {
+    selectedRating.value = rating;
+    filterReviews();
   }
 
   Future<void> setReviewHidden(String reviewId, bool hidden) async {
@@ -39,7 +135,7 @@ class ReviewManagementController extends GetxController {
     fetchReviews();
   }
 
-  void showResponseDialog(ReviewModel review) {
+  void showResponseDialog(ReviewWithUserModel reviewWithUser) {
     final controller = TextEditingController();
     Get.dialog(
       AlertDialog(
@@ -53,7 +149,7 @@ class ReviewManagementController extends GetxController {
           TextButton(onPressed: () => Get.back(), child: const Text('Batal')),
           ElevatedButton(
             onPressed: () async {
-              await respondToReview(review.id!, controller.text);
+              await respondToReview(reviewWithUser.review.id!, controller.text);
               Get.back();
             },
             child: const Text('Kirim'),
@@ -61,5 +157,11 @@ class ReviewManagementController extends GetxController {
         ],
       ),
     );
+  }
+
+  @override
+  void onClose() {
+    searchController.dispose();
+    super.onClose();
   }
 }
