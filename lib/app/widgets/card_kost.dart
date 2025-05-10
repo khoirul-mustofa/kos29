@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:kos29/app/data/models/kost_model.dart';
 import 'package:kos29/app/helper/formater_helper.dart';
 import 'package:kos29/app/modules/search_page/controllers/search_page_controller.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CardKost extends StatelessWidget {
   final KostModel kost;
@@ -33,9 +34,30 @@ class CardKost extends StatelessWidget {
                         height: 180,
                         width: double.infinity,
                         fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Shimmer.fromColors(
+                            baseColor: Colors.grey[300]!,
+                            highlightColor: Colors.grey[100]!,
+                            child: Container(
+                              height: 180,
+                              width: double.infinity,
+                              color: Colors.white,
+                            ),
+                          );
+                        },
                         errorBuilder:
-                            (_, __, ___) =>
-                                const Icon(Icons.image_not_supported),
+                            (_, __, ___) => Container(
+                              height: 180,
+                              color: Colors.grey[300],
+                              child: const Center(
+                                child: Icon(
+                                  Icons.image_not_supported,
+                                  size: 48,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
                       )
                       : Container(
                         height: 180,
@@ -79,9 +101,7 @@ class CardKost extends StatelessWidget {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: Get.theme.colorScheme.primary.withValues(
-                            alpha: 0.2,
-                          ),
+                          color: Get.theme.colorScheme.primary.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(

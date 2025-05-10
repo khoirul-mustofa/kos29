@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kos29/app/modules/search_page/controllers/search_page_controller.dart';
 import 'package:kos29/app/widgets/card_kost.dart';
+import 'package:shimmer/shimmer.dart';
 
 class SearchPageView extends StatefulWidget {
   const SearchPageView({super.key});
@@ -35,6 +36,23 @@ class _SearchPageViewState extends State<SearchPageView> {
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
     super.dispose();
+  }
+
+  Widget _buildShimmerCard() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[300]!,
+        highlightColor: Colors.grey[100]!,
+        child: Container(
+          height: 200,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -82,11 +100,38 @@ class _SearchPageViewState extends State<SearchPageView> {
                 const SizedBox(height: 10),
                 Expanded(
                   child:
-                      controller.kostList.isEmpty && !controller.isLoading
-                          ? const Center(child: Text('Tidak ada data kos'))
+                      controller.isLoading && controller.kostList.isEmpty
+                          ? ListView.builder(
+                            itemCount: 3,
+                            itemBuilder:
+                                (context, index) => _buildShimmerCard(),
+                          )
+                          : controller.kostList.isEmpty
+                          ? const Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.search_off,
+                                  size: 64,
+                                  color: Colors.grey,
+                                ),
+                                SizedBox(height: 16),
+                                Text(
+                                  'Tidak ada data kos',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
                           : ListView.builder(
                             controller: _scrollController,
-                            itemCount: controller.filteredKost.length + 1,
+                            itemCount:
+                                controller.filteredKost.length +
+                                (controller.hasMore ? 3 : 0),
                             itemBuilder: (context, index) {
                               if (index < controller.filteredKost.length) {
                                 final kost = controller.filteredKost[index];
@@ -96,12 +141,7 @@ class _SearchPageViewState extends State<SearchPageView> {
                                 );
                               } else {
                                 return controller.hasMore
-                                    ? const Padding(
-                                      padding: EdgeInsets.all(16),
-                                      child: Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                    )
+                                    ? _buildShimmerCard()
                                     : const SizedBox();
                               }
                             },
