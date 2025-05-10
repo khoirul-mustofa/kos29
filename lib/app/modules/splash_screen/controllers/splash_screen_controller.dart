@@ -8,7 +8,7 @@ class SplashScreenController extends GetxController {
     super.onInit();
     final box = GetStorage();
     final hasSeenOnboarding = box.read('onboarding') ?? false;
-    Future.delayed(const Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 3), () {
       Get.offAllNamed(
         hasSeenOnboarding ? Routes.BOTTOM_NAV : Routes.ONBOARDING,
       );
