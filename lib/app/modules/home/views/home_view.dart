@@ -96,7 +96,7 @@ class HomeView extends GetView<HomeController> {
                 children: [
                   SizedBox(height: 16),
                   Text(
-                    '${'hello'.tr} ${controller.prfController.currentUser?.displayName ?? 'kamu'} ${'home_welcome'.tr} 😎',
+                    '${'hello'.tr} ${controller.prfController.currentUser?.displayName ?? ''} ${'home_welcome'.tr} 😎',
                     style: Get.textTheme.titleMedium!.copyWith(
                       color: Get.theme.colorScheme.primary,
                     ),
