@@ -6,6 +6,7 @@ import 'package:kos29/app/helper/formater_helper.dart';
 import 'package:kos29/app/helper/logger_app.dart';
 import 'package:shimmer/shimmer.dart';
 import '../controllers/detail_page_controller.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class DetailPageView extends GetView<DetailPageController> {
   DetailPageView({super.key});
@@ -285,6 +286,26 @@ class DetailPageView extends GetView<DetailPageController> {
             ),
           ),
         ),
+        if (FirebaseAuth.instance.currentUser != null)
+          Positioned(
+            top: 16,
+            right: 16,
+            child: CircleAvatar(
+              backgroundColor: Colors.black45,
+              child: Obx(
+                () => IconButton(
+                  icon: Icon(
+                    controller.isFavorite.value
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    color:
+                        controller.isFavorite.value ? Colors.red : Colors.white,
+                  ),
+                  onPressed: controller.toggleFavorite,
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }

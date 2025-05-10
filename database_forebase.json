@@ -40,5 +40,10 @@
             "hidden": false,
             "owner_response": "Balasan Pemilik: Ulasan Kost A",
             "createdAt": "2021-01-01"
+        },
+        "favorite":{
+            "id_kos": "1",
+            "uid": "1",
+            "createdAt": "2021-01-01"
         }
 }

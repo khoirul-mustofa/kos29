@@ -57,6 +57,12 @@ class AppTranslation extends Translations {
       'lihat_semua': 'View All',
       'sembunyikan': 'Hide',
 
+      // favorite
+      'favorite_add_success': 'Added to favorites',
+      'favorite_remove_success': 'Removed from favorites',
+      'favorite_login_required': 'Please login to add favorites',
+      'favorite_error': 'Error',
+
       // comment
       'comment': 'Comment',
       'write_your_review': 'Write your review...',
@@ -115,13 +121,13 @@ class AppTranslation extends Translations {
       'home_title': 'Beranda',
       'home_welcome': 'Selamat Datang',
       'home_search': 'Cari',
-      'home_recommended': 'Rekomendasi',
+      'home_categories': 'Kategori',
+      'home_recommended': 'Direkomendasikan',
       'home_nearby': 'Terdekat',
       'home_cheapest': 'Termurah',
       'home_expensive': 'Termahal',
       'home_best': 'Terbaik',
-      'home_categories_title': 'Kategori',
-      'home_search_sub': 'Cari dan Temukan Kos Terdekat!',
+      'home_search_sub': 'Temukan kost terdekat!',
       'home_search_title': '#Dapatkan Kemudahan',
       'home_last_visit': 'Kunjungan Terakhir',
       'home_language_title': 'Pilih Bahasa',
@@ -134,7 +140,7 @@ class AppTranslation extends Translations {
 
       // bottom nav
       'exit_app_title': 'Keluar Aplikasi',
-      'exit_app_content': 'Anda yakin ingin keluar aplikasi?',
+      'exit_app_content': 'Apakah Anda yakin ingin keluar dari aplikasi?',
       'bottom_nav_home': 'Beranda',
       'bottom_nav_history': 'Riwayat',
       'bottom_nav_profile': 'Profil',
@@ -144,13 +150,19 @@ class AppTranslation extends Translations {
       'write_review': 'Tulis Ulasan',
       'fasilitas': 'Fasilitas',
       'deskripsi': 'Deskripsi',
-      'tap_alamat_for_visit': 'Tap alamat untuk mengunjungi kos',
+      'tap_alamat_for_visit': 'Ketuk alamat untuk mengunjungi kost',
       'distance_from_your_location': ' dari lokasi Anda',
       'room_available': 'Kamar Tersedia',
-      'no_review': 'Belum ada ulasan.',
-      'owner_response': 'Balasan Pemilik: ',
-      'lihat_semua': 'Lihat semua',
+      'no_review': 'Belum Ada Ulasan',
+      'owner_response': 'Respon Pemilik: ',
+      'lihat_semua': 'Lihat Semua',
       'sembunyikan': 'Sembunyikan',
+
+      // favorite
+      'favorite_add_success': 'Ditambahkan ke favorit',
+      'favorite_remove_success': 'Dihapus dari favorit',
+      'favorite_login_required': 'Silakan login untuk menambahkan favorit',
+      'favorite_error': 'Error',
 
       // comment
       'comment': 'Komentar',

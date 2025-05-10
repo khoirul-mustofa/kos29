@@ -1,6 +1,5 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
@@ -13,14 +12,18 @@ import 'package:kos29/app/routes/app_pages.dart';
 import 'package:kos29/app/services/review_service.dart';
 import 'package:kos29/app/services/user_service.dart';
 import 'package:kos29/app/services/visit_history_service.dart';
+import 'package:kos29/app/services/favorite_service.dart';
+import 'package:kos29/app/helper/logger_app.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DetailPageController extends GetxController {
   final _reviewService = ReviewService();
   final _userService = UserService();
+  final _favoriteService = FavoriteService();
   final jumlahUlasan = 0.obs;
   final rataRating = 0.0.obs;
   final isLoading = false.obs;
+  final isFavorite = false.obs;
   final KostModel dataKost = Get.arguments;
 
   var isFasilitasExpanded = false;
@@ -88,11 +91,45 @@ class DetailPageController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
     VisitHistoryService().saveVisit(dataKost.idKos);
     Get.find<HomeController>().refreshHomePage();
     getReviewsWithUser(dataKost.idKos);
     calculateRating();
+    checkFavoriteStatus();
+  }
+
+  Future<void> checkFavoriteStatus() async {
+    try {
+      isFavorite.value = await _favoriteService.isFavorite(dataKost.idKos);
+    } catch (e) {
+      logger.e('Error checking favorite status: $e');
+    }
+  }
+
+  Future<void> toggleFavorite() async {
+    try {
+      if (isFavorite.value) {
+        await _favoriteService.removeFavorite(dataKost.idKos);
+        isFavorite.value = false;
+        Get.snackbar(
+          'Success',
+          'favorite_remove_success'.tr,
+          snackPosition: SnackPosition.TOP,
+        );
+      } else {
+        await _favoriteService.addFavorite(dataKost.idKos);
+        isFavorite.value = true;
+        if (kDebugMode) {
+          logger.i('Favorite added');
+        }
+      }
+    } catch (e) {
+      Get.snackbar(
+        'favorite_error'.tr,
+        e.toString(),
+        snackPosition: SnackPosition.TOP,
+      );
+    }
   }
 
   void toggleiExpanded(String section) {
