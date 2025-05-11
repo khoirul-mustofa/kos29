@@ -54,6 +54,14 @@ class HomeView extends GetView<HomeController> {
             constraints: BoxConstraints(minWidth: 40, minHeight: 40),
             padding: EdgeInsets.zero,
           ),
+          IconButton(
+            onPressed: () {
+              Get.toNamed(Routes.FEEDBACK);
+            },
+            icon: Icon(Icons.feedback_outlined),
+            constraints: BoxConstraints(minWidth: 40, minHeight: 40),
+            padding: EdgeInsets.zero,
+          ),
           SizedBox(width: 8),
         ],
       ),

@@ -103,6 +103,52 @@ class AppTranslation extends Translations {
       'putra': 'Putra',
       'putri': 'Putri',
       'campur': 'Campur',
+
+      // feedback
+      'feedback': 'Feedback',
+      'feedback_message': 'Message',
+      'feedback_message_hint': 'Write your feedback here...',
+      'feedback_attach_image': 'Attach Image',
+      'feedback_submit': 'Submit Feedback',
+      'feedback_submitting': 'Submitting...',
+      'feedback_success': 'Feedback submitted successfully',
+      'feedback_error': 'Failed to submit feedback',
+      'feedback_no_image': 'No image selected',
+      'feedback_status_pending': 'Pending',
+      'feedback_status_processing': 'Processing',
+      'feedback_status_responded': 'Responded',
+      'feedback_response': 'Developer Response',
+      'feedback_no_feedbacks': 'No feedbacks yet',
+      'feedback_loading': 'Loading feedbacks...',
+      'submit_feedback': 'Submit Feedback',
+
+      // feedback categories
+      'bug_report': 'Bug Report',
+      'feature_suggestion': 'Feature Suggestion',
+      'complaint': 'Complaint',
+      'user_satisfaction': 'User Satisfaction',
+      'general': 'General',
+
+      // feedback messages
+      'rating': 'Rating',
+      'category': 'Category',
+      'please_select_rating': 'Please select a rating',
+      'please_select_category': 'Please select a category',
+      'please_enter_feedback': 'Please enter your feedback',
+      'feedback_submitted': 'Feedback submitted successfully',
+      'failed_to_submit_feedback': 'Failed to submit feedback',
+      'something_went_wrong': 'Something went wrong',
+      'error': 'Error',
+      'success': 'Success',
+
+      // feedback form fields
+      'name': 'Name',
+      'email': 'Email',
+      'enter_name': 'Enter your name',
+      'enter_email': 'Enter your email',
+      'please_enter_name': 'Please enter your name',
+      'please_enter_email': 'Please enter your email',
+      'please_enter_valid_email': 'Please enter a valid email address',
     },
     'id_ID': {
       'hello': 'Halo',
@@ -204,6 +250,52 @@ class AppTranslation extends Translations {
       'putra': 'Putra',
       'putri': 'Putri',
       'campur': 'Campur',
+
+      // feedback
+      'feedback': 'Umpan Balik',
+      'feedback_message': 'Pesan',
+      'feedback_message_hint': 'Tulis umpan balik Anda di sini...',
+      'feedback_attach_image': 'Lampirkan Gambar',
+      'feedback_submit': 'Kirim Umpan Balik',
+      'feedback_submitting': 'Mengirim...',
+      'feedback_success': 'Umpan balik berhasil dikirim',
+      'feedback_error': 'Gagal mengirim umpan balik',
+      'feedback_no_image': 'Tidak ada gambar yang dipilih',
+      'feedback_status_pending': 'Menunggu',
+      'feedback_status_processing': 'Diproses',
+      'feedback_status_responded': 'Direspon',
+      'feedback_response': 'Respon Pengembang',
+      'feedback_no_feedbacks': 'Belum ada umpan balik',
+      'feedback_loading': 'Memuat umpan balik...',
+      'submit_feedback': 'Kirim Umpan Balik',
+
+      // feedback categories
+      'bug_report': 'Laporan Bug',
+      'feature_suggestion': 'Saran Fitur',
+      'complaint': 'Keluhan',
+      'user_satisfaction': 'Kepuasan Pengguna',
+      'general': 'Umum',
+
+      // feedback messages
+      'rating': 'Penilaian',
+      'category': 'Kategori',
+      'please_select_rating': 'Silakan pilih penilaian',
+      'please_select_category': 'Silakan pilih kategori',
+      'please_enter_feedback': 'Silakan masukkan umpan balik Anda',
+      'feedback_submitted': 'Umpan balik berhasil dikirim',
+      'failed_to_submit_feedback': 'Gagal mengirim umpan balik',
+      'something_went_wrong': 'Terjadi kesalahan',
+      'error': 'Kesalahan',
+      'success': 'Berhasil',
+
+      // feedback form fields
+      'name': 'Nama',
+      'email': 'Email',
+      'enter_name': 'Masukkan nama Anda',
+      'enter_email': 'Masukkan email Anda',
+      'please_enter_name': 'Silakan masukkan nama Anda',
+      'please_enter_email': 'Silakan masukkan email Anda',
+      'please_enter_valid_email': 'Silakan masukkan alamat email yang valid',
     },
   };
 }

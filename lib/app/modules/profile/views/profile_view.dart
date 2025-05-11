@@ -105,7 +105,6 @@ class ProfileView extends GetView<ProfileController> {
                     '${'app_version'.tr} ${controller.appVersion}',
                     style: TextStyle(color: Colors.grey, fontSize: 12),
                   ),
-                  const SizedBox(height: 16),
                 ],
               ),
             );

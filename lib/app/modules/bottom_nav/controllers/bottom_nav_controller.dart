@@ -4,10 +4,14 @@ import 'package:get/get.dart';
 import 'package:kos29/app/modules/history_search/controllers/history_search_controller.dart';
 
 class BottomNavController extends GetxController {
-  RxInt selectedIndex = 0.obs;
+  final selectedIndex = 0.obs;
   bool get isAuth => FirebaseAuth.instance.currentUser != null;
 
   final PageController pageController = PageController();
+
+  void changePage(int index) {
+    selectedIndex.value = index;
+  }
 
   void changeTabIndexWithAnimation(int index) {
     selectedIndex.value = index;

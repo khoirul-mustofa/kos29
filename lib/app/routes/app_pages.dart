@@ -15,6 +15,8 @@ import '../modules/change_location/bindings/change_location_binding.dart';
 import '../modules/change_location/views/change_location_view.dart';
 import '../modules/detail_page/bindings/detail_page_binding.dart';
 import '../modules/detail_page/views/detail_page_view.dart';
+import '../modules/feedback/bindings/feedback_binding.dart';
+import '../modules/feedback/views/feedback_view.dart';
 import '../modules/form_profile/bindings/form_profile_binding.dart';
 import '../modules/form_profile/views/form_profile_view.dart';
 import '../modules/history_search/bindings/history_search_binding.dart';
@@ -157,6 +159,11 @@ class AppPages {
       name: _Paths.CATEGORY_PAGE,
       page: () => const CategoryView(),
       binding: CategoryBinding(),
+    ),
+    GetPage(
+      name: _Paths.FEEDBACK,
+      page: () => const FeedbackView(),
+      binding: FeedbackBinding(),
     ),
   ];
 }

@@ -27,6 +27,7 @@ abstract class Routes {
   static const AUTH_RESET_PASSWORD = _Paths.RESET_PASSWORD;
   static const AUTH_MANAGE_USER = _Paths.AUTH_MANAGE_USER;
   static const CATEGORY_PAGE = _Paths.CATEGORY_PAGE;
+  static const FEEDBACK = _Paths.FEEDBACK;
 }
 
 abstract class _Paths {
@@ -55,4 +56,5 @@ abstract class _Paths {
   static const AUTH_RESET_PASSWORD = '/reset-password';
   static const AUTH_MANAGE_USER = '/manage-user';
   static const CATEGORY_PAGE = '/category-page';
+  static const FEEDBACK = '/feedback';
 }
