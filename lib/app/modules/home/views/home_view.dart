@@ -48,35 +48,12 @@ class HomeView extends GetView<HomeController> {
         actions: [
           IconButton(
             onPressed: () {
-              Get.toNamed(Routes.NOTIFICATION_PAGE);
-            },
-            icon: Icon(Icons.notifications_outlined),
-            constraints: BoxConstraints(minWidth: 40, minHeight: 40),
-            padding: EdgeInsets.zero,
-          ),
-          IconButton(
-            onPressed: () {
               controller.showLanguageDialog(context);
             },
             icon: Icon(Icons.language),
             constraints: BoxConstraints(minWidth: 40, minHeight: 40),
             padding: EdgeInsets.zero,
           ),
-          // IconButton(
-          //   onPressed: () => controller.toggleTheme(),
-          //   tooltip: controller.isDarkMode.value ? 'Light theme' : 'Dark theme',
-          //   icon: Obx(
-          //     () => Icon(
-          //       controller.isDarkMode.value
-          //           ? Icons.dark_mode
-          //           : Icons.light_mode,
-          //       color:
-          //           controller.isDarkMode.value ? Colors.amber : Colors.orange,
-          //     ),
-          //   ),
-          //   constraints: BoxConstraints(minWidth: 40, minHeight: 40),
-          //   padding: EdgeInsets.zero,
-          // ),
           SizedBox(width: 8),
         ],
       ),

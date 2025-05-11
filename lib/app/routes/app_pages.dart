@@ -33,8 +33,6 @@ import '../modules/management_kost/edit_kost/bindings/management_kost_edit_kost_
 import '../modules/management_kost/edit_kost/views/management_kost_edit_kost_view.dart';
 import '../modules/management_kost/review_management/bindings/review_management_binding.dart';
 import '../modules/management_kost/review_management/views/review_management_view.dart';
-import '../modules/notification_page/bindings/notification_page_binding.dart';
-import '../modules/notification_page/views/notification_page_view.dart';
 import '../modules/onboarding/bindings/onboarding_binding.dart';
 import '../modules/onboarding/views/onboarding_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
@@ -104,11 +102,6 @@ class AppPages {
       name: _Paths.HISTORY_SEARCH,
       page: () => HistorySearchView(),
       binding: HistorySearchBinding(),
-    ),
-    GetPage(
-      name: _Paths.NOTIFICATION_PAGE,
-      page: () => const NotificationPageView(),
-      binding: NotificationPageBinding(),
     ),
     GetPage(
       name: _Paths.KOST_PAGE,

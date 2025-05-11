@@ -343,6 +343,7 @@ class ManagementKostAddKostController extends GetxController {
       };
 
       await FirebaseFirestore.instance.collection('kosts').doc(idKos).set(data);
+
       final listController = Get.find<KostPageController>();
       listController.loadKos(firstLoad: true);
       Get.snackbar('Berhasil', 'Kosan berhasil disimpan');

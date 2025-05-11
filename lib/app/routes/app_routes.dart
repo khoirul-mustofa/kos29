@@ -14,7 +14,6 @@ abstract class Routes {
   static const ONBOARDING = _Paths.ONBOARDING;
   static const DETAIL_PAGE = _Paths.DETAIL_PAGE;
   static const HISTORY_SEARCH = _Paths.HISTORY_SEARCH;
-  static const NOTIFICATION_PAGE = _Paths.NOTIFICATION_PAGE;
   static const KOST_PAGE = _Paths.KOST_PAGE;
   static const MANAGEMENT_KOST_DETAIL_KOST = _Paths.MANAGEMENT_KOST_DETAIL_KOST;
   static const MANAGEMENT_KOST_ADD_KOST = _Paths.MANAGEMENT_KOST_ADD_KOST;
@@ -43,7 +42,6 @@ abstract class _Paths {
   static const ONBOARDING = '/onboarding';
   static const DETAIL_PAGE = '/detail-page';
   static const HISTORY_SEARCH = '/history-search';
-  static const NOTIFICATION_PAGE = '/notification-page';
   static const KOST_PAGE = '/kost-page';
   static const MANAGEMENT_KOST_DETAIL_KOST = '/detail-kost';
   static const MANAGEMENT_KOST_ADD_KOST = '/add-kost';
