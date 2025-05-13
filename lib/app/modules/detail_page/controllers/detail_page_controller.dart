@@ -293,6 +293,7 @@ class DetailPageController extends GetxController {
                             createdAt: DateTime.now(),
                             hidden: false,
                             ownerResponse: null,
+                            ownerId: dataKost.uid
                           );
                           await _reviewService.submitReview(review);
                           update();

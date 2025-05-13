@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kos29/app/data/models/review_model.dart';
@@ -11,7 +12,7 @@ class ReviewManagementController extends GetxController {
   final isLoading = false.obs;
   final searchController = TextEditingController();
   final selectedFilter = 'all'.obs;
-  final selectedRating = 0.obs; // 0 means no rating filter
+  final selectedRating = 0.obs; 
   final _userService = UserService();
 
   @override
@@ -22,11 +23,16 @@ class ReviewManagementController extends GetxController {
 
   Future<void> fetchReviews() async {
     isLoading.value = true;
-    final query =
-        await FirebaseFirestore.instance
-            .collection('reviews')
-            .orderBy('createdAt', descending: true)
-            .get();
+    
+
+
+final userId = FirebaseAuth.instance.currentUser!.uid;
+
+final query = await FirebaseFirestore.instance
+    .collection('reviews')
+    .where('ownerId', isEqualTo: userId)
+    .orderBy('createdAt', descending: true)
+    .get();
 
     final reviewsList =
         query.docs.map((doc) => ReviewModel.fromDoc(doc)).toList();

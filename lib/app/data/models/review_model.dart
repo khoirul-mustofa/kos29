@@ -8,6 +8,7 @@ class ReviewModel {
   final String kostId;
   final bool hidden;
   final String? ownerResponse;
+  final String ownerId;
   final DateTime createdAt;
 
   ReviewModel({
@@ -18,6 +19,7 @@ class ReviewModel {
     required this.kostId,
     required this.hidden,
     required this.ownerResponse,
+    required this.ownerId,
     required this.createdAt,
   });
 
@@ -31,6 +33,7 @@ class ReviewModel {
       kostId: json['kostId'],
       hidden: json['hidden'],
       ownerResponse: json['ownerResponse'],
+      ownerId: json['ownerId'],
       createdAt: (json['createdAt'] as Timestamp).toDate(),
     );
   }

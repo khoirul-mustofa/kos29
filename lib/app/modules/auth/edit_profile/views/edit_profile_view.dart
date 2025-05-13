@@ -23,89 +23,90 @@ class EditProfileView extends GetView<EditProfileController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 20),
+                // const SizedBox(height: 20),
                 // Profile Image
-                Stack(
-                  children: [
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Theme.of(context).primaryColor,
-                          width: 2,
-                        ),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(60),
-                        child: Obx(() {
-                          if (controller.localImagePath != null) {
-                            return Image.file(
-                              File(controller.localImagePath!),
-                              fit: BoxFit.cover,
-                            );
-                          }
-                          if (controller.profileImageUrl.value.isNotEmpty) {
-                            return CachedNetworkImage(
-                              imageUrl: controller.profileImageUrl.value,
-                              fit: BoxFit.cover,
-                              placeholder:
-                                  (context, url) => Shimmer.fromColors(
-                                    baseColor: Colors.grey[300]!,
-                                    highlightColor: Colors.grey[100]!,
-                                    child: Container(color: Colors.white),
-                                  ),
-                              errorWidget:
-                                  (context, url, error) => const Icon(
-                                    Icons.person,
-                                    size: 60,
-                                    color: Colors.grey,
-                                  ),
-                            );
-                          }
-                          return const Icon(
-                            Icons.person,
-                            size: 60,
-                            color: Colors.grey,
-                          );
-                        }),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                          shape: BoxShape.circle,
-                        ),
-                        child: IconButton(
-                          icon: Obx(() {
-                            return controller.isUploadingImage.value
-                                ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
-                                : const Icon(
-                                  Icons.camera_alt,
-                                  color: Colors.white,
-                                );
-                          }),
-                          onPressed:
-                              controller.isUploadingImage.value
-                                  ? null
-                                  : controller.pickAndUploadImage,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 32),
+                // Stack(
+                //   children: [
+                //     Container(
+                //       width: 120,
+                //       height: 120,
+                //       decoration: BoxDecoration(
+                //         shape: BoxShape.circle,
+                //         border: Border.all(
+                //           color: Theme.of(context).primaryColor,
+                //           width: 2,
+                //         ),
+                //       ),
+                //       child: ClipRRect(
+                //         borderRadius: BorderRadius.circular(60),
+                //         child: Obx(() {
+                //           if (controller.localImagePath != null) {
+                //             return Image.file(
+                //               File(controller.localImagePath!),
+                //               fit: BoxFit.cover,
+                //             );
+                //           }
+                //           if (controller.profileImageUrl.value.isNotEmpty) {
+                //             return CachedNetworkImage(
+                //               imageUrl: controller.profileImageUrl.value,
+                //               fit: BoxFit.cover,
+                //               placeholder:
+                //                   (context, url) => Shimmer.fromColors(
+                //                     baseColor: Colors.grey[300]!,
+                //                     highlightColor: Colors.grey[100]!,
+                //                     child: Container(color: Colors.white),
+                //                   ),
+                //               errorWidget:
+                //                   (context, url, error) => const Icon(
+                //                     Icons.person,
+                //                     size: 60,
+                //                     color: Colors.grey,
+                //                   ),
+                //             );
+                //           }
+                //           return const Icon(
+                //             Icons.person,
+                //             size: 60,
+                //             color: Colors.grey,
+                //           );
+                //         }),
+                //       ),
+                //     ),
+                //     Positioned(
+                //       bottom: 0,
+                //       right: 0,
+                //       child: Container(
+                //         decoration: BoxDecoration(
+                //           color: Theme.of(context).primaryColor,
+                //           shape: BoxShape.circle,
+                //         ),
+                //         child: IconButton(
+                //           icon: Obx(() {
+                //             return controller.isUploadingImage.value
+                //                 ? const SizedBox(
+                //                   width: 20,
+                //                   height: 20,
+                //                   child: CircularProgressIndicator(
+                //                     strokeWidth: 2,
+                //                     color: Colors.white,
+                //                   ),
+                //                 )
+                //                 : const Icon(
+                //                   Icons.camera_alt,
+                //                   color: Colors.white,
+                //                 );
+                //           }),
+                //           onPressed:
+                //               controller.isUploadingImage.value
+                //                   ? null
+                //                   : controller.pickAndUploadImage,
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                // const SizedBox(height: 32),
+
                 // Form Fields
                 Card(
                   elevation: 2,

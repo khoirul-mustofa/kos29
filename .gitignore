@@ -7,3 +7,5 @@ build/
 
 # Flutter
 .dart_tool
+
+.env 

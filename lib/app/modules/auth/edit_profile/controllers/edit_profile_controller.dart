@@ -5,11 +5,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kos29/app/helper/logger_app.dart';
 import 'package:kos29/app/modules/profile/controllers/profile_controller.dart';
+import 'package:mime/mime.dart';
 import 'package:path/path.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -33,6 +34,8 @@ class EditProfileController extends GetxController {
   RxString profileImageUrl = ''.obs;
   RxString gender = 'Laki-laki'.obs;
   String? localImagePath;
+
+
 
   final List<String> genderOptions = ['Laki-laki', 'Perempuan'];
 
@@ -99,40 +102,31 @@ class EditProfileController extends GetxController {
     }
   }
 
-  Future<void> pickAndUploadImage() async {
+ Future<void> pickAndUploadImage() async {
     final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(
-      source: ImageSource.gallery,
-      maxWidth: 800,
-      maxHeight: 800,
-      imageQuality: 85,
-    );
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-    if (pickedFile == null) return;
+    if (pickedFile == null) {
+      return;
+    }
 
     isUploadingImage.value = true;
     localImagePath = pickedFile.path;
     update();
 
+    final file = File(pickedFile.path);
+    final fileName = basename(file.path);
+    final fileBytes = await file.readAsBytes();
+    final contentType = lookupMimeType(file.path);
+
+    final bucket = Supabase.instance.client.storage.from('media');
+
     try {
-      final file = File(pickedFile.path);
-      final fileName = '${Uuid().v1()}${extension(file.path)}';
-      final fileBytes = await file.readAsBytes();
-
-      final bucket = Supabase.instance.client.storage.from('profile_images');
-
-      // Delete old image if exists
-      if (profileImageUrl.value.isNotEmpty) {
-        final oldFileName = basename(profileImageUrl.value);
-        await bucket.remove([oldFileName]);
-      }
-
+      await bucket.remove([fileName]); // opsional
       final result = await bucket.uploadBinary(
         fileName,
         fileBytes,
-        fileOptions: FileOptions(
-          contentType: 'image/${extension(file.path).replaceAll('.', '')}',
-        ),
+        fileOptions: FileOptions(contentType: contentType),
       );
 
       if (result.isEmpty) throw Exception("Upload gagal");
@@ -140,24 +134,15 @@ class EditProfileController extends GetxController {
       profileImageUrl.value = bucket.getPublicUrl(fileName);
       update();
 
-      Get.snackbar(
-        "Sukses",
-        "Foto profil berhasil diperbarui",
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
+      // Get.snackbar("Sukses", "Gambar berhasil diupload");
     } catch (e) {
-      Get.snackbar(
-        "Error",
-        "Gagal mengupload foto: ${e.toString()}",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      logger.e('Error uploading image: $e');
+      Get.snackbar("Error", e.toString());
+      logger.e(e);
     } finally {
       isUploadingImage.value = false;
     }
   }
+
 
   void updateProfile() async {
     try {

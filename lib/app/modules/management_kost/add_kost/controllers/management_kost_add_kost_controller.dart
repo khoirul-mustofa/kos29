@@ -214,7 +214,7 @@ class ManagementKostAddKostController extends GetxController {
       imageUrl = bucket.getPublicUrl(fileName);
       update();
 
-      Get.snackbar("Sukses", "Gambar berhasil diupload");
+      // Get.snackbar("Sukses", "Gambar berhasil diupload");
     } catch (e) {
       Get.snackbar("Error", e.toString());
       logger.e(e);
