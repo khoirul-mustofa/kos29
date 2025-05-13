@@ -4,7 +4,7 @@
 
 ## 👨‍💻 Kontributor
 
-- [Khoirul Mustofa](mailto:khoirul@gmail.com)
+- [Khoirul Mustofa](https://github.com/khoirul-mustofa)
 
 ---
 
