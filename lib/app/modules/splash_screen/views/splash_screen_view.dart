@@ -158,6 +158,21 @@ class SplashScreenView extends GetView<SplashScreenController> {
                 ],
               ),
             ),
+          Positioned(
+            bottom: 16,
+            left: 0,
+            right: 0,
+            child: Obx(
+              () => Text(
+                'v${controller.appVersion}',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.7),
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ),
           ],
         ),
       ),
