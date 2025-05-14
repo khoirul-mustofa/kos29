@@ -42,10 +42,10 @@ class ReviewModel {
     'userId': userId,
     'rating': rating,
     'comment': comment,
-
     'kostId': kostId,
     'hidden': hidden,
     'ownerResponse': ownerResponse,
     'createdAt': createdAt,
+    'ownerId':ownerId,
   };
 }

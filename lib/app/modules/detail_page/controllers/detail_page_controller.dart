@@ -7,6 +7,7 @@ import 'package:kos29/app/data/models/kost_model.dart';
 import 'package:kos29/app/data/models/review_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kos29/app/data/models/review_with_user_model.dart';
+import 'package:kos29/app/data/models/user_model.dart';
 import 'package:kos29/app/modules/home/controllers/home_controller.dart';
 import 'package:kos29/app/routes/app_pages.dart';
 import 'package:kos29/app/services/review_service.dart';
@@ -25,7 +26,7 @@ class DetailPageController extends GetxController {
   final isLoading = false.obs;
   final isFavorite = false.obs;
   final KostModel dataKost = Get.arguments;
-
+final Rxn<UserModel> owner = Rxn<UserModel>();
   var isFasilitasExpanded = false;
   var isDeskripsiExpanded = false;
 
@@ -96,8 +97,19 @@ class DetailPageController extends GetxController {
     getReviewsWithUser(dataKost.idKos);
     calculateRating();
     checkFavoriteStatus();
+     _loadOwnerData();
   }
 
+Future<void> _loadOwnerData() async {
+    try {
+      final ownerData = await _userService.getUserById(dataKost.uid);
+      if (ownerData != null) {
+        owner.value = ownerData;
+      }
+    } catch (e) {
+      logger.e('Error loading owner data: $e');
+    }
+  }
   Future<void> checkFavoriteStatus() async {
     try {
       isFavorite.value = await _favoriteService.isFavorite(dataKost.idKos);

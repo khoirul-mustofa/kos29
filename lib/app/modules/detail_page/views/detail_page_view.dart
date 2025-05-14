@@ -46,6 +46,28 @@ class DetailPageView extends GetView<DetailPageController> {
                         const SizedBox(height: 12),
                         _buildPriceSection(),
                         const SizedBox(height: 16),
+                        Obx(() => controller.owner.value != null
+  ? ListTile(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      tileColor: Colors.grey[100],
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      leading: CircleAvatar(
+        backgroundImage: controller.owner.value?.photoUrl != null
+          ? NetworkImage(controller.owner.value!.photoUrl!)
+          : null,
+        child: controller.owner.value?.photoUrl == null
+          ? const Icon(Icons.person)
+          : null,
+      ),
+      title: Text(controller.owner.value?.name ?? 'Unknown'),
+ 
+    )
+  : const SizedBox.shrink(),
+),
+                        const SizedBox(height: 16),
+
                         _buildExpandableSection(
                           'fasilitas'.tr,
                           'fasilitas',
