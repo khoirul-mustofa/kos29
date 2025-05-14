@@ -6,159 +6,117 @@ import 'package:shimmer/shimmer.dart';
 import '../controllers/edit_profile_controller.dart';
 
 class EditProfileView extends GetView<EditProfileController> {
-  const EditProfileView({super.key});
+  EditProfileView({super.key});
+  final controller = Get.put(EditProfileController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Edit Profil'), centerTitle: true),
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return _buildShimmerLoading();
-        }
+      body: GetBuilder<EditProfileController>(
+        init: controller,
+        builder: (ctrl) {
+          return Obx(() {
+            if (ctrl.isLoading.value) {
+              return _buildShimmerLoading();
+            }
 
-        return SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // const SizedBox(height: 20),
-                // Profile Image
-                // Stack(
-                //   children: [
-                //     Container(
-                //       width: 120,
-                //       height: 120,
-                //       decoration: BoxDecoration(
-                //         shape: BoxShape.circle,
-                //         border: Border.all(
-                //           color: Theme.of(context).primaryColor,
-                //           width: 2,
-                //         ),
-                //       ),
-                //       child: ClipRRect(
-                //         borderRadius: BorderRadius.circular(60),
-                //         child: Obx(() {
-                //           if (controller.localImagePath != null) {
-                //             return Image.file(
-                //               File(controller.localImagePath!),
-                //               fit: BoxFit.cover,
-                //             );
-                //           }
-                //           if (controller.profileImageUrl.value.isNotEmpty) {
-                //             return CachedNetworkImage(
-                //               imageUrl: controller.profileImageUrl.value,
-                //               fit: BoxFit.cover,
-                //               placeholder:
-                //                   (context, url) => Shimmer.fromColors(
-                //                     baseColor: Colors.grey[300]!,
-                //                     highlightColor: Colors.grey[100]!,
-                //                     child: Container(color: Colors.white),
-                //                   ),
-                //               errorWidget:
-                //                   (context, url, error) => const Icon(
-                //                     Icons.person,
-                //                     size: 60,
-                //                     color: Colors.grey,
-                //                   ),
-                //             );
-                //           }
-                //           return const Icon(
-                //             Icons.person,
-                //             size: 60,
-                //             color: Colors.grey,
-                //           );
-                //         }),
-                //       ),
-                //     ),
-                //     Positioned(
-                //       bottom: 0,
-                //       right: 0,
-                //       child: Container(
-                //         decoration: BoxDecoration(
-                //           color: Theme.of(context).primaryColor,
-                //           shape: BoxShape.circle,
-                //         ),
-                //         child: IconButton(
-                //           icon: Obx(() {
-                //             return controller.isUploadingImage.value
-                //                 ? const SizedBox(
-                //                   width: 20,
-                //                   height: 20,
-                //                   child: CircularProgressIndicator(
-                //                     strokeWidth: 2,
-                //                     color: Colors.white,
-                //                   ),
-                //                 )
-                //                 : const Icon(
-                //                   Icons.camera_alt,
-                //                   color: Colors.white,
-                //                 );
-                //           }),
-                //           onPressed:
-                //               controller.isUploadingImage.value
-                //                   ? null
-                //                   : controller.pickAndUploadImage,
-                //         ),
-                //       ),
-                //     ),
-                //   ],
-                // ),
-                // const SizedBox(height: 32),
-
-                // Form Fields
-                Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 20),
+                    // Profile Image
+                    Stack(
                       children: [
-                        buildTextInput(
-                          controller: controller.nameController,
-                          label: "Nama Lengkap",
-                          icon: Icons.person,
-                          validator: (v) => v!.isEmpty ? "Wajib diisi" : null,
-                        ),
-                        const SizedBox(height: 16),
-                        buildTextInput(
-                          controller: controller.usernameController,
-                          label: "Username",
-                          icon: Icons.alternate_email,
-                          validator: (v) => v!.isEmpty ? "Wajib diisi" : null,
-                        ),
-                        const SizedBox(height: 16),
-                        buildTextInput(
-                          controller: controller.emailController,
-                          label: "Email",
-                          icon: Icons.email,
-                          keyboardType: TextInputType.emailAddress,
-                          readOnly: true,
-                        ),
-                        const SizedBox(height: 16),
-                        buildTextInput(
-                          controller: controller.phoneController,
-                          label: "Nomor HP",
-                          icon: Icons.phone,
-                          keyboardType: TextInputType.phone,
-                          validator: (v) => v!.isEmpty ? "Wajib diisi" : null,
-                        ),
-                        const SizedBox(height: 16),
-                        // Gender Dropdown
-                        DropdownButtonFormField<String>(
-                          value: controller.gender.value,
-                          decoration: InputDecoration(
-                            labelText: "Jenis Kelamin",
-                            prefixIcon: const Icon(Icons.people),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
+                        Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Theme.of(context).primaryColor,
+                              width: 2,
                             ),
                           ),
-                          items:
-                              controller.genderOptions
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(60),
+                            child: _buildProfileImage(ctrl),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColor,
+                              shape: BoxShape.circle,
+                            ),
+                            child: IconButton(
+                              icon: _buildUploadIcon(ctrl),
+                              onPressed: ctrl.isUploadingImage.value
+                                  ? null
+                                  : ctrl.pickAndUploadImage,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 32),
+
+                    // Form Fields
+                    Card(
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            buildTextInput(
+                              controller: ctrl.nameController,
+                              label: "Nama Lengkap",
+                              icon: Icons.person,
+                              validator: (v) => v!.isEmpty ? "Wajib diisi" : null,
+                            ),
+                            const SizedBox(height: 16),
+                            buildTextInput(
+                              controller: ctrl.usernameController,
+                              label: "Username",
+                              icon: Icons.alternate_email,
+                              validator: (v) => v!.isEmpty ? "Wajib diisi" : null,
+                            ),
+                            const SizedBox(height: 16),
+                            buildTextInput(
+                              controller: ctrl.emailController,
+                              label: "Email",
+                              icon: Icons.email,
+                              keyboardType: TextInputType.emailAddress,
+                              readOnly: true,
+                            ),
+                            const SizedBox(height: 16),
+                            buildTextInput(
+                              controller: ctrl.phoneController,
+                              label: "Nomor HP",
+                              icon: Icons.phone,
+                              keyboardType: TextInputType.phone,
+                              validator: (v) => v!.isEmpty ? "Wajib diisi" : null,
+                            ),
+                            const SizedBox(height: 16),
+                            // Gender Dropdown
+                            Obx(() => DropdownButtonFormField<String>(
+                              value: ctrl.gender.value,
+                              decoration: InputDecoration(
+                                labelText: "Jenis Kelamin",
+                                prefixIcon: const Icon(Icons.people),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              items: ctrl.genderOptions
                                   .map(
                                     (gender) => DropdownMenuItem(
                                       value: gender,
@@ -166,78 +124,130 @@ class EditProfileView extends GetView<EditProfileController> {
                                     ),
                                   )
                                   .toList(),
-                          onChanged: (value) {
-                            if (value != null) {
-                              controller.gender.value = value;
-                            }
-                          },
+                              onChanged: (value) {
+                                if (value != null) {
+                                  ctrl.gender.value = value;
+                                }
+                              },
+                            )),
+                            const SizedBox(height: 16),
+                            buildTextInput(
+                              controller: ctrl.birthDateController,
+                              label: "Tanggal Lahir",
+                              icon: Icons.calendar_today,
+                              readOnly: true,
+                              onTap: () async {
+                                final date = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(1900),
+                                  lastDate: DateTime.now(),
+                                );
+                                if (date != null) {
+                                  ctrl.birthDateController.text =
+                                      '${date.day}/${date.month}/${date.year}';
+                                }
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                            buildTextInput(
+                              controller: ctrl.occupationController,
+                              label: "Pekerjaan",
+                              icon: Icons.work,
+                            ),
+                            const SizedBox(height: 16),
+                            buildTextInput(
+                              controller: ctrl.addressController,
+                              label: "Alamat",
+                              icon: Icons.location_on,
+                              maxLines: 2,
+                            ),
+                            const SizedBox(height: 16),
+                            buildTextInput(
+                              controller: ctrl.bioController,
+                              label: "Bio",
+                              icon: Icons.description,
+                              maxLines: 3,
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 16),
-                        buildTextInput(
-                          controller: controller.birthDateController,
-                          label: "Tanggal Lahir",
-                          icon: Icons.calendar_today,
-                          readOnly: true,
-                          onTap: () async {
-                            final date = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(1900),
-                              lastDate: DateTime.now(),
-                            );
-                            if (date != null) {
-                              controller.birthDateController.text =
-                                  '${date.day}/${date.month}/${date.year}';
-                            }
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        buildTextInput(
-                          controller: controller.occupationController,
-                          label: "Pekerjaan",
-                          icon: Icons.work,
-                        ),
-                        const SizedBox(height: 16),
-                        buildTextInput(
-                          controller: controller.addressController,
-                          label: "Alamat",
-                          icon: Icons.location_on,
-                          maxLines: 2,
-                        ),
-                        const SizedBox(height: 16),
-                        buildTextInput(
-                          controller: controller.bioController,
-                          label: "Bio",
-                          icon: Icons.description,
-                          maxLines: 3,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                // Save Button
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton.icon(
-                    onPressed: controller.updateProfile,
-                    icon: const Icon(Icons.save),
-                    label: const Text("Simpan Perubahan"),
-                    style: FilledButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                  ),
+                    const SizedBox(height: 24),
+                    // Save Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton.icon(
+                        onPressed: () {
+                          ctrl.updateProfile();
+                        },
+                        icon: const Icon(Icons.save),
+                        label: const Text("Simpan Perubahan"),
+                        style: FilledButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
                 ),
-                const SizedBox(height: 24),
-              ],
-            ),
+              ),
+            );
+          });
+        },
+      ),
+    );
+  }
+
+  Widget _buildProfileImage(EditProfileController controller) {
+    if (controller.localImagePath != null) {
+      return Image.file(
+        File(controller.localImagePath!),
+        fit: BoxFit.cover,
+      );
+    }
+    return Obx(() {
+      if (controller.profileImageUrl.value.isNotEmpty) {
+        return CachedNetworkImage(
+          imageUrl: controller.profileImageUrl.value,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: Container(color: Colors.white),
+          ),
+          errorWidget: (context, url, error) => const Icon(
+            Icons.person,
+            size: 60,
+            color: Colors.grey,
           ),
         );
-      }),
-    );
+      }
+      return const Icon(
+        Icons.person,
+        size: 60,
+        color: Colors.grey,
+      );
+    });
+  }
+
+  Widget _buildUploadIcon(EditProfileController controller) {
+    return Obx(() => controller.isUploadingImage.value
+        ? const SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: Colors.white,
+            ),
+          )
+        : const Icon(
+            Icons.camera_alt,
+            color: Colors.white,
+          ));
   }
 
   Widget _buildShimmerLoading() {
@@ -270,7 +280,7 @@ class EditProfileView extends GetView<EditProfileController> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: List.generate(
-                    9, // Updated to match number of fields
+                    9,
                     (index) => Padding(
                       padding: const EdgeInsets.only(bottom: 16),
                       child: Container(

@@ -1,7 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:kos29/app/routes/app_pages.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../controllers/profile_controller.dart';
 
@@ -22,10 +24,39 @@ class ProfileView extends GetView<ProfileController> {
                   Center(
                     child: Stack(
                       children: [
-                        CircleAvatar(
-                          radius: 45,
-                          backgroundImage: NetworkImage(
-                            '${controller.userData!['photo_url']}',
+                        Container(
+                          width: 90,
+                          height: 90,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Theme.of(context).primaryColor,
+                              width: 2,
+                            ),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(45),
+                            child: controller.userData?['photo_url'] != null &&
+                                    controller.userData!['photo_url'].toString().isNotEmpty
+                                ? CachedNetworkImage(
+                                    imageUrl: controller.userData!['photo_url'],
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => Shimmer.fromColors(
+                                      baseColor: Colors.grey[300]!,
+                                      highlightColor: Colors.grey[100]!,
+                                      child: Container(color: Colors.white),
+                                    ),
+                                    errorWidget: (context, url, error) => const Icon(
+                                      Icons.person,
+                                      size: 45,
+                                      color: Colors.grey,
+                                    ),
+                                  )
+                                : const Icon(
+                                    Icons.person,
+                                    size: 45,
+                                    color: Colors.grey,
+                                  ),
                           ),
                         ),
                       ],
