@@ -36,27 +36,35 @@ class ProfileView extends GetView<ProfileController> {
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(45),
-                            child: controller.userData?['photo_url'] != null &&
-                                    controller.userData!['photo_url'].toString().isNotEmpty
-                                ? CachedNetworkImage(
-                                    imageUrl: controller.userData!['photo_url'],
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) => Shimmer.fromColors(
-                                      baseColor: Colors.grey[300]!,
-                                      highlightColor: Colors.grey[100]!,
-                                      child: Container(color: Colors.white),
-                                    ),
-                                    errorWidget: (context, url, error) => const Icon(
+                            child:
+                                controller.userData?['photo_url'] != null &&
+                                        controller.userData!['photo_url']
+                                            .toString()
+                                            .isNotEmpty
+                                    ? CachedNetworkImage(
+                                      imageUrl:
+                                          controller.userData!['photo_url'],
+                                      fit: BoxFit.cover,
+                                      placeholder:
+                                          (context, url) => Shimmer.fromColors(
+                                            baseColor: Colors.grey[300]!,
+                                            highlightColor: Colors.grey[100]!,
+                                            child: Container(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                      errorWidget:
+                                          (context, url, error) => const Icon(
+                                            Icons.person,
+                                            size: 45,
+                                            color: Colors.grey,
+                                          ),
+                                    )
+                                    : const Icon(
                                       Icons.person,
                                       size: 45,
                                       color: Colors.grey,
                                     ),
-                                  )
-                                : const Icon(
-                                    Icons.person,
-                                    size: 45,
-                                    color: Colors.grey,
-                                  ),
                           ),
                         ),
                       ],
@@ -111,6 +119,7 @@ class ProfileView extends GetView<ProfileController> {
                       Get.toNamed(Routes.REVIEW_MANAGEMENT);
                     },
                   ),
+                 
                   const SizedBox(height: 12),
                   Obx(
                     () =>
@@ -148,6 +157,45 @@ class ProfileView extends GetView<ProfileController> {
   Widget _buildMenuItem(IconData icon, String title, Function() onTap) {
     return ListTile(
       leading: Icon(icon),
+      title: Text(title),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: onTap,
+    );
+  }
+  
+  Widget _buildMenuItemWithBadge(IconData icon, String title, int badgeCount, Function() onTap) {
+    return ListTile(
+      leading: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Icon(icon),
+          if (badgeCount > 0)
+            Positioned(
+              right: -5,
+              top: -5,
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                constraints: const BoxConstraints(
+                  minWidth: 16,
+                  minHeight: 16,
+                ),
+                child: Text(
+                  badgeCount > 9 ? '9+' : badgeCount.toString(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+        ],
+      ),
       title: Text(title),
       trailing: const Icon(Icons.chevron_right),
       onTap: onTap,

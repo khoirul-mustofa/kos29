@@ -10,6 +10,7 @@ import 'package:kos29/app/modules/profile/controllers/profile_controller.dart';
 import 'package:kos29/app/services/haversine_service.dart';
 import 'package:kos29/app/services/visit_history_service.dart';
 import 'package:kos29/app/style/theme/theme_controller.dart';
+import 'package:kos29/app/services/notification_service.dart';
 
 class HomeController extends GetxController {
   final prfController = Get.put(ProfileController());
@@ -17,6 +18,7 @@ class HomeController extends GetxController {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final VisitHistoryService _visitHistoryService = VisitHistoryService();
+  late final NotificationService _notificationService;
 
   final kunjunganTerakhir = Rxn<KostModel>();
   final rekomendasiKosts = <KostModel>[].obs;
@@ -34,6 +36,7 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     isDarkMode.value = themeController.isDarkMode;
+    _notificationService = Get.find<NotificationService>();
     refreshHomePage();
   }
 

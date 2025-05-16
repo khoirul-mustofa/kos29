@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -11,11 +12,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:kos29/app/helper/logger_app.dart';
 import 'package:kos29/app/modules/kost_page/controllers/kost_page_controller.dart';
 import 'package:kos29/app/routes/app_pages.dart';
+import 'package:kos29/app/services/notification_service.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
+
 
 class ManagementKostAddKostController extends GetxController {
   final formKey = GlobalKey<FormState>();
@@ -36,6 +39,8 @@ class ManagementKostAddKostController extends GetxController {
 
   String? imageUrl;
   String? localImagePath;
+
+
 
   @override
   void onInit() {
@@ -223,6 +228,7 @@ class ManagementKostAddKostController extends GetxController {
     }
   }
 
+
   void saveKost() async {
     // Validasi nama (minimal 3 karakter)
     if (namaController.text.trim().length < 3) {
@@ -346,7 +352,20 @@ class ManagementKostAddKostController extends GetxController {
 
       final listController = Get.find<KostPageController>();
       listController.loadKos(firstLoad: true);
+
+      // Show success notification
       Get.snackbar('Berhasil', 'Kosan berhasil disimpan');
+
+      // Show push notification and save to Firestore
+      final notificationService = Get.find<NotificationService>();
+      
+      // Broadcast notification to all users
+      await notificationService.broadcastNewKostNotification(
+        kostId: idKos,
+        kostName: namaController.text,
+        route: '${Routes.DETAIL_PAGE}?id=$idKos',
+      );
+
       Get.offNamed(Routes.KOST_PAGE);
 
       if (kDebugMode) {

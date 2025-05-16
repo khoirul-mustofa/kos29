@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kos29/app/helper/formater_helper.dart';
 import 'package:kos29/app/routes/app_pages.dart';
+
 import 'package:kos29/app/style/app_colors.dart';
+import 'package:kos29/app/services/notification_service.dart';
 
 import 'package:shimmer/shimmer.dart';
 import 'package:kos29/app/data/models/kost_model.dart';
@@ -46,6 +48,46 @@ class HomeView extends GetView<HomeController> {
           ),
         ),
         actions: [
+          Stack(
+            children: [
+         
+
+              IconButton(
+                onPressed: () => Get.toNamed(Routes.NOTIFICATIONS),
+                icon: Icon(Icons.notifications_outlined),
+                constraints: BoxConstraints(minWidth: 40, minHeight: 40),
+                padding: EdgeInsets.zero,
+              ),
+              Obx(() {
+                final unreadCount = Get.find<NotificationService>().unreadCount.value;
+                if (unreadCount == 0) return const SizedBox.shrink();
+                return Positioned(
+                  right: 0,
+                  top: 0,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      unreadCount > 9 ? '9+' : unreadCount.toString(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                );
+              }),
+            ],
+          ),
           IconButton(
             onPressed: () {
               controller.showLanguageDialog(context);
@@ -79,6 +121,7 @@ class HomeView extends GetView<HomeController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  
                   SizedBox(height: 16),
                   Text(
                     '${'hello'.tr} ${controller.prfController.currentUser?.displayName ?? ''} ${'home_welcome'.tr} 😎',

@@ -28,6 +28,7 @@ abstract class Routes {
   static const AUTH_MANAGE_USER = _Paths.AUTH_MANAGE_USER;
   static const CATEGORY_PAGE = _Paths.CATEGORY_PAGE;
   static const FEEDBACK = _Paths.FEEDBACK;
+  static const NOTIFICATIONS = _Paths.NOTIFICATIONS;
 }
 
 abstract class _Paths {
@@ -57,4 +58,5 @@ abstract class _Paths {
   static const AUTH_MANAGE_USER = '/manage-user';
   static const CATEGORY_PAGE = '/category-page';
   static const FEEDBACK = '/feedback';
+  static const NOTIFICATIONS = '/notifications';
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +9,9 @@ import 'package:kos29/app/helper/logger_app.dart';
 import 'package:kos29/app/modules/history_search/controllers/history_search_controller.dart';
 import 'package:kos29/app/modules/home/controllers/home_controller.dart';
 import 'package:kos29/app/routes/app_pages.dart';
+import 'package:kos29/app/services/notification_service.dart';
 import 'package:kos29/app/services/visit_history_service.dart';
+import 'package:logger/logger.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class ProfileController extends GetxController {
@@ -15,18 +19,42 @@ class ProfileController extends GetxController {
   Map<String, dynamic>? userData;
   var appVersion = '';
   var isAdmin = false.obs;
+  
+  // For notification badge
+  final RxInt unreadNotificationCount = 0.obs;
+  StreamSubscription<int>? _notificationSubscription;
 
   @override
   void onInit() {
     super.onInit();
     getCurrentUser();
     loadAppVersion();
+    listenToUnreadNotifications();
+  }
+  
+  @override
+  void onClose() {
+    _notificationSubscription?.cancel();
+    super.onClose();
   }
 
   void loadAppVersion() async {
     final info = await PackageInfo.fromPlatform();
     appVersion = '${info.version} (${info.buildNumber})';
     update();
+  }
+  
+  void listenToUnreadNotifications() {
+    try {
+      final notificationService = Get.find<NotificationService>();
+      _notificationSubscription = notificationService
+          .getUnreadNotificationCount()
+          .listen((count) {
+        unreadNotificationCount.value = count;
+      });
+    } catch (e) {
+      Logger().e('Error listening to notifications: $e');
+    }
   }
 
   getCurrentUser() {

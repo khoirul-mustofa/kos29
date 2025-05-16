@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:kos29/app/modules/auth/manage_user/bindings/manage_user_binding.dart';
 import 'package:kos29/app/modules/auth/manage_user/views/manage_user_view.dart';
+import '../modules/notifications/bindings/notifications_binding.dart';
+import '../modules/notifications/views/notifications_view.dart';
 import '../modules/auth/edit_profile/bindings/edit_profile_binding.dart';
 import '../modules/auth/edit_profile/views/edit_profile_view.dart';
 import '../modules/auth/register/bindings/auth_register_binding.dart';
@@ -164,6 +166,11 @@ class AppPages {
       name: _Paths.FEEDBACK,
       page: () => const FeedbackView(),
       binding: FeedbackBinding(),
+    ),
+    GetPage(
+      name: _Paths.NOTIFICATIONS,
+      page: () => const NotificationsView(),
+      binding: NotificationsBinding(),
     ),
   ];
 }
