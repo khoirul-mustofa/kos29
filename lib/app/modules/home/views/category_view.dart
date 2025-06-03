@@ -139,7 +139,9 @@ Widget buildKostCard(kost) {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: Get.theme.colorScheme.primary.withOpacity(0.2),
+                          color: Get.theme.colorScheme.primary.withValues(
+                            alpha: 0.2,
+                          ),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(

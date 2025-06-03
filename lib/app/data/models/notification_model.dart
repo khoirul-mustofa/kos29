@@ -5,7 +5,7 @@ class NotificationModel {
   final String title;
   final String body;
   final String? payload;
-  final String userId;
+
   final DateTime createdAt;
   final bool isRead;
   final String? type;
@@ -16,7 +16,7 @@ class NotificationModel {
     required this.title,
     required this.body,
     this.payload,
-    required this.userId,
+
     required this.createdAt,
     this.isRead = false,
     this.type,
@@ -30,7 +30,7 @@ class NotificationModel {
       'title': title,
       'body': body,
       'payload': payload,
-      'userId': userId,
+
       'createdAt': createdAt,
       'isRead': isRead,
       'type': type,
@@ -47,7 +47,7 @@ class NotificationModel {
       title: data['title'] ?? '',
       body: data['body'] ?? '',
       payload: data['payload'],
-      userId: data['userId'] ?? '',
+
       createdAt: (data['createdAt'] as Timestamp).toDate(),
       isRead: data['isRead'] ?? false,
       type: data['type'],
@@ -61,7 +61,7 @@ class NotificationModel {
     String? title,
     String? body,
     String? payload,
-    String? userId,
+
     DateTime? createdAt,
     bool? isRead,
     String? type,
@@ -72,7 +72,7 @@ class NotificationModel {
       title: title ?? this.title,
       body: body ?? this.body,
       payload: payload ?? this.payload,
-      userId: userId ?? this.userId,
+
       createdAt: createdAt ?? this.createdAt,
       isRead: isRead ?? this.isRead,
       type: type ?? this.type,

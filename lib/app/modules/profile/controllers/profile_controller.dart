@@ -5,21 +5,25 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:kos29/app/helper/logger_app.dart';
+
 import 'package:kos29/app/modules/history_search/controllers/history_search_controller.dart';
 import 'package:kos29/app/modules/home/controllers/home_controller.dart';
 import 'package:kos29/app/routes/app_pages.dart';
-import 'package:kos29/app/services/notification_service.dart';
 import 'package:kos29/app/services/visit_history_service.dart';
-import 'package:logger/logger.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import 'package:kos29/app/helper/logger_app.dart';
+import 'package:kos29/app/services/kost_update_request_service.dart';
 
 class ProfileController extends GetxController {
-  User? currentUser;
-  Map<String, dynamic>? userData;
-  var appVersion = '';
-  var isAdmin = false.obs;
-  
+  final currentUser = Rx<User?>(null);
+  final userData = Rxn<Map<String, dynamic>>();
+  final userRole = ''.obs;
+  final pendingUpdateRequestsCount = 0.obs;
+  final pendingKosRegistrationsCount = 0.obs;
+  final _requestService = KostUpdateRequestService();
+  final _firestore = FirebaseFirestore.instance;
+  StreamSubscription? _pendingRequestsSubscription;
+  StreamSubscription? _pendingRegistrationsSubscription;
+
   // For notification badge
   final RxInt unreadNotificationCount = 0.obs;
   StreamSubscription<int>? _notificationSubscription;
@@ -27,73 +31,99 @@ class ProfileController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    getCurrentUser();
-    loadAppVersion();
-    listenToUnreadNotifications();
+    currentUser.value = FirebaseAuth.instance.currentUser;
+    if (currentUser.value != null) {
+      loadUserData();
+    }
   }
-  
+
   @override
   void onClose() {
     _notificationSubscription?.cancel();
+    _pendingRequestsSubscription?.cancel();
+    _pendingRegistrationsSubscription?.cancel();
     super.onClose();
   }
 
-  void loadAppVersion() async {
-    final info = await PackageInfo.fromPlatform();
-    appVersion = '${info.version} (${info.buildNumber})';
-    update();
-  }
-  
-  void listenToUnreadNotifications() {
-    try {
-      final notificationService = Get.find<NotificationService>();
-      _notificationSubscription = notificationService
-          .getUnreadNotificationCount()
-          .listen((count) {
-        unreadNotificationCount.value = count;
-      });
-    } catch (e) {
-      Logger().e('Error listening to notifications: $e');
+  void startListeningToPendingRequests() {
+    if (userRole.value == 'admin') {
+      // Listen to update requests
+      _pendingRequestsSubscription?.cancel();
+      _pendingRequestsSubscription = _requestService
+          .getPendingUpdateRequests()
+          .listen(
+            (requests) {
+              pendingUpdateRequestsCount.value = requests.length;
+            },
+            onError: (error) {
+              logger.e('Error listening to pending requests: $error');
+            },
+          );
+
+      // Listen to kos registrations
+      _pendingRegistrationsSubscription?.cancel();
+      _pendingRegistrationsSubscription = _firestore
+          .collection('kos_registrations')
+          .where('status', isEqualTo: 'pending')
+          .snapshots()
+          .listen(
+            (snapshot) {
+              pendingKosRegistrationsCount.value = snapshot.docs.length;
+            },
+            onError: (error) {
+              logger.e('Error listening to pending registrations: $error');
+            },
+          );
     }
   }
 
-  getCurrentUser() {
-    currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {
-      getUserData();
-    }
-  }
-
-  Future<void> getUserData() async {
+  Future<void> loadUserData() async {
     try {
-      if (currentUser != null) {
+      if (currentUser.value != null) {
         DocumentSnapshot userDoc =
             await FirebaseFirestore.instance
                 .collection('users')
-                .doc(currentUser!.uid)
+                .doc(currentUser.value?.uid)
                 .get();
+
         if (userDoc.exists) {
-          userData = userDoc.data() as Map<String, dynamic>;
-          // Check if user is admin
-          isAdmin.value = userData?['role'] == 'admin';
+          final data = userDoc.data() as Map<String, dynamic>;
+          userData.value = data;
+          userRole.value = data['role'] ?? 'user';
+
+          // Start listening to pending requests if user is admin
+          if (userRole.value == 'admin') {
+            startListeningToPendingRequests();
+          }
+
           update();
         }
-        update();
       }
     } catch (e) {
-      logger.e(e.toString());
+      logger.e('Error loading user data: $e');
+      Get.snackbar(
+        'Error',
+        'Gagal memuat data pengguna',
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
   }
 
   Future<void> signOut() async {
     try {
+      _pendingRequestsSubscription?.cancel();
+      _notificationSubscription?.cancel();
       await FirebaseAuth.instance.signOut();
       await GoogleSignIn().signOut();
 
       Get.offAllNamed(Routes.BOTTOM_NAV);
     } catch (e) {
-      logger.e(e.toString());
-      Get.snackbar('Error', 'Failed to log out: $e');
+      logger.e('Error signing out: $e');
+      Get.snackbar(
+        'Error',
+        'Gagal keluar: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
   }
 
@@ -115,7 +145,7 @@ class ProfileController extends GetxController {
         final stopwatch = Stopwatch()..start();
 
         try {
-          VisitHistoryService().clearHistory();
+          await VisitHistoryService().clearHistory();
 
           final controllerHome = Get.find<HomeController>();
           controllerHome.refreshHomePage();
@@ -124,7 +154,11 @@ class ProfileController extends GetxController {
           controllerHistorySearch.getHistorySearch();
         } catch (e) {
           Get.back();
-          Get.snackbar('Error', 'Terjadi kesalahan saat menghapus riwayat');
+          Get.snackbar(
+            'Error',
+            'Terjadi kesalahan saat menghapus riwayat',
+            snackPosition: SnackPosition.BOTTOM,
+          );
           return;
         }
 
@@ -134,7 +168,11 @@ class ProfileController extends GetxController {
         }
 
         Get.back();
-        Get.snackbar('Success', 'Riwayat berhasil dihapus');
+        Get.snackbar(
+          'Success',
+          'Riwayat berhasil dihapus',
+          snackPosition: SnackPosition.BOTTOM,
+        );
       },
     );
   }

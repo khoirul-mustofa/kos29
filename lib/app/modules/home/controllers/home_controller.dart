@@ -54,7 +54,6 @@ class HomeController extends GetxController {
   }
 
   Future<void> ambilKunjunganTerakhir() async {
-    logger.i('Mencoba mengambil kunjungan terakhir');
     try {
       final visitedIds = await _visitHistoryService.getVisitedKosts();
 
@@ -89,9 +88,6 @@ class HomeController extends GetxController {
         'idKos': kostDoc.id,
         ...kostDoc.data()!,
       });
-      if (kDebugMode) {
-        logger.i('Kunjungan terakhir berhasil diambil');
-      }
     } catch (e) {
       if (kDebugMode) {
         logger.e('Gagal ambil kunjungan terakhir: $e');
@@ -102,20 +98,12 @@ class HomeController extends GetxController {
 
   Future<void> ambilRekomendasiTerdekat() async {
     try {
-      final izin = await cekIzinLokasi();
-      if (!izin) return;
-
-      final posisi = await Geolocator.getCurrentPosition(
-        locationSettings: LocationSettings(accuracy: LocationAccuracy.high),
-      );
-
       final snapshot = await _firestore.collection('kosts').get();
 
-      final List<MapEntry<KostModel, dynamic>> kostWithDistance =
+      final List<KostModel> kosts =
           snapshot.docs
               .map((doc) {
                 final data = doc.data();
-
                 final lat = data['latitude'];
                 final lon = data['longitude'];
 
@@ -126,27 +114,33 @@ class HomeController extends GetxController {
                   return null;
                 }
 
-                final distance = calculateDistanceService(
-                  posisi.latitude,
-                  posisi.longitude,
-                  (lat as num).toDouble(),
-                  (lon as num).toDouble(),
-                );
-
-                final kost = KostModel.fromMap({'idKos': doc.id, ...data});
-                kost.distance = distance;
-                return MapEntry(kost, distance);
+                return KostModel.fromMap({'idKos': doc.id, ...data});
               })
-              .whereType<MapEntry<KostModel, dynamic>>()
+              .whereType<KostModel>()
               .toList();
 
-      kostWithDistance.sort((a, b) => a.value.compareTo(b.value));
-      rekomendasiKosts.value =
-          kostWithDistance.take(5).map((e) => e.key).toList();
+      // Calculate distances and sort
+      final List<MapEntry<KostModel, double?>> kostsWithDistance = [];
 
-      if (kDebugMode) {
-        logger.i("Berhasil ambil rekomendasi kost terdekat");
+      for (final kost in kosts) {
+        final distance = await calculateDistanceFromCurrentLocation(
+          kost.latitude!,
+          kost.longitude!,
+        );
+        kostsWithDistance.add(MapEntry(kost, distance));
       }
+
+      // Sort by distance, null distances will be at the end
+      kostsWithDistance.sort((a, b) {
+        if (a.value == null && b.value == null) return 0;
+        if (a.value == null) return 1;
+        if (b.value == null) return -1;
+        return a.value!.compareTo(b.value!);
+      });
+
+      // Take top 5 closest kosts
+      rekomendasiKosts.value =
+          kostsWithDistance.take(5).map((entry) => entry.key).toList();
     } catch (e) {
       logger.e("Gagal ambil rekomendasi kost terdekat: $e");
       rekomendasiKosts.clear();

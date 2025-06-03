@@ -6,7 +6,9 @@ class KostPageBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<KostPageController>(
-      () => KostPageController(),
+      () => KostPageController(
+        isForUpdateRequest: Get.arguments?['isForUpdateRequest'] ?? false,
+      ),
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kos29/app/helper/formater_helper.dart';
 import 'package:kos29/app/routes/app_pages.dart';
+import 'package:kos29/app/services/haversine_service.dart';
 
 import 'package:kos29/app/style/app_colors.dart';
 import 'package:kos29/app/services/notification_service.dart';
@@ -24,7 +25,7 @@ class HomeView extends GetView<HomeController> {
       appBar: AppBar(
         scrolledUnderElevation: 0,
         leading:
-            controller.prfController.currentUser != null
+            controller.prfController.currentUser.value != null
                 ? Center(
                   child: Container(
                     margin: EdgeInsets.only(left: 5),
@@ -32,8 +33,24 @@ class HomeView extends GetView<HomeController> {
                     height: 40,
                     child: CircleAvatar(
                       radius: 30,
-                      backgroundImage: NetworkImage(
-                        '${controller.prfController.currentUser?.photoURL}',
+                      child: CachedNetworkImage(
+                        imageUrl:
+                            '${controller.prfController.currentUser.value?.photoURL}',
+                        imageBuilder:
+                            (context, imageProvider) => Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                        placeholder:
+                            (context, url) =>
+                                const CircularProgressIndicator(strokeWidth: 2),
+                        errorWidget:
+                            (context, url, error) => const Icon(Icons.person),
                       ),
                     ),
                   ),
@@ -50,42 +67,40 @@ class HomeView extends GetView<HomeController> {
         actions: [
           Stack(
             children: [
-         
-
               IconButton(
                 onPressed: () => Get.toNamed(Routes.NOTIFICATIONS),
                 icon: Icon(Icons.notifications_outlined),
                 constraints: BoxConstraints(minWidth: 40, minHeight: 40),
                 padding: EdgeInsets.zero,
               ),
-              Obx(() {
-                final unreadCount = Get.find<NotificationService>().unreadCount.value;
-                if (unreadCount == 0) return const SizedBox.shrink();
-                return Positioned(
-                  right: 0,
-                  top: 0,
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                    constraints: const BoxConstraints(
-                      minWidth: 16,
-                      minHeight: 16,
-                    ),
-                    child: Text(
-                      unreadCount > 9 ? '9+' : unreadCount.toString(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                );
-              }),
+              // Obx(() {
+              //   final unreadCount = Get.find<NotificationService>().unreadCount.value;
+              //   if (unreadCount == 0) return const SizedBox.shrink();
+              //   return Positioned(
+              //     right: 0,
+              //     top: 0,
+              //     child: Container(
+              //       padding: const EdgeInsets.all(4),
+              //       decoration: BoxDecoration(
+              //         color: Colors.red,
+              //         shape: BoxShape.circle,
+              //       ),
+              //       constraints: const BoxConstraints(
+              //         minWidth: 16,
+              //         minHeight: 16,
+              //       ),
+              //       child: Text(
+              //         unreadCount > 9 ? '9+' : unreadCount.toString(),
+              //         style: const TextStyle(
+              //           color: Colors.white,
+              //           fontSize: 10,
+              //           fontWeight: FontWeight.bold,
+              //         ),
+              //         textAlign: TextAlign.center,
+              //       ),
+              //     ),
+              //   );
+              // }),
             ],
           ),
           IconButton(
@@ -96,14 +111,7 @@ class HomeView extends GetView<HomeController> {
             constraints: BoxConstraints(minWidth: 40, minHeight: 40),
             padding: EdgeInsets.zero,
           ),
-          IconButton(
-            onPressed: () {
-              Get.toNamed(Routes.FEEDBACK);
-            },
-            icon: Icon(Icons.feedback_outlined),
-            constraints: BoxConstraints(minWidth: 40, minHeight: 40),
-            padding: EdgeInsets.zero,
-          ),
+
           SizedBox(width: 8),
         ],
       ),
@@ -121,10 +129,9 @@ class HomeView extends GetView<HomeController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  
                   SizedBox(height: 16),
                   Text(
-                    '${'hello'.tr} ${controller.prfController.currentUser?.displayName ?? ''} ${'home_welcome'.tr} 😎',
+                    '${'hello'.tr} ${controller.prfController.currentUser.value?.displayName ?? ''} ${'home_welcome'.tr} 😎',
                     style: Get.textTheme.titleMedium!.copyWith(
                       color: Get.theme.colorScheme.primary,
                     ),
@@ -203,7 +210,18 @@ class HomeView extends GetView<HomeController> {
                                             : Colors.yellow.shade50,
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  child: Center(child: Icon(Icons.home)),
+                                  child: Center(
+                                    child:
+                                        index == 0
+                                            ? Icon(Icons.map_outlined)
+                                            : index == 1
+                                            ? Icon(
+                                              Icons.arrow_downward_outlined,
+                                            )
+                                            : index == 2
+                                            ? Icon(Icons.arrow_upward_outlined)
+                                            : Icon(Icons.percent),
+                                  ),
                                 ),
                               ),
                               SizedBox(height: 4),
@@ -325,7 +343,7 @@ class HomeView extends GetView<HomeController> {
   }
 }
 
-Widget buildKunjunganCard(kunjungan) {
+Widget buildKunjunganCard(KostModel kunjungan) {
   return Card(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     color: Get.isDarkMode ? Colors.grey[800] : Colors.white,
@@ -343,7 +361,10 @@ Widget buildKunjunganCard(kunjungan) {
               bottomLeft: Radius.circular(8),
             ),
             child: CachedNetworkImage(
-              imageUrl: kunjungan.gambar,
+              imageUrl:
+                  kunjungan.fotoKosUrls.isNotEmpty
+                      ? kunjungan.fotoKosUrls[0]
+                      : '',
               width: 100,
               height: 80,
               fit: BoxFit.cover,
@@ -373,7 +394,7 @@ Widget buildKunjunganCard(kunjungan) {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    kunjungan.nama,
+                    kunjungan.namaKos,
                     style: Get.textTheme.bodyMedium,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -404,9 +425,7 @@ Widget buildKunjunganCard(kunjungan) {
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          FormatterHelper.formatHarga(
-                            kunjungan.harga,
-                          ).toString(),
+                          FormatterHelper.formatHarga(kunjungan.harga),
                           style: Get.textTheme.bodyMedium,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -448,7 +467,7 @@ Widget buildKostCard(KostModel kost) {
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.network(
-                  kost.gambar,
+                  kost.fotoKosUrls.isNotEmpty ? kost.fotoKosUrls[0] : '',
                   width: double.infinity,
                   height: 150,
                   fit: BoxFit.cover,
@@ -476,12 +495,11 @@ Widget buildKostCard(KostModel kost) {
                   },
                 ),
               ),
-
               SizedBox(height: 10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(kost.nama, style: Get.textTheme.titleMedium),
+                  Text(kost.namaKos, style: Get.textTheme.titleMedium),
                   const SizedBox(height: 6),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -510,27 +528,68 @@ Widget buildKostCard(KostModel kost) {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.location_on,
-                        size: 16,
-                        color: Colors.red,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${kost.distance.toStringAsFixed(2)} km',
-                        style: Get.textTheme.bodyMedium!.copyWith(
-                          color: Colors.teal,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'distance_from_your_location'.tr,
-                        style: Get.textTheme.bodyMedium,
-                      ),
-                    ],
+                  FutureBuilder<double?>(
+                    future: calculateDistanceFromCurrentLocation(
+                      kost.latitude!,
+                      kost.longitude!,
+                    ),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const SizedBox(
+                          height: 20,
+                          child: Center(
+                            child: SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
+                        );
+                      }
+
+                      final distance = snapshot.data;
+                      if (distance == null) {
+                        return Row(
+                          children: [
+                            const Icon(
+                              Icons.location_off,
+                              size: 16,
+                              color: Colors.grey,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Lokasi tidak tersedia',
+                              style: Get.textTheme.bodyMedium!.copyWith(
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+
+                      return Row(
+                        children: [
+                          const Icon(
+                            Icons.location_on,
+                            size: 16,
+                            color: Colors.red,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${distance.toStringAsFixed(2)} km',
+                            style: Get.textTheme.bodyMedium!.copyWith(
+                              color: Colors.teal,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'distance_from_your_location'.tr,
+                            style: Get.textTheme.bodyMedium,
+                          ),
+                        ],
+                      );
+                    },
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0, top: 10),

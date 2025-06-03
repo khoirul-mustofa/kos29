@@ -29,6 +29,12 @@ abstract class Routes {
   static const CATEGORY_PAGE = _Paths.CATEGORY_PAGE;
   static const FEEDBACK = _Paths.FEEDBACK;
   static const NOTIFICATIONS = _Paths.NOTIFICATIONS;
+  static const ABOUT_APP = _Paths.ABOUT_APP;
+  static const REGISTER_KOS = _Paths.REGISTER_KOS;
+  static const KOS_REGISTRATION = _Paths.KOS_REGISTRATION;
+  static const MY_REVIEWS = _Paths.MY_REVIEWS;
+  static const ADMIN_KOST_UPDATE_REQUESTS = '/admin/kost-update-requests';
+  static const KOST_UPDATE_REQUEST = _Paths.KOST_UPDATE_REQUEST;
 }
 
 abstract class _Paths {
@@ -59,4 +65,9 @@ abstract class _Paths {
   static const CATEGORY_PAGE = '/category-page';
   static const FEEDBACK = '/feedback';
   static const NOTIFICATIONS = '/notifications';
+  static const ABOUT_APP = '/about-app';
+  static const REGISTER_KOS = '/register-kos';
+  static const KOS_REGISTRATION = '/kos-registration';
+  static const MY_REVIEWS = '/my-reviews';
+  static const KOST_UPDATE_REQUEST = '/kost-update-request';
 }

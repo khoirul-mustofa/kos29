@@ -50,9 +50,7 @@ class VisitHistoryService {
     final file = await _getFile();
     final content = await file.readAsString();
     final List<dynamic> jsonList = jsonDecode(content);
-    if (kDebugMode) {
-      log('✅ Visited IDs: ${jsonList.length}');
-    }
+
     return jsonList
         .map(
           (e) => {
@@ -61,6 +59,22 @@ class VisitHistoryService {
           },
         )
         .toList();
+  }
+
+  Future<Map<String, String>?> getLastVisit(String userId) async {
+    try {
+      final visits = await getVisitedKosts();
+      if (visits.isEmpty) return null;
+
+      // Sort visits by visitedAt in descending order
+      visits.sort((a, b) => b['visitedAt']!.compareTo(a['visitedAt']!));
+      return visits.first;
+    } catch (e) {
+      if (kDebugMode) {
+        logger.e('⛔ Error getting last visit: $e');
+      }
+      return null;
+    }
   }
 
   Future<void> clearHistory() async {

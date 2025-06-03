@@ -5,8 +5,10 @@ import 'package:kos29/app/data/models/review_with_user_model.dart';
 import 'package:kos29/app/helper/formater_helper.dart';
 import 'package:kos29/app/helper/logger_app.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import '../controllers/detail_page_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class DetailPageView extends GetView<DetailPageController> {
   DetailPageView({super.key});
@@ -14,12 +16,17 @@ class DetailPageView extends GetView<DetailPageController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: ElevatedButton.icon(
-        icon: const Icon(Icons.rate_review),
-        label: Text("write_review".tr),
-        onPressed: () {
-          controller.showReviewDialog(context);
-        },
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          const SizedBox(height: 16),
+          FloatingActionButton.extended(
+            onPressed: () => controller.showReviewDialog(context),
+            icon: const Icon(Icons.rate_review),
+            label: const Text('Beri Ulasan'),
+            heroTag: 'review',
+          ),
+        ],
       ),
       body: GetBuilder<DetailPageController>(
         builder: (controller) {
@@ -28,61 +35,132 @@ class DetailPageView extends GetView<DetailPageController> {
               return _buildShimmerLoading();
             }
             return SafeArea(
-              child: ListView(
-                children: [
-                  _buildHeaderImage(),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildTitleSection(),
-                        const SizedBox(height: 12),
-                        _buildLocationSection(context),
-                        const SizedBox(height: 8),
-                        _buildDistanceInfo(),
-                        const SizedBox(height: 12),
-                        _buildRatingAndAvailability(),
-                        const SizedBox(height: 12),
-                        _buildPriceSection(),
-                        const SizedBox(height: 16),
-                        Obx(() => controller.owner.value != null
-  ? ListTile(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      tileColor: Colors.grey[100],
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      leading: CircleAvatar(
-        backgroundImage: controller.owner.value?.photoUrl != null
-          ? NetworkImage(controller.owner.value!.photoUrl!)
-          : null,
-        child: controller.owner.value?.photoUrl == null
-          ? const Icon(Icons.person)
-          : null,
-      ),
-      title: Text(controller.owner.value?.name ?? 'Unknown'),
- 
-    )
-  : const SizedBox.shrink(),
-),
-                        const SizedBox(height: 16),
-
-                        _buildExpandableSection(
-                          'fasilitas'.tr,
-                          'fasilitas',
-                          controller.dataKost.fasilitas,
-                        ),
-                        _buildExpandableSection('deskripsi'.tr, 'deskripsi', [
-                          controller.dataKost.deskripsi,
-                        ]),
-                        const SizedBox(height: 24),
-                        _buildReviewSection(context),
-                        const SizedBox(height: 24),
-                      ],
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _buildHeaderImage(),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildTitleSection(),
+                          const SizedBox(height: 12),
+                          _buildLocationSection(context),
+                          const SizedBox(height: 8),
+                          _buildDistanceInfo(),
+                          const SizedBox(height: 12),
+                          _buildRatingAndAvailability(),
+                          const SizedBox(height: 12),
+                          _buildPriceSection(),
+                          const SizedBox(height: 16),
+                          Obx(
+                            () =>
+                                controller.owner.value != null
+                                    ? ListTile(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      tileColor: Colors.grey[100],
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 8,
+                                          ),
+                                      leading: CircleAvatar(
+                                        backgroundImage:
+                                            controller.owner.value?.photoUrl !=
+                                                    null
+                                                ? NetworkImage(
+                                                  controller
+                                                      .owner
+                                                      .value!
+                                                      .photoUrl!,
+                                                )
+                                                : null,
+                                        child:
+                                            controller.owner.value?.photoUrl ==
+                                                    null
+                                                ? const Icon(Icons.person)
+                                                : null,
+                                      ),
+                                      title: Text(
+                                        controller.owner.value?.name ??
+                                            'Unknown',
+                                      ),
+                                      subtitle: Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.phone,
+                                            size: 16,
+                                            color: Colors.grey,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(controller.dataKost.nomorHp),
+                                        ],
+                                      ),
+                                      trailing: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.green,
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                        child: Material(
+                                          color: Colors.transparent,
+                                          child: InkWell(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                            onTap: controller.launchWhatsApp,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 16,
+                                                    vertical: 8,
+                                                  ),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  const Icon(
+                                                    Icons.chat,
+                                                    color: Colors.white,
+                                                    size: 20,
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  Text(
+                                                    'chat'.tr,
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                    : const SizedBox.shrink(),
+                          ),
+                          const SizedBox(height: 16),
+                          _buildExpandableSection(
+                            'fasilitas'.tr,
+                            'fasilitas',
+                            controller.dataKost.fasilitas,
+                          ),
+                          _buildExpandableSection('deskripsi'.tr, 'deskripsi', [
+                            controller.dataKost.deskripsi,
+                          ]),
+                          const SizedBox(height: 24),
+                          _buildReviewSection(context),
+                          // Add extra padding at the bottom to account for the FAB
+                          const SizedBox(height: 80),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           });
@@ -271,32 +349,183 @@ class DetailPageView extends GetView<DetailPageController> {
     );
   }
 
+  void _showFullScreenImage(
+    BuildContext context,
+    List<String> images,
+    int initialIndex,
+  ) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder:
+            (context) => Scaffold(
+              backgroundColor: Colors.black,
+              appBar: AppBar(
+                backgroundColor: Colors.black,
+                iconTheme: const IconThemeData(color: Colors.white),
+                title: Text(
+                  '${initialIndex + 1}/${images.length}',
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+              body: CarouselSlider(
+                options: CarouselOptions(
+                  height: MediaQuery.of(context).size.height,
+                  viewportFraction: 1.0,
+                  initialPage: initialIndex,
+                  enableInfiniteScroll: images.length > 1,
+                  onPageChanged: (index, reason) {
+                    // Update the app bar title with current image number
+                    Navigator.of(context).pop();
+                    _showFullScreenImage(context, images, index);
+                  },
+                ),
+                items:
+                    images.map((imageUrl) {
+                      return Builder(
+                        builder: (BuildContext context) {
+                          return InteractiveViewer(
+                            minScale: 0.5,
+                            maxScale: 4.0,
+                            child: Center(
+                              child: Image.network(
+                                imageUrl,
+                                fit: BoxFit.contain,
+                                loadingBuilder: (
+                                  context,
+                                  child,
+                                  loadingProgress,
+                                ) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
+                                      color: Colors.white,
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(
+                                          Icons.error_outline,
+                                          size: 50,
+                                          color: Colors.white,
+                                        ),
+                                        const SizedBox(height: 16),
+                                        Text(
+                                          'Failed to load image',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    }).toList(),
+              ),
+            ),
+      ),
+    );
+  }
+
   Widget _buildHeaderImage() {
+    // Create a list of images, using the main gambar if fotoKosUrls is empty
+    final List<String> images =
+        controller.dataKost.fotoKosUrls.isNotEmpty
+            ? controller.dataKost.fotoKosUrls
+            : [controller.dataKost.gambar];
+
+    // Filter out any empty or null image URLs
+    final validImages = images.where((url) => url.isNotEmpty).toList();
+
     return Stack(
       children: [
         ClipRRect(
           borderRadius: const BorderRadius.vertical(
             bottom: Radius.circular(24),
           ),
-          child: Image.network(
-            controller.dataKost.gambar,
-            width: double.infinity,
-            height: 250,
-            fit: BoxFit.cover,
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null) return child;
-              return Shimmer.fromColors(
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
-                child: Container(
-                  width: double.infinity,
-                  height: 250,
-                  color: Colors.white,
-                ),
-              );
-            },
+          child: CarouselSlider(
+            options: CarouselOptions(
+              height: 250,
+              viewportFraction: 1.0,
+              enableInfiniteScroll: validImages.length > 1,
+              autoPlay: validImages.length > 1,
+              autoPlayInterval: const Duration(seconds: 3),
+              autoPlayAnimationDuration: const Duration(milliseconds: 800),
+              autoPlayCurve: Curves.fastOutSlowIn,
+              onPageChanged: (index, reason) {
+                controller.currentImageIndex.value = index;
+              },
+            ),
+            items:
+                validImages.map((imageUrl) {
+                  return Builder(
+                    builder: (BuildContext context) {
+                      return GestureDetector(
+                        onTap:
+                            () => _showFullScreenImage(
+                              context,
+                              validImages,
+                              controller.currentImageIndex.value,
+                            ),
+                        child: CachedNetworkImage(
+                          imageUrl: imageUrl,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          placeholder:
+                              (context, url) => Shimmer.fromColors(
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.grey[100]!,
+                                child: Container(color: Colors.white),
+                              ),
+                          errorWidget:
+                              (context, url, error) => Container(
+                                color: Colors.grey[300],
+                                child: const Icon(Icons.error),
+                              ),
+                        ),
+                      );
+                    },
+                  );
+                }).toList(),
           ),
         ),
+        if (validImages.length > 1)
+          Positioned(
+            bottom: 16,
+            right: 16,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.black54,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Obx(
+                () => Text(
+                  '${controller.currentImageIndex.value + 1}/${validImages.length}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+          ),
         Positioned(
           top: 16,
           left: 16,
@@ -352,8 +581,8 @@ class DetailPageView extends GetView<DetailPageController> {
             onTap: () {
               controller.launchMapOnAndroid(
                 context,
-                controller.dataKost.latitude,
-                controller.dataKost.longitude,
+                controller.dataKost.latitude ?? 0,
+                controller.dataKost.longitude ?? 0,
               );
             },
             borderRadius: BorderRadius.circular(12),
@@ -563,89 +792,124 @@ class DetailPageView extends GetView<DetailPageController> {
           ),
         ),
         const SizedBox(height: 8),
-        FutureBuilder<List<ReviewWithUserModel>>(
-          future: controller.getReviewsWithUser(controller.dataKost.idKos),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Text("no_review".tr, style: Get.textTheme.bodySmall);
-            }
+        Obx(() {
+          if (controller.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (controller.reviews.isEmpty) {
+            return Text("no_review".tr, style: Get.textTheme.bodySmall);
+          }
 
-            final reviews = snapshot.data!;
-            return Column(
-              children:
-                  reviews.map((rwu) {
-                    logger.i(
-                      "rwu: ${rwu.review.id}, ${rwu.user.uid}, ${rwu.user.name}, ${rwu.user.email}, ${rwu.user.photoUrl}, ${rwu.review.rating}, ${rwu.review.comment}, ${rwu.review.ownerResponse}, ${rwu.review.createdAt}",
-                    );
-
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 6.0),
-                      child: Row(
+          return Column(
+            children:
+                controller.reviews.map((rwu) {
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          CircleAvatar(
-                            backgroundImage:
-                                rwu.user.photoUrl != null
-                                    ? NetworkImage(rwu.user.photoUrl!)
-                                    : null,
-                            child:
-                                rwu.user.photoUrl == null
-                                    ? const Icon(Icons.person)
-                                    : null,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  rwu.user.name,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text('${rwu.review.rating} ★'),
-                                Text(rwu.review.comment),
-                                if (rwu.review.ownerResponse != null)
-                                  Container(
-                                    margin: const EdgeInsets.only(top: 4),
-                                    padding: const EdgeInsets.all(6),
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[100],
-                                      borderRadius: BorderRadius.circular(6),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CircleAvatar(
+                                radius: 20,
+                                backgroundImage:
+                                    rwu.user.photoUrl != null
+                                        ? NetworkImage(rwu.user.photoUrl!)
+                                        : null,
+                                child:
+                                    rwu.user.photoUrl == null
+                                        ? const Icon(Icons.person, size: 20)
+                                        : null,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            rwu.user.name,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          '${rwu.review.rating} ★',
+                                          style: const TextStyle(
+                                            color: Colors.orange,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    child: Text(
-                                      "${"owner_response".tr} ${rwu.review.ownerResponse}",
-                                      style: TextStyle(
-                                        color: Colors.grey[700],
-                                        fontStyle: FontStyle.italic,
-                                        fontSize: 12,
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      FormatterHelper.formatDate(
+                                        rwu.review.createdAt,
+                                      ),
+                                      style: Get.textTheme.bodySmall?.copyWith(
+                                        fontSize: 10,
+                                        color: Colors.grey,
                                       ),
                                     ),
-                                  ),
-                                Text(
-                                  FormatterHelper.formatDate(
-                                    rwu.review.createdAt,
-                                  ),
-                                  style: Get.textTheme.bodySmall?.copyWith(
-                                    fontSize: 10,
-                                    color: Colors.grey,
-                                  ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
+                          const SizedBox(height: 8),
+                          Text(
+                            rwu.review.comment,
+                            style: Get.textTheme.bodyMedium,
+                          ),
+                          if (rwu.review.ownerResponse != null) ...[
+                            const SizedBox(height: 8),
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[100],
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "owner_response".tr,
+                                    style: TextStyle(
+                                      color: Colors.grey[700],
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    rwu.review.ownerResponse!,
+                                    style: TextStyle(
+                                      color: Colors.grey[700],
+                                      fontStyle: FontStyle.italic,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ],
                       ),
-                    );
-                  }).toList(),
-            );
-          },
-        ),
-
-        const SizedBox(height: 50),
+                    ),
+                  );
+                }).toList(),
+          );
+        }),
+        const SizedBox(height: 80), // Extra padding for FAB
       ],
     );
   }

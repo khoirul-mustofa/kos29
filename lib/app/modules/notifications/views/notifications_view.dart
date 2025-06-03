@@ -18,18 +18,18 @@ class NotificationsView extends GetView<NotificationsController> {
       appBar: AppBar(
         title: const Text('Notifikasi'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.check_circle_outline),
-            onPressed: () {
-              controller.markAllAsRead();
-              Get.snackbar(
-                'Info',
-                'Semua notifikasi telah ditandai sebagai dibaca',
-                snackPosition: SnackPosition.BOTTOM,
-              );
-            },
-            tooltip: 'Tandai semua sebagai dibaca',
-          ),
+          // IconButton(
+          //   icon: const Icon(Icons.check_circle_outline),
+          //   onPressed: () {
+          //     controller.markAllAsRead();
+          //     Get.snackbar(
+          //       'Info',
+          //       'Semua notifikasi telah ditandai sebagai dibaca',
+          //       snackPosition: SnackPosition.BOTTOM,
+          //     );
+          //   },
+          //   tooltip: 'Tandai semua sebagai dibaca',
+          // ),
         ],
       ),
       body: Obx(() {
@@ -142,42 +142,42 @@ class NotificationsView extends GetView<NotificationsController> {
     final dateFormat = DateFormat('dd MMM yyyy, HH:mm');
     final formattedDate = dateFormat.format(notification.createdAt);
     
-    return Dismissible(
+    return Container(
       key: Key(notification.id),
-      background: Container(
-        color: Colors.red,
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        child: const Icon(
-          Icons.delete,
-          color: Colors.white,
-        ),
-      ),
-      direction: DismissDirection.endToStart,
-      onDismissed: (direction) {
-        controller.deleteNotification(notification.id);
-        Get.snackbar(
-          'Info',
-          'Notifikasi dihapus',
-          snackPosition: SnackPosition.TOP,
-        );
-      },
+      // background: Container(
+      //   color: Colors.red,
+      //   alignment: Alignment.centerRight,
+      //   padding: const EdgeInsets.only(right: 20),
+      //   child: const Icon(
+      //     Icons.delete,
+      //     color: Colors.white,
+      //   ),
+      // ),
+      // direction: DismissDirection.endToStart,
+      // onDismissed: (direction) {
+      //   controller.deleteNotification(notification.id);
+      //   Get.snackbar(
+      //     'Info',
+      //     'Notifikasi dihapus',
+      //     snackPosition: SnackPosition.TOP,
+      //   );
+      // },
       child: GestureDetector(
-        onTap: () {
-          if (!notification.isRead) {
-            controller.markAsRead(notification.id);
-          }
+        // onTap: () {
+        //   if (!notification.isRead) {
+        //     controller.markAsRead(notification.id);
+        //   }
           
-          // Handle navigation based on notification type
-          if (notification.payload != null && notification.payload!.isNotEmpty) {
-            Get.toNamed(notification.payload!);
-          }
-        },
+        //   // Handle navigation based on notification type
+        //   if (notification.payload != null && notification.payload!.isNotEmpty) {
+        //     Get.toNamed(notification.payload!);
+        //   }
+        // },
         child: Container(
           margin: const EdgeInsets.only(bottom: 16),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: notification.isRead ? Colors.white : Colors.blue[50],
+            color:Colors.white,
             borderRadius: BorderRadius.circular(8),
             boxShadow: [
               BoxShadow(
@@ -223,15 +223,15 @@ class NotificationsView extends GetView<NotificationsController> {
                   ],
                 ),
               ),
-              if (!notification.isRead)
-                Container(
-                  width: 10,
-                  height: 10,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.blue,
-                  ),
-                ),
+              // if (!notification.isRead)
+              //   Container(
+              //     width: 10,
+              //     height: 10,
+              //     decoration: const BoxDecoration(
+              //       shape: BoxShape.circle,
+              //       color: Colors.blue,
+              //     ),
+              //   ),
             ],
           ),
         ),

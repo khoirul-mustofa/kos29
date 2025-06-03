@@ -400,6 +400,7 @@ class ManageUserController extends GetxController {
               items: const [
                 DropdownMenuItem(value: 'admin', child: Text('Admin')),
                 DropdownMenuItem(value: 'user', child: Text('User')),
+                // DropdownMenuItem(value: 'owner', child: Text('Owner')),
               ],
               onChanged: (value) {
                 if (value != null) selectedUserRole.value = value;

@@ -33,59 +33,116 @@ class ManagementKostEditKostView
             key: controller.formKey,
             child: ListView(
               children: [
+                // Section: Informasi Dasar
+                _buildSectionTitle("Informasi Dasar"),
+                const SizedBox(height: 12),
+
                 // Gambar
                 GetBuilder<ManagementKostEditKostController>(
                   builder: (controller) {
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Container(
-                        height: 200,
-                        width: Get.width,
-                        color: Colors.grey[200],
-                        child:
-                            controller.localImagePath != null
-                                ? Image.file(
-                                  File(controller.localImagePath!),
-                                  fit: BoxFit.cover,
-                                )
-                                : controller.imageUrl != null
-                                ? CachedNetworkImage(
-                                  imageUrl: controller.imageUrl!,
-                                  fit: BoxFit.cover,
-                                  placeholder:
-                                      (context, url) => Shimmer.fromColors(
-                                        baseColor: Colors.grey[300]!,
-                                        highlightColor: Colors.grey[100]!,
-                                        child: Container(color: Colors.white),
-                                      ),
-                                  errorWidget:
-                                      (context, url, error) => const Icon(
-                                        Icons.broken_image,
-                                        size: 50,
-                                        color: Colors.grey,
-                                      ),
-                                )
-                                : const Center(
-                                  child: Icon(
-                                    Icons.image,
-                                    size: 60,
-                                    color: Colors.grey,
-                                  ),
+                    return Column(
+                      children: [
+                        if (controller.imageUrls.isEmpty)
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              height: 200,
+                              width: Get.width,
+                              color: Colors.grey[200],
+                              child: const Center(
+                                child: Icon(
+                                  Icons.image,
+                                  size: 60,
+                                  color: Colors.grey,
                                 ),
-                      ),
+                              ),
+                            ),
+                          )
+                        else
+                          SizedBox(
+                            height: 200,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: controller.imageUrls.length,
+                              itemBuilder: (context, index) {
+                                // Get the current state of images
+                                final images = controller.imageUrls;
+                                if (index >= images.length)
+                                  return const SizedBox.shrink();
+
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: Stack(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: SizedBox(
+                                          width: 200,
+                                          child: CachedNetworkImage(
+                                            imageUrl: images[index],
+                                            fit: BoxFit.cover,
+                                            placeholder:
+                                                (context, url) =>
+                                                    Shimmer.fromColors(
+                                                      baseColor:
+                                                          Colors.grey[300]!,
+                                                      highlightColor:
+                                                          Colors.grey[100]!,
+                                                      child: Container(
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    const Icon(
+                                                      Icons.broken_image,
+                                                      size: 50,
+                                                      color: Colors.grey,
+                                                    ),
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 8,
+                                        right: 8,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.black.withOpacity(
+                                              0.5,
+                                            ),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: IconButton(
+                                            icon: const Icon(
+                                              Icons.close,
+                                              color: Colors.white,
+                                            ),
+                                            onPressed:
+                                                () => controller
+                                                    .removeImageAtIndex(index),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        const SizedBox(height: 12),
+                        OutlinedButton.icon(
+                          onPressed: controller.pickAndUploadImage,
+                          icon: const Icon(Icons.upload_file),
+                          label: const Text("Pilih & Upload Gambar"),
+                          style: OutlinedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                      ],
                     );
                   },
-                ),
-                const SizedBox(height: 12),
-                OutlinedButton.icon(
-                  onPressed: controller.pickAndUploadImage,
-                  icon: const Icon(Icons.upload_file),
-                  label: const Text("Pilih & Upload Gambar"),
-                  style: OutlinedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
                 ),
                 const SizedBox(height: 20),
 
@@ -96,6 +153,11 @@ class ManagementKostEditKostView
                   validator: (v) => v!.isEmpty ? "Wajib diisi" : null,
                 ),
                 const SizedBox(height: 12),
+
+                // Section: Informasi Harga & Ketersediaan
+                _buildSectionTitle("Informasi Harga & Ketersediaan"),
+                const SizedBox(height: 12),
+
                 buildTextInput(
                   controller: controller.hargaController,
                   label: "Harga / bulan",
@@ -103,6 +165,58 @@ class ManagementKostEditKostView
                   keyboardType: TextInputType.number,
                   validator: (v) => v!.isEmpty ? "Wajib diisi" : null,
                 ),
+                const SizedBox(height: 12),
+
+                buildTextInput(
+                  controller: controller.uangJaminanController,
+                  label: "Uang Jaminan (opsional)",
+                  icon: Icons.security,
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 12),
+
+                buildTextInput(
+                  controller: controller.kamarTersediaController,
+                  label: "Kamar Tersedia",
+                  icon: Icons.bed,
+                  keyboardType: TextInputType.number,
+                  validator: (v) => v!.isEmpty ? "Wajib diisi" : null,
+                ),
+                const SizedBox(height: 12),
+
+                Obx(
+                  () => CheckboxListTile(
+                    title: const Text('Kos Tersedia'),
+                    value: controller.kosTersedia.value,
+                    onChanged:
+                        (val) => controller.kosTersedia.value = val ?? true,
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // Section: Informasi Pemilik
+                _buildSectionTitle("Informasi Pemilik"),
+                const SizedBox(height: 12),
+
+                buildTextInput(
+                  controller: controller.namaPemilikController,
+                  label: "Nama Pemilik",
+                  icon: Icons.person,
+                  validator: (v) => v!.isEmpty ? "Wajib diisi" : null,
+                ),
+                const SizedBox(height: 12),
+
+                buildTextInput(
+                  controller: controller.nomorHpController,
+                  label: "Nomor HP Pemilik",
+                  icon: Icons.phone,
+                  keyboardType: TextInputType.phone,
+                  validator: (v) => v!.isEmpty ? "Wajib diisi" : null,
+                ),
+                const SizedBox(height: 12),
+
+                // Section: Detail Kosan
+                _buildSectionTitle("Detail Kosan"),
                 const SizedBox(height: 12),
 
                 DropdownButtonFormField<String>(
@@ -119,21 +233,14 @@ class ManagementKostEditKostView
                     ),
                   ),
                   items: const [
-                    DropdownMenuItem(value: 'Putra', child: Text('Putra')),
-                    DropdownMenuItem(value: 'Putri', child: Text('Putri')),
-                    DropdownMenuItem(value: 'Campur', child: Text('Campur')),
+                    DropdownMenuItem(value: 'putra', child: Text('Putra')),
+                    DropdownMenuItem(value: 'putri', child: Text('Putri')),
+                    DropdownMenuItem(value: 'campur', child: Text('Campur')),
                   ],
                   onChanged: (val) => controller.jenis.value = val!,
                 ),
                 const SizedBox(height: 12),
-                buildTextInput(
-                  controller: controller.kamarTersediaController,
-                  label: "Kamar Tersedia",
-                  icon: Icons.bed,
-                  keyboardType: TextInputType.number,
-                  validator: (v) => v!.isEmpty ? "Wajib diisi" : null,
-                ),
-                const SizedBox(height: 12),
+
                 buildTextInput(
                   controller: controller.deskripsiController,
                   label: "Deskripsi Kosan",
@@ -141,6 +248,7 @@ class ManagementKostEditKostView
                   maxLines: 3,
                 ),
                 const SizedBox(height: 12),
+
                 buildTextInput(
                   controller: controller.fasilitasController,
                   label: "Fasilitas (pisahkan dengan koma)",
@@ -148,14 +256,16 @@ class ManagementKostEditKostView
                 ),
                 const SizedBox(height: 12),
 
-                Obx(
-                  () => CheckboxListTile(
-                    title: const Text('Kos Tersedia'),
-                    value: controller.kosTersedia.value,
-                    onChanged:
-                        (val) => controller.kosTersedia.value = val ?? true,
-                  ),
+                buildTextInput(
+                  controller: controller.kebijakanController,
+                  label: "Kebijakan (pisahkan dengan koma)",
+                  icon: Icons.policy,
+                  maxLines: 2,
                 ),
+                const SizedBox(height: 12),
+
+                // Section: Lokasi
+                _buildSectionTitle("Lokasi"),
                 const SizedBox(height: 12),
 
                 buildTextInput(
@@ -253,6 +363,17 @@ class ManagementKostEditKostView
     );
   }
 
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: Colors.blue,
+      ),
+    );
+  }
+
   Widget _buildShimmerLoading() {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
@@ -260,6 +381,21 @@ class ManagementKostEditKostView
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // Section titles shimmer
+          ...List.generate(
+            5,
+            (index) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Container(
+                height: 24,
+                width: 150,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+          ),
           // Image shimmer
           Container(
             height: 200,
@@ -280,7 +416,7 @@ class ManagementKostEditKostView
           const SizedBox(height: 20),
           // Form fields shimmer
           ...List.generate(
-            7,
+            10,
             (index) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Container(

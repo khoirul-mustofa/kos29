@@ -16,9 +16,11 @@ class SearchPageController extends GetxController {
   DocumentSnapshot? lastDoc;
   String _searchText = '';
   Position? currentPosition;
+
   List<KostModel> get filteredKost {
     List<KostModel> list = kostList;
 
+    // Apply category filter
     if (selectedCategory > 0) {
       list =
           list
@@ -30,24 +32,7 @@ class SearchPageController extends GetxController {
               .toList();
     }
 
-    if (currentPosition != null) {
-      final currentLat = currentPosition!.latitude;
-      final currentLon = currentPosition!.longitude;
-
-      list =
-          list.map((k) {
-            k.distance = calculateDistanceService(
-              currentLat,
-              currentLon,
-              k.latitude,
-              k.longitude,
-            );
-            return k;
-          }).toList();
-
-      list.sort((a, b) => a.distance.compareTo(b.distance));
-    }
-
+    // Apply search text filter
     if (_searchText.isNotEmpty) {
       list =
           list
@@ -55,6 +40,27 @@ class SearchPageController extends GetxController {
                 (k) => k.nama.toLowerCase().contains(_searchText.toLowerCase()),
               )
               .toList();
+    }
+
+    // Calculate and sort by distance if location is available
+    if (currentPosition != null) {
+      final currentLat = currentPosition!.latitude;
+      final currentLon = currentPosition!.longitude;
+
+      // Calculate distance for each kost
+      list =
+          list.map((k) {
+            k.distance = calculateDistanceService(
+              currentLat,
+              currentLon,
+              k.latitude ?? 0,
+              k.longitude ?? 0,
+            );
+            return k;
+          }).toList();
+
+      // Sort by distance (nearest to farthest)
+      list.sort((a, b) => a.distance.compareTo(b.distance));
     }
 
     return list;
@@ -75,10 +81,22 @@ class SearchPageController extends GetxController {
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          Get.snackbar(
+            'Error',
+            'Izin lokasi diperlukan untuk mengurutkan berdasarkan jarak',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+          return;
+        }
       }
 
       if (permission == LocationPermission.deniedForever) {
-        logger.e('❌ Location permission denied forever');
+        Get.snackbar(
+          'Error',
+          'Izin lokasi ditolak secara permanen. Silakan aktifkan di pengaturan.',
+          snackPosition: SnackPosition.BOTTOM,
+        );
         return;
       }
 
@@ -90,6 +108,11 @@ class SearchPageController extends GetxController {
       update();
     } catch (e) {
       logger.e('❌ Error getting location: $e');
+      Get.snackbar(
+        'Error',
+        'Gagal mendapatkan lokasi saat ini',
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
   }
 
@@ -100,10 +123,8 @@ class SearchPageController extends GetxController {
       isLoading = true;
       update();
 
-      Query query = FirebaseFirestore.instance
-          .collection('kosts')
-          .orderBy('nama')
-          .limit(limit);
+      // Get all kost data without ordering to allow distance-based sorting
+      Query query = FirebaseFirestore.instance.collection('kosts').limit(limit);
 
       if (loadMore && lastDoc != null) {
         query = query.startAfterDocument(lastDoc!);
@@ -117,17 +138,16 @@ class SearchPageController extends GetxController {
         final newKost =
             snapshot.docs.map((doc) {
               final data = doc.data() as Map<String, dynamic>;
-              final kost = KostModel.fromMap(data);
-              kost.idKos = doc.id; // Assign document ID ke model
+              final kost = KostModel.fromMap({...data, 'idKos': doc.id});
 
+              // Calculate distance if location is available
               if (currentPosition != null) {
-                final distance = Geolocator.distanceBetween(
+                kost.distance = calculateDistanceService(
                   currentPosition!.latitude,
                   currentPosition!.longitude,
-                  kost.latitude,
-                  kost.longitude,
+                  kost.latitude ?? 0,
+                  kost.longitude ?? 0,
                 );
-                kost.distance = distance / 1000;
               }
 
               return kost;
@@ -138,11 +158,21 @@ class SearchPageController extends GetxController {
         } else {
           kostList = newKost;
         }
+
+        // Sort the entire list by distance if location is available
+        if (currentPosition != null) {
+          kostList.sort((a, b) => a.distance.compareTo(b.distance));
+        }
       } else {
         hasMore = false;
       }
     } catch (e) {
       logger.e('⛔ fetchKostData error: $e');
+      Get.snackbar(
+        'Error',
+        'Gagal mengambil data kos',
+        snackPosition: SnackPosition.BOTTOM,
+      );
     } finally {
       isLoading = false;
       update();

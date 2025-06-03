@@ -195,8 +195,8 @@ class SignInView extends GetView<SignInController> {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 27),
-                            SwipeIndicator(),
+                            // const SizedBox(height: 27),
+                            // SwipeIndicator(),
                             const SizedBox(height: 16),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,

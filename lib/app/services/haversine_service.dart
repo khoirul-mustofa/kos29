@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'package:geolocator/geolocator.dart';
+import 'package:kos29/app/helper/request_permission_location_helper.dart';
 
 double calculateDistanceService(
   double lat1,
@@ -23,6 +25,30 @@ double calculateDistanceService(
   return R * c; // Jarak dalam kilometer
 }
 
+Future<double?> calculateDistanceFromCurrentLocation(
+  double targetLat,
+  double targetLon,
+) async {
+  try {
+    final izin = await cekIzinLokasi();
+    if (!izin) return null;
+
+    final posisi = await Geolocator.getCurrentPosition(
+      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+    );
+
+    return calculateDistanceService(
+      posisi.latitude,
+      posisi.longitude,
+      targetLat,
+      targetLon,
+    );
+  } catch (e) {
+    return null;
+  }
+}
+
 double _degToRad(double deg) {
   return deg * (pi / 180);
 }
+

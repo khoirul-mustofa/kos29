@@ -19,31 +19,31 @@ class BottomNavView extends GetView<BottomNavController> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
-        if (didPop) return;
-        final shouldExit = await Get.dialog<bool>(
-          AlertDialog(
-            title: Text('exit_app_title'.tr),
-            content: Text('exit_app_content'.tr),
-            actions: [
-              TextButton(
-                onPressed: () => Get.back(result: false),
-                child: Text('exit_app_no'.tr),
-              ),
-              TextButton(
-                onPressed: () => Get.back(result: true),
-                child: Text(
-                  'exit_app_yes'.tr,
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
-            ],
-          ),
-        );
-        if (shouldExit == true) {
-          Future.delayed(const Duration(milliseconds: 200), () {
-            Get.close(1);
-          });
-        }
+        // if (didPop) return;
+        // final shouldExit = await Get.dialog<bool>(
+        //   AlertDialog(
+        //     title: Text('exit_app_title'.tr),
+        //     content: Text('exit_app_content'.tr),
+        //     actions: [
+        //       TextButton(
+        //         onPressed: () => Get.back(result: false),
+        //         child: Text('exit_app_no'.tr),
+        //       ),
+        //       TextButton(
+        //         onPressed: () => Get.back(result: true),
+        //         child: Text(
+        //           'exit_app_yes'.tr,
+        //           style: TextStyle(color: Colors.red),
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // );
+        // if (shouldExit == true) {
+        //   Future.delayed(const Duration(milliseconds: 200), () {
+        //     Get.close(1);
+        //   });
+        // }
       },
       child: Scaffold(
         backgroundColor:
@@ -52,17 +52,10 @@ class BottomNavView extends GetView<BottomNavController> {
           controller: controller.pageController,
           onPageChanged: controller.onPageChanged,
           physics: const BouncingScrollPhysics(),
-          children: [
-            HomeView(),
-            HistorySearchView(),
-            controller.isAuth ? ProfileView() : SignInView(),
-          ],
+          children: [HomeView(), HistorySearchView(), ProfileView()],
         ),
 
         bottomNavigationBar: Obx(() {
-          if (controller.selectedIndex.value == 2 && !controller.isAuth) {
-            return const SizedBox.shrink();
-          }
           return AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
@@ -142,18 +135,13 @@ class BottomNavView extends GetView<BottomNavController> {
                               );
                             },
                             child: Icon(
-                              controller.isAuth
-                                  ? Icons.person
-                                  : Icons.login_rounded,
+                              Icons.person,
                               key: ValueKey(
                                 controller.selectedIndex.value == 2,
                               ),
                             ),
                           ),
-                          label:
-                              controller.isAuth
-                                  ? 'bottom_nav_profile'.tr
-                                  : 'bottom_nav_login'.tr,
+                          label: 'bottom_nav_profile'.tr,
                         ),
                       ],
                     ),

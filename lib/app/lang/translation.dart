@@ -149,6 +149,9 @@ class AppTranslation extends Translations {
       'please_enter_name': 'Please enter your name',
       'please_enter_email': 'Please enter your email',
       'please_enter_valid_email': 'Please enter a valid email address',
+
+      'about_app': 'About App',
+      'my_reviews': 'My Reviews',
     },
     'id_ID': {
       'hello': 'Halo',
@@ -296,6 +299,10 @@ class AppTranslation extends Translations {
       'please_enter_name': 'Silakan masukkan nama Anda',
       'please_enter_email': 'Silakan masukkan email Anda',
       'please_enter_valid_email': 'Silakan masukkan alamat email yang valid',
+
+      // about app
+      'about_app': 'Tentang Aplikasi',
+      'my_reviews': 'Ulasan Saya',
     },
   };
 }

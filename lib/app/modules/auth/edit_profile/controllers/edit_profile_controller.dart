@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +13,6 @@ import 'package:kos29/app/helper/logger_app.dart';
 import 'package:kos29/app/modules/profile/controllers/profile_controller.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart' as path;
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 class EditProfileController extends GetxController {
@@ -28,6 +28,7 @@ class EditProfileController extends GetxController {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 
   RxBool isLoading = false.obs;
   RxBool isUploadingImage = false.obs;
@@ -70,7 +71,8 @@ class EditProfileController extends GetxController {
       };
 
       // Update controllers with data
-      nameController.text = data?['displayName'] ?? authData['displayName'] ?? '';
+      nameController.text =
+          data?['displayName'] ?? authData['displayName'] ?? '';
       phoneController.text = data?['phone'] ?? authData['phoneNumber'] ?? '';
       emailController.text = authData['email'] ?? '';
       bioController.text = data?['bio'] ?? '';
@@ -117,63 +119,67 @@ class EditProfileController extends GetxController {
     localImagePath = pickedFile.path;
     update();
 
-    final file = File(pickedFile.path);
-    final fileExtension = path.extension(file.path).toLowerCase();
-    final uniqueFileName = '${const Uuid().v4()}$fileExtension';
-    final fileBytes = await file.readAsBytes();
-    final contentType = lookupMimeType(file.path);
-
-    final bucket = Supabase.instance.client.storage.from('media');
-
     try {
+      final file = File(pickedFile.path);
+      final fileExtension = path.extension(file.path).toLowerCase();
+      final uniqueFileName = '${const Uuid().v4()}$fileExtension';
+      final contentType = lookupMimeType(file.path);
+
+      // Create a reference to the location you want to upload to in Firebase Storage
+      final storageRef = _storage.ref().child('profile_images/$uniqueFileName');
+
       // If there's an existing image, try to delete it
       if (profileImageUrl.value.isNotEmpty) {
-        final oldFileName = profileImageUrl.value.split('/').last;
         try {
-          await bucket.remove([oldFileName]);
+          final oldImageRef = _storage.refFromURL(profileImageUrl.value);
+          await oldImageRef.delete();
         } catch (e) {
           logger.w('Failed to delete old image: $e');
         }
       }
 
-      final result = await bucket.uploadBinary(
-        uniqueFileName,
-        fileBytes,
-        fileOptions: FileOptions(
-          contentType: contentType,
-          upsert: true,
-        ),
+      // Upload the file to Firebase Storage
+      final metadata = SettableMetadata(
+        contentType: contentType,
+        customMetadata: {'picked-file-path': file.path},
       );
 
-      if (result.isEmpty) throw Exception("Upload failed");
+      final uploadTask = await storageRef.putFile(file, metadata);
+      final downloadUrl = await uploadTask.ref.getDownloadURL();
 
-      final publicUrl = bucket.getPublicUrl(uniqueFileName);
-      profileImageUrl.value = publicUrl;
-      
+      profileImageUrl.value = downloadUrl;
+
       // Update Firestore with new photo URL immediately
       final user = _auth.currentUser;
       if (user != null) {
         await _firestore.collection('users').doc(user.uid).update({
-          'photoURL': publicUrl,
-          'photo_url': publicUrl, // Update both fields for compatibility
+          'photoURL': downloadUrl,
+          'photo_url': downloadUrl, // Update both fields for compatibility
           'updated_at': DateTime.now().toIso8601String(),
         });
-        
+
         // Update Firebase Auth profile
-        await user.updatePhotoURL(publicUrl);
+        await user.updatePhotoURL(downloadUrl);
       }
 
       update();
+      Get.snackbar(
+        'Success',
+        'Foto profil berhasil diperbarui',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
     } catch (e) {
       Get.snackbar(
-        "Error",
-        "Failed to upload image: ${e.toString()}",
+        'Error',
+        'Gagal mengupload foto: ${e.toString()}',
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
       logger.e('Error uploading image: $e');
     } finally {
       isUploadingImage.value = false;
+      update();
     }
   }
 
@@ -191,7 +197,7 @@ class EditProfileController extends GetxController {
 
       isLoading.value = true;
       update();
-      
+
       final user = _auth.currentUser;
       if (user == null) {
         Get.snackbar(
@@ -224,6 +230,10 @@ class EditProfileController extends GetxController {
 
       await _firestore.collection('users').doc(user.uid).update(data);
 
+      // Refresh profile data in ProfileController
+      final profileController = Get.find<ProfileController>();
+      await profileController.loadUserData();
+
       Get.back();
       Get.snackbar(
         'Berhasil',
@@ -231,9 +241,6 @@ class EditProfileController extends GetxController {
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
-      
-      final controllerProfile = Get.find<ProfileController>();
-      controllerProfile.getCurrentUser();
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -259,8 +266,6 @@ class EditProfileController extends GetxController {
     genderController.dispose();
     birthDateController.dispose();
     occupationController.dispose();
-    final controllerProfile = Get.find<ProfileController>();
-    controllerProfile.getCurrentUser();
     super.onClose();
   }
 }

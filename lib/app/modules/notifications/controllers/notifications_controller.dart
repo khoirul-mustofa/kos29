@@ -17,15 +17,21 @@ class NotificationsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    print('NotificationsController onInit');
     _loadNotifications();
     // _listenToUnreadCount();
   }
   
   // Load notifications
   void _loadNotifications() {
+    print('Load notifications dipanggil');
     isLoading.value = true;
     _notificationService.getUserNotifications().listen((notificationsList) {
-      notifications.value = notificationsList;
+      final uniqueNotifications = <String, NotificationModel>{};
+      for (var notif in notificationsList) {
+        uniqueNotifications[notif.id] = notif;
+      }
+      notifications.value = uniqueNotifications.values.toList();
       isLoading.value = false;
     }, onError: (error) {
       isLoading.value = false;
@@ -37,7 +43,7 @@ class NotificationsController extends GetxController {
   void _listenToUnreadCount() {
     _notificationService.getUnreadNotificationCount().listen((count) {
       unreadCount.value = count;
-    });
+    });   
   }
   
   // Mark notification as read
@@ -59,7 +65,7 @@ class NotificationsController extends GetxController {
   String getNotificationTypeIcon(String? type) {
     switch (type) {
       case 'kost_release':
-        return 'assets/icons/home.png';
+        return 'assets/icons/home.png'; 
       case 'payment':
         return 'assets/icons/payment.png';
       case 'message':

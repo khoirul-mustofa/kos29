@@ -38,13 +38,16 @@ final query = await FirebaseFirestore.instance
         query.docs.map((doc) => ReviewModel.fromDoc(doc)).toList();
 
     // Fetch user data for each review
-    final reviewsWithUser = await Future.wait(
-      reviewsList.map((review) async {
-        final user = await _userService.getUserById(review.userId);
-        if (user == null) throw Exception('User tidak ditemukan');
-        return ReviewWithUserModel(review: review, user: user);
-      }),
-    );
+    final reviewsWithUser = <ReviewWithUserModel>[];
+    for (final review in reviewsList) {
+      final user = await _userService.getUserById(review.userId);
+      if (user != null) {
+        reviewsWithUser.add(ReviewWithUserModel(review: review, user: user));
+      } else {
+        debugPrint('User dengan id ${review.userId} tidak ditemukan');
+        // Bisa juga tambahkan user placeholder jika mau
+      }
+    }
 
     reviews.clear();
     reviews.addAll(reviewsWithUser);

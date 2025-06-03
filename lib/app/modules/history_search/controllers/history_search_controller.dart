@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:kos29/app/data/models/kost_model.dart';
+import 'package:kos29/app/helper/logger_app.dart';
 import 'package:kos29/app/services/visit_history_service.dart';
 
 class HistorySearchController extends GetxController {
@@ -85,13 +86,13 @@ class HistorySearchController extends GetxController {
 
       final data = snapshot.data();
       if (data == null) {
-        // Get.snackbar('Error', 'Data kosan tidak ditemukan');
+        logger.e('Data kosan tidak ditemukan');
         return;
       }
 
       kostData.add(KostModel.fromMap(data)..visitedAt = visitedAt);
     } catch (e) {
-      Get.snackbar('Error', 'Gagal mengambil data kosan');
+            logger.e('Gagal mengambil data kosan: $e');
     }
   }
 }

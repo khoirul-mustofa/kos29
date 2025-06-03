@@ -222,7 +222,7 @@ class NotificationService extends GetxService {
         title: title,
         body: body,
         payload: payload,
-        userId: currentUser.uid,
+
         createdAt: DateTime.now(),
         isRead: false,
         type: type ?? 'general',
@@ -331,20 +331,17 @@ class NotificationService extends GetxService {
   }) async {
     try {
       // Get all user documents from Firestore
-      final userDocs = await _firestore.collection('users').get();
+      // final userDocs = await _firestore.collection('users').get();
       
       // Create a batch write
       final batch = _firestore.batch();
-      
-      // Create notification for each user
-      for (var userDoc in userDocs.docs) {
-        final notificationId = _uuid.v4();
+      final notificationId = _uuid.v4();
         final notification = NotificationModel(
           id: notificationId,
           title: 'Kos Baru Tersedia',
           body: 'Kos baru $kostName telah ditambahkan! Ayo kunjungi sekarang!',
           payload: route,
-          userId: userDoc.id,
+
           createdAt: DateTime.now(),
           isRead: false,
           type: 'kost_release',
@@ -356,7 +353,7 @@ class NotificationService extends GetxService {
           _firestore.collection('notifications').doc(notificationId),
           notification.toMap(),
         );
-      }
+   
       
       // Commit the batch
       await batch.commit();

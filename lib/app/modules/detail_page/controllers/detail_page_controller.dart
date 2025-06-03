@@ -26,9 +26,23 @@ class DetailPageController extends GetxController {
   final isLoading = false.obs;
   final isFavorite = false.obs;
   final KostModel dataKost = Get.arguments;
-final Rxn<UserModel> owner = Rxn<UserModel>();
+  final Rxn<UserModel> owner = Rxn<UserModel>();
   var isFasilitasExpanded = false;
   var isDeskripsiExpanded = false;
+  final currentImageIndex = 0.obs;
+  final reviews = <ReviewWithUserModel>[].obs;
+
+  // Get valid images list
+  List<String> get validImages {
+    final images =
+        dataKost.fotoKosUrls.isNotEmpty
+            ? dataKost.fotoKosUrls
+            : [dataKost.gambar];
+    return images.where((url) => url.isNotEmpty).toList();
+  }
+
+  // Get total valid images count
+  int get totalImages => validImages.length;
 
   String ratingLabel(double rating) {
     switch (rating.round()) {
@@ -94,13 +108,13 @@ final Rxn<UserModel> owner = Rxn<UserModel>();
     super.onInit();
     VisitHistoryService().saveVisit(dataKost.idKos);
     Get.find<HomeController>().refreshHomePage();
-    getReviewsWithUser(dataKost.idKos);
+    loadReviews();
     calculateRating();
     checkFavoriteStatus();
-     _loadOwnerData();
+    _loadOwnerData();
   }
 
-Future<void> _loadOwnerData() async {
+  Future<void> _loadOwnerData() async {
     try {
       final ownerData = await _userService.getUserById(dataKost.uid);
       if (ownerData != null) {
@@ -110,6 +124,7 @@ Future<void> _loadOwnerData() async {
       logger.e('Error loading owner data: $e');
     }
   }
+
   Future<void> checkFavoriteStatus() async {
     try {
       isFavorite.value = await _favoriteService.isFavorite(dataKost.idKos);
@@ -153,21 +168,38 @@ Future<void> _loadOwnerData() async {
     update();
   }
 
-  Future<List<ReviewModel>> getReviews(String kostId) async {
-    return await _reviewService.getReviews(kostId);
-  }
+  Future<void> loadReviews() async {
+    try {
+      isLoading.value = true;
+      final reviewsList = await _reviewService.getReviews(dataKost.idKos);
+      final usersFutures =
+          reviewsList.map((r) => _userService.getUserById(r.userId)).toList();
+      final users = await Future.wait(usersFutures);
 
-  Future<List<ReviewWithUserModel>> getReviewsWithUser(String kostId) async {
-    final reviews = await _reviewService.getReviews(kostId);
-    final usersFutures =
-        reviews.map((r) => _userService.getUserById(r.userId)).toList();
-    final users = await Future.wait(usersFutures);
+      final reviewsWithUser = <ReviewWithUserModel>[];
+      for (int i = 0; i < reviewsList.length; i++) {
+        final user = users[i];
+        if (user != null) {
+          reviewsWithUser.add(
+            ReviewWithUserModel(review: reviewsList[i], user: user),
+          );
+        } else {
+          logger.e('User dengan id ${reviewsList[i].userId} tidak ditemukan');
+        }
+      }
 
-    return List.generate(reviews.length, (i) {
-      final user = users[i];
-      if (user == null) throw Exception('User tidak ditemukan');
-      return ReviewWithUserModel(review: reviews[i], user: user);
-    });
+      reviews.value = reviewsWithUser;
+      jumlahUlasan.value = reviewsWithUser.length;
+    } catch (e) {
+      logger.e('Error loading reviews: $e');
+      Get.snackbar(
+        'Error',
+        'Gagal memuat ulasan',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   Future<void> showReviewDialog(BuildContext context) async {
@@ -295,23 +327,61 @@ Future<void> _loadOwnerData() async {
                         ),
                       ),
                       onPressed: () async {
+                        if (commentController.text.trim().isEmpty) {
+                          Get.snackbar(
+                            'Error',
+                            'Komentar tidak boleh kosong',
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white,
+                          );
+                          return;
+                        }
+
                         final user = FirebaseAuth.instance.currentUser;
                         if (user != null) {
-                          final review = ReviewModel(
-                            userId: user.uid,
-                            kostId: dataKost.idKos,
-                            comment: commentController.text,
-                            rating: selectedRating,
-                            createdAt: DateTime.now(),
-                            hidden: false,
-                            ownerResponse: null,
-                            ownerId: dataKost.uid
-                          );
-                          await _reviewService.submitReview(review);
-                          update();
-                          calculateRating();
+                          try {
+                            isLoading.value = true;
+                            update();
+
+                            final review = ReviewModel(
+                              userId: user.uid,
+                              kostId: dataKost.id!,
+                              comment: commentController.text.trim(),
+                              rating: selectedRating,
+                              createdAt: DateTime.now(),
+                              hidden: false,
+                              ownerResponse: null,
+                              ownerId: dataKost.ownerId,
+                            );
+
+                            await _reviewService.submitReview(review);
+
+                            // Reload reviews and rating after submitting
+                            await Future.wait([
+                              loadReviews(),
+                              calculateRating(),
+                            ]);
+
+                            Get.back();
+                            Get.snackbar(
+                              'Success',
+                              'Review berhasil ditambahkan',
+                              backgroundColor: Colors.green,
+                              colorText: Colors.white,
+                            );
+                          } catch (e) {
+                            logger.e('Error submitting review: $e');
+                            Get.snackbar(
+                              'Error',
+                              'Gagal menambahkan review: ${e.toString()}',
+                              backgroundColor: Colors.red,
+                              colorText: Colors.white,
+                            );
+                          } finally {
+                            isLoading.value = false;
+                            update();
+                          }
                         }
-                        Get.back();
                       },
                     ),
                   ],
@@ -327,6 +397,83 @@ Future<void> _loadOwnerData() async {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Tidak dapat membuka Google Maps')),
+      );
+    }
+  }
+
+  void launchWhatsApp() async {
+    try {
+      final phoneNumber = dataKost.nomorHp;
+      if (phoneNumber.isEmpty) {
+        Get.snackbar(
+          'error'.tr,
+          'phone_number_not_available'.tr,
+          snackPosition: SnackPosition.TOP,
+        );
+        return;
+      }
+
+      // Format the phone number
+      String formattedPhone = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
+
+      // Add country code if not present
+      if (!formattedPhone.startsWith('+')) {
+        if (formattedPhone.startsWith('0')) {
+          formattedPhone = '+62${formattedPhone.substring(1)}';
+        } else {
+          formattedPhone = '+62$formattedPhone';
+        }
+      }
+
+      // Remove any '+' from the beginning for the URL
+      final phoneForUrl = formattedPhone.replaceAll('+', '');
+
+      // Create WhatsApp URL
+      final whatsappUrl = 'https://wa.me/$phoneForUrl';
+      final uri = Uri.parse(whatsappUrl);
+
+      if (await canLaunchUrl(uri)) {
+        try {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        } catch (e) {
+          logger.e('Error launching WhatsApp URL: $e');
+          // Fallback to market if WhatsApp is not installed
+          final marketUrl = 'market://details?id=com.whatsapp';
+          final marketUri = Uri.parse(marketUrl);
+          if (await canLaunchUrl(marketUri)) {
+            await launchUrl(marketUri, mode: LaunchMode.externalApplication);
+          } else {
+            // Fallback to Play Store web URL
+            final playStoreUrl =
+                'https://play.google.com/store/apps/details?id=com.whatsapp';
+            final playStoreUri = Uri.parse(playStoreUrl);
+            if (await canLaunchUrl(playStoreUri)) {
+              await launchUrl(
+                playStoreUri,
+                mode: LaunchMode.externalApplication,
+              );
+            } else {
+              Get.snackbar(
+                'error'.tr,
+                'cannot_open_whatsapp'.tr,
+                snackPosition: SnackPosition.TOP,
+              );
+            }
+          }
+        }
+      } else {
+        Get.snackbar(
+          'error'.tr,
+          'cannot_open_whatsapp'.tr,
+          snackPosition: SnackPosition.TOP,
+        );
+      }
+    } catch (e) {
+      logger.e('Error in launchWhatsApp: $e');
+      Get.snackbar(
+        'error'.tr,
+        'something_went_wrong'.tr,
+        snackPosition: SnackPosition.TOP,
       );
     }
   }
