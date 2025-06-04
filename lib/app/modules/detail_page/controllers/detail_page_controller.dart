@@ -14,6 +14,7 @@ import 'package:kos29/app/services/review_service.dart';
 import 'package:kos29/app/services/user_service.dart';
 import 'package:kos29/app/services/visit_history_service.dart';
 import 'package:kos29/app/services/favorite_service.dart';
+import 'package:kos29/app/services/haversine_service.dart';
 import 'package:kos29/app/helper/logger_app.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -112,6 +113,7 @@ class DetailPageController extends GetxController {
     calculateRating();
     checkFavoriteStatus();
     _loadOwnerData();
+    _calculateDistance();
   }
 
   Future<void> _loadOwnerData() async {
@@ -475,6 +477,19 @@ class DetailPageController extends GetxController {
         'something_went_wrong'.tr,
         snackPosition: SnackPosition.TOP,
       );
+    }
+  }
+
+  Future<void> _calculateDistance() async {
+    if (dataKost.latitude != null && dataKost.longitude != null) {
+      final distance = await calculateDistanceFromCurrentLocation(
+        dataKost.latitude!,
+        dataKost.longitude!,
+      );
+      if (distance != null) {
+        dataKost.distance = distance;
+        update();
+      }
     }
   }
 }
