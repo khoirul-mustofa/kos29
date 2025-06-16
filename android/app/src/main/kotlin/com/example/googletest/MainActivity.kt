@@ -1,4 +1,4 @@
-package com.example.kos29
+package com.example.googletest
 
 import io.flutter.embedding.android.FlutterActivity
 

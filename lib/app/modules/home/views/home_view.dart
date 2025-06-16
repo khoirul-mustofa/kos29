@@ -6,7 +6,7 @@ import 'package:kos29/app/routes/app_pages.dart';
 import 'package:kos29/app/services/haversine_service.dart';
 
 import 'package:kos29/app/style/app_colors.dart';
-import 'package:kos29/app/services/notification_service.dart';
+
 
 import 'package:shimmer/shimmer.dart';
 import 'package:kos29/app/data/models/kost_model.dart';

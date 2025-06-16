@@ -12,7 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:kos29/app/helper/logger_app.dart';
 import 'package:kos29/app/modules/kost_page/controllers/kost_page_controller.dart';
 import 'package:kos29/app/routes/app_pages.dart';
-import 'package:kos29/app/services/notification_service.dart';
+
 import 'package:latlong2/latlong.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart';
@@ -357,15 +357,8 @@ class ManagementKostAddKostController extends GetxController {
       Get.snackbar('Berhasil', 'Kosan berhasil disimpan');
 
       // Show push notification and save to Firestore
-      final notificationService = Get.find<NotificationService>();
-      
-      // Broadcast notification to all users
-      await notificationService.broadcastNewKostNotification(
-        kostId: idKos,
-        kostName: namaController.text,
-        route: '${Routes.DETAIL_PAGE}?id=$idKos',
-      );
-
+  
+   
       Get.offNamed(Routes.KOST_PAGE);
 
       if (kDebugMode) {

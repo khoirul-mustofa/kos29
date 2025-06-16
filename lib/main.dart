@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:kos29/app/lang/translation.dart';
-import 'package:kos29/app/services/notification_service.dart';
+
 import 'package:kos29/app/style/theme/theme.dart';
 import 'package:kos29/app/style/theme/theme_controller.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -18,14 +18,6 @@ void main() async {
   await initializeDateFormatting('id_ID', null);
   await Permission.storage.request();
 
-  // await Supabase.initialize(
-  //   url: 'https://lnhdhgvokxpmbhgdvxtq.supabase.co',
-  //   anonKey:
-  //       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxuaGRoZ3Zva3hwbWJoZ2R2eHRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYzNTA0NzAsImV4cCI6MjA2MTkyNjQ3MH0.HfhcBM7gq_sGPS38qtXt0THGXrr2tjgdPDAIucZsS5k',
-  // );
-
-  // Initialize notification service
-  await Get.putAsync(() => NotificationService().init());
 
   runApp(MyApp());
 }

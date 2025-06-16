@@ -14,7 +14,7 @@ class KostModel {
   final List<String> fotoKosUrls;
   final String namaPemilik;
   final String nomorHp;
-  final String status; // 'active', 'inactive'
+  final String status; 
   final DateTime createdAt;
   final DateTime? updatedAt;
   final String ownerId; // Owner's Firebase Auth UID

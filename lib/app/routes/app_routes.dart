@@ -35,6 +35,7 @@ abstract class Routes {
   static const MY_REVIEWS = _Paths.MY_REVIEWS;
   static const ADMIN_KOST_UPDATE_REQUESTS = '/admin/kost-update-requests';
   static const KOST_UPDATE_REQUEST = _Paths.KOST_UPDATE_REQUEST;
+  static const KOST_SUBMISSION_LIST = '/kost-submission-list';
 }
 
 abstract class _Paths {

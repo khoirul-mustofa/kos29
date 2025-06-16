@@ -1,49 +1,50 @@
 {
   "project_info": {
-    "project_number": "1016451331670",
-    "project_id": "kos29-fa0be",
-    "storage_bucket": "kos29-fa0be.firebasestorage.app"
+    "project_number": "736233903464",
+    "project_id": "test-5e30a",
+    "storage_bucket": "test-5e30a.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1016451331670:android:83e5ec86b4a64bbab1edf7",
+        "mobilesdk_app_id": "1:736233903464:android:8805137899c19078a7b2dd",
         "android_client_info": {
-          "package_name": "com.example.kos29"
+          "package_name": "com.example.googletest"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1016451331670-hf9v56pfks13r9f85ucu0tndsom40bab.apps.googleusercontent.com",
+          "client_id": "736233903464-87gfrvqlod38abeluk6j39atr9mehrh6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.kos29",
-            "certificate_hash": "0b1b16e1b6984df084966f9f3a0ff7567c8265c0"
+            "package_name": "com.example.googletest",
+            "certificate_hash": "bc6cf9f4a62cb6df5507660aa3761f512d119e37"
           }
         },
         {
-          "client_id": "1016451331670-2v8va45q932k6aq91bgpu6dhiu614i4s.apps.googleusercontent.com",
+          "client_id": "736233903464-hcen43ea1bc2ov0paa6m3c1ff895v55m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.googletest",
+            "certificate_hash": "6fe27bc77b78290452e83ac9b4c52a8bd49338ab"
+          }
+        },
+        {
+          "client_id": "736233903464-kuv3fac0vhh7qhnah7j5dkct3rfmagmf.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCFkpCKEGzNc9Xih6EbuyANZiNSQjvzclA"
+          "current_key": "AIzaSyBebM8WROUBPYQrRoBmyGtJ9DwO9dsjPII"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1016451331670-2v8va45q932k6aq91bgpu6dhiu614i4s.apps.googleusercontent.com",
+              "client_id": "736233903464-kuv3fac0vhh7qhnah7j5dkct3rfmagmf.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "1016451331670-80oac7ka1oaqqg8bfqbcumd5k04ggeeo.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.kos29"
-              }
             }
           ]
         }

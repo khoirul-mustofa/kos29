@@ -151,6 +151,7 @@ class ProfileView extends GetView<ProfileController> {
                                 Get.toNamed(Routes.KOST_PAGE);
                               },
                             ),
+                          
                           _buildMenuItem(
                             Icons.rate_review_outlined,
                             'manage_review'.tr,
@@ -240,8 +241,7 @@ class ProfileView extends GetView<ProfileController> {
                   }),
 
                   Obx(() {
-                    if (controller.userRole.value == "admin" ||
-                        controller.userRole.value == "owner") {
+                    if (controller.userRole.value == "admin") {
                       return _buildMenuItem(
                         Icons.person_outline,
                         'Manage User',
@@ -263,6 +263,22 @@ class ProfileView extends GetView<ProfileController> {
                         trailing: const Icon(Icons.chevron_right),
                         onTap: () {
                           Get.toNamed(Routes.REGISTER_KOS);
+                        },
+                      );
+                    } else {
+                      return const SizedBox.shrink();
+                    }
+                  }),
+
+                          Obx(() {
+                    if (controller.currentUser.value != null &&
+                        controller.userRole.value != "admin") {
+                      return ListTile(
+                        title: Text('Status Kos'),
+                        leading: const Icon(Icons.list_alt_outlined),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () {
+                          Get.toNamed(Routes.KOST_SUBMISSION_LIST);
                         },
                       );
                     } else {

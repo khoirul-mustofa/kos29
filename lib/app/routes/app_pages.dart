@@ -60,6 +60,7 @@ import '../modules/admin/kost_update_requests/bindings/admin_kost_update_request
 import '../modules/admin/kost_update_requests/views/admin_kost_update_requests_view.dart';
 import '../modules/kost_update_request/bindings/kost_update_request_binding.dart';
 import '../modules/kost_update_request/views/kost_update_request_view.dart';
+import '../modules/kost_submission_list/views/kost_submission_list_page.dart';
 
 part 'app_routes.dart';
 
@@ -67,6 +68,7 @@ class AppPages {
   AppPages._();
 
   static const INITIAL = Routes.SPLASH_SCREEN;
+
 
   static final routes = [
     GetPage(name: _Paths.HOME, page: () => HomeView(), binding: HomeBinding()),
@@ -214,6 +216,10 @@ class AppPages {
       name: Routes.KOST_UPDATE_REQUEST,
       page: () => const KostUpdateRequestView(),
       binding: KostUpdateRequestBinding(),
+    ),
+    GetPage(
+      name: Routes.KOST_SUBMISSION_LIST,
+      page: () => const KostSubmissionListPage(),
     ),
   ];
 }
